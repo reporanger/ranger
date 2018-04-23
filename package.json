@@ -10,9 +10,12 @@
     "start": "probot run ./index.js",
     "lint": "standard --fix",
     "test": "jest && standard",
-    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage",
+    "redis:clear": "redis-cli flushall"
   },
   "dependencies": {
+    "bee-queue": "^1.2.2",
+    "moment": "^2.22.1",
     "ms": "^2.1.1",
     "probot": "^6.0.0"
   },
