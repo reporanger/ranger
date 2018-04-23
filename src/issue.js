@@ -36,9 +36,7 @@ module.exports = (robot) => {
   })
 
   return async (context) => {
-    const owner = context.payload.repository.owner.login
-    const repo = context.payload.repository.name
-    const number = context.payload.issue.number
+    const { owner, repo, number } = context.issue()
     const ID = `${owner}:${repo}:${number}`
 
     if (context.payload.issue.state === 'closed') {
@@ -48,24 +46,17 @@ module.exports = (robot) => {
     const withClosableLabels = await Promise.all(
       context.payload.issue.labels
         .filter(l => closableLabels.has(l.name))
-        .map(({ name }) => context.github.issues.getLabel({
-          owner,
-          repo,
-          name,
-          headers: {
-            'Accept': 'application/vnd.github.symmetra-preview+json'
-          }
-        }))
+        .map(({ name }) => context.github.issues.getLabel(
+          context.repo({
+            name,
+            headers: {
+              'Accept': 'application/vnd.github.symmetra-preview+json'
+            }
+          })
+        ))
     ).then(arr => arr.map(_ => _.data))
 
     if (withClosableLabels.length) {
-      const job = {
-        owner,
-        repo,
-        number,
-        installation_id: context.payload.installation.id
-      }
-
       const time = Math.min(...(
         withClosableLabels
           .map(l => l.description)
@@ -76,8 +67,8 @@ module.exports = (robot) => {
       ))
 
       return queue
-        .createJob(job)
-        .setId(`${owner}:${repo}:${number}`)
+        .createJob(context.issue({ installation_id: context.payload.installation.id }))
+        .setId(ID)
         .delayUntil(Date.now() + time)
         .save()
     }
