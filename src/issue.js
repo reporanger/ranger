@@ -11,8 +11,6 @@ const closableLabels = new Set([
 const shouldBeClosed = issues => issues.some(i => closableLabels.has(i.name.toLowerCase()))
 
 module.exports = robot => async (context) => {
-  robot.debug(context)
-
   const owner = context.payload.repository.owner.login
   const repo = context.payload.repository.name
 
@@ -38,5 +36,25 @@ module.exports = robot => async (context) => {
       })
   ))
 
-  console.log(ms(time));
+  setTimeout(function () {
+    closeIssue(context.github, {
+      owner,
+      repo,
+      number: context.payload.issue.number,
+    })
+  }, time);
+}
+
+function closeIssue (github, {
+  owner,
+  repo,
+  number,
+  state = 'closed'
+}) {
+  return github.issues.edit({
+    owner,
+    repo,
+    number,
+    state
+  })
 }
