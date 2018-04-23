@@ -4,6 +4,7 @@ const ms = require('ms')
 const { closeIssue } = require('./api')
 
 const CONFIG_FILE = 'maintainence.yml'
+const DEFAULT_COMMENT = '⚠️ This issue has been marked to be closed in $CLOSE_TIME.'
 const DEFAULT_CLOSE_TIME = ms('7 days')
 const DEFAULT_LABELS = [
   'duplicate',
@@ -25,6 +26,10 @@ const queue = new Queue('issues', {
   }
 })
 
+const timeToNumber = time => {
+  return isNaN(time) ? ms(time) : time
+}
+
 module.exports = (robot) => {
   queue.process(async ({ id, data }) => {
     try {
@@ -45,7 +50,8 @@ module.exports = (robot) => {
 
     const config = await context.config(CONFIG_FILE, {
       labels: DEFAULT_LABELS,
-      delayTime: DEFAULT_CLOSE_TIME
+      delayTime: DEFAULT_CLOSE_TIME,
+      comment: DEFAULT_COMMENT
     })
 
     const closableLabels = new Set(config.labels)
@@ -67,11 +73,20 @@ module.exports = (robot) => {
       const time = Math.min(...(
         withClosableLabels
           .map(l => l.description)
-          .map(d => {
-            const match = d.match(/\[(.+)\]/)
-            return (match && match[1] && ms(match[1])) || config.delayTime
-          })
+          .map(d => d.match(/\[(.+)\]/))
+          .map(match => (match && match[1]) || config.delayTime)
+          .map(timeToNumber)
       ))
+
+      if (context.payload.action.indexOf('labeled') > -1 &&
+          config.comment &&
+          config.comment.trim() !== 'false') {
+          context.github.issues.createComment(
+            context.issue({
+              body: config.comment.replace('$CLOSE_TIME', ms(time, { long: true }))
+            })
+          )
+      }
 
       return queue
         .createJob(context.issue({ installation_id: context.payload.installation.id }))
