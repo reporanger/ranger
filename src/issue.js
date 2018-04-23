@@ -27,7 +27,7 @@ const queue = new Queue('issues', {
 })
 
 const timeToNumber = time => {
-  return isNaN(time) ? ms(time) : time
+  return isNaN(time) ? ms(time.trim()) : time
 }
 
 module.exports = (robot) => {
@@ -51,7 +51,8 @@ module.exports = (robot) => {
     const config = await context.config(CONFIG_FILE, {
       labels: DEFAULT_LABELS,
       delayTime: DEFAULT_CLOSE_TIME,
-      comment: DEFAULT_COMMENT
+      comment: DEFAULT_COMMENT,
+      labelComments: {}
     })
 
     const closableLabels = new Set(config.labels)
