@@ -12,13 +12,18 @@ const closableLabels = new Set([
   'stale'
 ])
 
-const shouldBeClosed = issues => issues.some(i => closableLabels.has(i.name.toLowerCase()))
-
 const queue = new Queue('issues', {
   removeOnSuccess: true,
   removeOnFailure: true,
-  activateDelayedJobs: true
-});
+  activateDelayedJobs: true,
+  redis: {
+    host: process.env.REDIS_HOST,
+    post: process.env.REDIS_PORT,
+    db: 0,
+    password: process.env.REDIS_PASSWORD,
+    options: { password: process.env.REDIS_PASSWORD }
+  }
+})
 
 module.exports = (robot) => {
   queue.process(async ({ id, data }) => {
@@ -26,16 +31,16 @@ module.exports = (robot) => {
       const github = await robot.auth(data.installation_id)
       return await closeIssue(github, data)
     } catch (e) {
-      robot.log.error(e);
+      robot.log.error(e)
     }
-  });
+  })
 
   return async (context) => {
     const owner = context.payload.repository.owner.login
     const repo = context.payload.repository.name
 
     if (context.payload.issue.state === 'closed') {
-      return;
+      return
     }
 
     const withClosableLabels = await Promise.all(
@@ -66,7 +71,7 @@ module.exports = (robot) => {
           .map(l => l.description)
           .map(d => {
             const match = d.match(/\[(.+)\]/)
-            return match && match[1] && ms(match[1]) || DEFAULT_CLOSE_TIME
+            return (match && match[1] && ms(match[1])) || DEFAULT_CLOSE_TIME
           })
       ))
 
