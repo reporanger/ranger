@@ -18,7 +18,7 @@ const queue = new Queue('issues', {
   activateDelayedJobs: true,
   redis: {
     host: process.env.REDIS_HOST,
-    post: process.env.REDIS_PORT,
+    port: process.env.REDIS_PORT,
     db: 0,
     password: process.env.REDIS_PASSWORD,
     options: { password: process.env.REDIS_PASSWORD }
