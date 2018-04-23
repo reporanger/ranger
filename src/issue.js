@@ -38,6 +38,8 @@ module.exports = (robot) => {
   return async (context) => {
     const owner = context.payload.repository.owner.login
     const repo = context.payload.repository.name
+    const number = context.payload.issue.number
+    const ID = `${owner}:${repo}:${number}`
 
     if (context.payload.issue.state === 'closed') {
       return
@@ -57,8 +59,6 @@ module.exports = (robot) => {
     ).then(arr => arr.map(_ => _.data))
 
     if (withClosableLabels.length) {
-      const number = context.payload.issue.number
-
       const job = {
         owner,
         repo,
@@ -75,12 +75,14 @@ module.exports = (robot) => {
           })
       ))
 
-      queue
+      return queue
         .createJob(job)
         .setId(`${owner}:${repo}:${number}`)
         .delayUntil(Date.now() + time)
         .save()
     }
+
+    queue.removeJob(ID).catch(() => {})
   }
 }
 
