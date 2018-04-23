@@ -71,22 +71,23 @@ module.exports = (robot) => {
     ).then(arr => arr.map(_ => _.data))
 
     if (withClosableLabels.length) {
-      const time = Math.min(...(
-        withClosableLabels
-          .map(l => l.description)
-          .map(d => d.match(/\[(.+)\]/))
-          .map(match => (match && match[1]) || config.delayTime)
-          .map(timeToNumber)
-      ))
+      const { label, time } = withClosableLabels.reduce((accum, label) => {
+        const match = label.description.match(/\[(.+)\]/)
+        const time = timeToNumber((match && match[1]) || config.delayTime)
+        if (time < accum.time) {
+          return { label, time }
+        }
+        return accum
+      }, { label: null, time: Infinity })
 
-      if (context.payload.action.indexOf('labeled') > -1 &&
-          config.comment &&
-          config.comment.trim() !== 'false') {
-          context.github.issues.createComment(
-            context.issue({
-              body: config.comment.replace('$CLOSE_TIME', ms(time, { long: true }))
-            })
-          )
+      if (context.payload.action.indexOf('labeled') > -1) {
+        const comment = config.labelComments[label.name] || config.comment
+        if (comment && comment.trim() !== 'false') {
+          const body = comment
+            .replace('$CLOSE_TIME', ms(time, { long: true }))
+            .replace('$LABEL', label.name)
+          context.github.issues.createComment(context.issue({ body }))
+        }
       }
 
       return queue
