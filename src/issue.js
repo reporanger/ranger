@@ -3,14 +3,14 @@ const ms = require('ms')
 
 const { closeIssue } = require('./api')
 
+const CONFIG_FILE = 'maintainence.yml'
 const DEFAULT_CLOSE_TIME = ms('7 days')
-
-const closableLabels = new Set([
+const DEFAULT_LABELS = [
   'duplicate',
   'wontfix',
   'invalid',
   'stale'
-])
+]
 
 const queue = new Queue('issues', {
   removeOnSuccess: true,
@@ -43,6 +43,13 @@ module.exports = (robot) => {
       return
     }
 
+    const config = await context.config(CONFIG_FILE, {
+      labels: DEFAULT_LABELS,
+      delayTime: DEFAULT_CLOSE_TIME
+    })
+
+    const closableLabels = new Set(config.labels)
+
     const withClosableLabels = await Promise.all(
       context.payload.issue.labels
         .filter(l => closableLabels.has(l.name))
@@ -62,7 +69,7 @@ module.exports = (robot) => {
           .map(l => l.description)
           .map(d => {
             const match = d.match(/\[(.+)\]/)
-            return (match && match[1] && ms(match[1])) || DEFAULT_CLOSE_TIME
+            return (match && match[1] && ms(match[1])) || config.delayTime
           })
       ))
 
