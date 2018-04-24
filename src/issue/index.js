@@ -1,24 +1,10 @@
-const Queue = require('bee-queue')
 const ms = require('ms')
 
-const getConfig = require('./config')
 const { closeIssue } = require('./api')
 const { getId, getLabelConfig, timeToNumber } = require('./util')
+const getConfig = require('../config')
 
-const queue = new Queue('issues', {
-  removeOnSuccess: true,
-  removeOnFailure: true,
-  activateDelayedJobs: true,
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    db: 0,
-    password: process.env.REDIS_PASSWORD,
-    options: { password: process.env.REDIS_PASSWORD }
-  }
-})
-
-module.exports = (robot) => {
+module.exports = (robot, queue) => {
   queue.process(async ({ id, data }) => {
     try {
       const github = await robot.auth(data.installation_id)
@@ -53,7 +39,7 @@ module.exports = (robot) => {
     if (withClosableLabels.length) {
       const { label, time } = withClosableLabels
         .reduce((accum, label) => {
-          const { delayTime: time } = timeToNumber(getLabelConfig(config, label.name))
+          const time = timeToNumber(getLabelConfig(config, label.name).delayTime)
 
           if (time < accum.time) {
             return { label, time }
@@ -85,7 +71,7 @@ module.exports = (robot) => {
   }
 }
 
-module.exports.close = function close (context) {
+module.exports.close = (robot, queue) => context => {
   const ID = getId(context)
 
   return queue.removeJob(ID)

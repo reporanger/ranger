@@ -2,6 +2,8 @@
 const { createRobot } = require('probot')
 const app = require('..')
 
+const payload = require('./fixtures/labeled.json')
+
 describe('Bot', () => {
   let robot
   let github
@@ -10,15 +12,15 @@ describe('Bot', () => {
     app(robot)
     github = {
       issues: {
-        createComment: jest.fn()
+        createComment: jest.fn(),
+        edit: jest.fn()
       }
     }
     robot.auth = () => Promise.resolve(github)
   })
 
-  test('Will schedule a job', () => {
-    // your real tests go here
-    expect(1 + 2 + 3).toBe(6)
+  test('Will schedule a job', async (done) => {
+    await robot.receive(payload)
   })
 })
 
