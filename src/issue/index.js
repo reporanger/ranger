@@ -1,7 +1,7 @@
 const ms = require('ms')
 
 const { closeIssue } = require('./api')
-const { getId, getLabelConfig, timeToNumber } = require('./util')
+const { getId, getLabelConfig, getEffectiveLabel } = require('./util')
 const getConfig = require('../config')
 
 module.exports = (robot, queue) => {
@@ -37,19 +37,10 @@ module.exports = (robot, queue) => {
       .filter(l => closableLabels.has(l.name))
 
     if (withClosableLabels.length) {
-      const { label, time } = withClosableLabels
-        .reduce((accum, label) => {
-          const time = timeToNumber(getLabelConfig(config, label.name).delayTime)
+      const { label, time } = getEffectiveLabel(config, withClosableLabels)
 
-          if (time < accum.time) {
-            return { label, time }
-          }
-          return accum
-        }, { label: null, time: Infinity })
-
-      // TODO move into separate handler
-      const job = await queue.getJob(ID)
-      if (!job && context.payload.action.indexOf('labeled') > -1) {
+      const jobExists = await queue.getJob(ID)
+      if (!jobExists) {
         const { comment } = getLabelConfig(config, label.name)
 
         if (comment && comment.trim() !== 'false') {
@@ -67,7 +58,7 @@ module.exports = (robot, queue) => {
         .save()
     }
 
-    return queue.removeJob(ID).catch(() => {})
+    return queue.removeJob(ID)
   }
 }
 

@@ -1,14 +1,34 @@
 const ms = require('ms')
 
-exports.getId = context => {
+exports.getId = getId
+exports.getLabelConfig = getLabelConfig
+exports.timeToNumber = timeToNumber
+exports.getEffectiveLabel = getEffectiveLabel
+
+function getId (context) {
   const { owner, repo, number } = context.issue()
   return `${owner}:${repo}:${number}`
 }
 
-exports.getLabelConfig = (config, labelName, key) => {
+function getLabelConfig (config, labelName) {
   return config.labelConfig[labelName] || config
 }
 
-exports.timeToNumber = time => {
+function timeToNumber (time) {
   return isNaN(time) ? ms(time.trim()) : time
+}
+
+function getEffectiveLabel (config, labels) {
+  return labels
+    .reduce(
+      (accum, label) => {
+        const time = timeToNumber(getLabelConfig(config, label.name).delayTime)
+
+        if (time < accum.time) {
+          return { label, time }
+        }
+        return accum
+      },
+      { label: null, time: Infinity }
+    )
 }
