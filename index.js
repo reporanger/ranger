@@ -1,8 +1,7 @@
 const issue = require('./src/issue')
 
 module.exports = async robot => {
-  // Your code here
-
+  // Listeners 
   robot.on(
     [
       'issues.labeled',
