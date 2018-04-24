@@ -31,6 +31,14 @@ module.exports = (robot) => {
     }
   })
 
+  queue.on('succeeded', (job, result) => {
+    robot.log.debug(`Job ${job.id} succeeded with result: ${JSON.stringify(result, null, 2)}`)
+  })
+
+  queue.on('failed', (job, err) => {
+    robot.log.error(`Job ${job.id} failed with error ${err.message}`)
+  })
+
   return async (context) => {
     const { owner, repo, number } = context.issue()
     const ID = `${owner}:${repo}:${number}`
@@ -43,23 +51,14 @@ module.exports = (robot) => {
 
     const closableLabels = new Set(config.labels)
 
-    const withClosableLabels = await Promise.all(
-      context.payload.issue.labels
-        .filter(l => closableLabels.has(l.name))
-        .map(({ name }) => context.github.issues.getLabel(
-          context.repo({
-            name,
-            headers: {
-              'Accept': 'application/vnd.github.symmetra-preview+json'
-            }
-          })
-        ))
-    ).then(arr => arr.map(_ => _.data))
+    const withClosableLabels = context.payload.issue.labels
+      .filter(l => closableLabels.has(l.name))
 
     if (withClosableLabels.length) {
       const { label, time } = withClosableLabels.reduce((accum, label) => {
-        const match = label.description.match(/\[(.+)\]/)
-        const time = timeToNumber((match && match[1]) || config.delayTime)
+        const time = timeToNumber(
+          (config.labelConfig[label.name] && config.labelConfig[label.name].delayTime) || config.delayTime
+        )
         if (time < accum.time) {
           return { label, time }
         }
@@ -69,7 +68,7 @@ module.exports = (robot) => {
       // TODO move into separate handler
       const job = await queue.getJob(ID)
       if (!job && context.payload.action.indexOf('labeled') > -1) {
-        const comment = config.labelComments[label.name] || config.comment
+        const comment = (config.labelConfig[label.name] && config.labelConfig[label.name].comment) || config.comment
         if (comment && comment.trim() !== 'false') {
           const body = comment
             .replace('$CLOSE_TIME', ms(time, { long: true }))
@@ -85,7 +84,7 @@ module.exports = (robot) => {
         .save()
     }
 
-    queue.removeJob(ID).catch(() => {})
+    return queue.removeJob(ID).catch(() => {})
   }
 }
 
