@@ -1,8 +1,9 @@
 const Queue = require('bee-queue')
 const ms = require('ms')
 
-const { closeIssue } = require('./api')
 const getConfig = require('./config')
+const { closeIssue } = require('./api')
+const { getId, getLabelConfig, timeToNumber } = require('./util')
 
 const queue = new Queue('issues', {
   removeOnSuccess: true,
@@ -16,10 +17,6 @@ const queue = new Queue('issues', {
     options: { password: process.env.REDIS_PASSWORD }
   }
 })
-
-const timeToNumber = time => {
-  return isNaN(time) ? ms(time.trim()) : time
-}
 
 module.exports = (robot) => {
   queue.process(async ({ id, data }) => {
@@ -40,8 +37,7 @@ module.exports = (robot) => {
   })
 
   return async (context) => {
-    const { owner, repo, number } = context.issue()
-    const ID = `${owner}:${repo}:${number}`
+    const ID = getId(context)
 
     if (context.payload.issue.state === 'closed') {
       return
@@ -55,20 +51,21 @@ module.exports = (robot) => {
       .filter(l => closableLabels.has(l.name))
 
     if (withClosableLabels.length) {
-      const { label, time } = withClosableLabels.reduce((accum, label) => {
-        const time = timeToNumber(
-          (config.labelConfig[label.name] && config.labelConfig[label.name].delayTime) || config.delayTime
-        )
-        if (time < accum.time) {
-          return { label, time }
-        }
-        return accum
-      }, { label: null, time: Infinity })
+      const { label, time } = withClosableLabels
+        .reduce((accum, label) => {
+          const { delayTime: time } = timeToNumber(getLabelConfig(config, label.name))
+
+          if (time < accum.time) {
+            return { label, time }
+          }
+          return accum
+        }, { label: null, time: Infinity })
 
       // TODO move into separate handler
       const job = await queue.getJob(ID)
       if (!job && context.payload.action.indexOf('labeled') > -1) {
-        const comment = (config.labelConfig[label.name] && config.labelConfig[label.name].comment) || config.comment
+        const { comment } = getLabelConfig(config, label.name)
+
         if (comment && comment.trim() !== 'false') {
           const body = comment
             .replace('$CLOSE_TIME', ms(time, { long: true }))
@@ -89,10 +86,7 @@ module.exports = (robot) => {
 }
 
 module.exports.close = function close (context) {
-  const { owner, repo, number } = context.issue()
-  const ID = `${owner}:${repo}:${number}`
+  const ID = getId(context)
 
   return queue.removeJob(ID)
 }
-
-module.exports.queue = queue
