@@ -12,13 +12,13 @@ module.exports = async robot => {
 
   robot.on(
     [
-      'issues.opened',
-      'issues.edited',
       'issues.labeled',
       'issues.unlabeled'
     ],
     issue(robot)
   )
+
+  robot.on('issues.closed', issue.close)
 
   // For more information on building apps:
   // https://probot.github.io/docs/

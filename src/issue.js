@@ -2,16 +2,7 @@ const Queue = require('bee-queue')
 const ms = require('ms')
 
 const { closeIssue } = require('./api')
-
-const CONFIG_FILE = 'maintainence.yml'
-const DEFAULT_COMMENT = '⚠️ This issue has been marked to be closed in $CLOSE_TIME.'
-const DEFAULT_CLOSE_TIME = ms('7 days')
-const DEFAULT_LABELS = [
-  'duplicate',
-  'wontfix',
-  'invalid',
-  'stale'
-]
+const getConfig = require('./config')
 
 const queue = new Queue('issues', {
   removeOnSuccess: true,
@@ -48,12 +39,7 @@ module.exports = (robot) => {
       return
     }
 
-    const config = await context.config(CONFIG_FILE, {
-      labels: DEFAULT_LABELS,
-      delayTime: DEFAULT_CLOSE_TIME,
-      comment: DEFAULT_COMMENT,
-      labelComments: {}
-    })
+    const config = await getConfig(context)
 
     const closableLabels = new Set(config.labels)
 
@@ -80,7 +66,9 @@ module.exports = (robot) => {
         return accum
       }, { label: null, time: Infinity })
 
-      if (context.payload.action.indexOf('labeled') > -1) {
+      // TODO move into separate handler
+      const job = await queue.getJob(ID)
+      if (!job && context.payload.action.indexOf('labeled') > -1) {
         const comment = config.labelComments[label.name] || config.comment
         if (comment && comment.trim() !== 'false') {
           const body = comment
@@ -99,6 +87,13 @@ module.exports = (robot) => {
 
     queue.removeJob(ID).catch(() => {})
   }
+}
+
+module.exports.close = function close (context) {
+  const { owner, repo, number } = context.issue()
+  const ID = `${owner}:${repo}:${number}`
+
+  return queue.removeJob(ID)
 }
 
 module.exports.queue = queue
