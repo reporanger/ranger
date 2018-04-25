@@ -1,5 +1,11 @@
 # Eucalyptus 🐨🍃
 
+### Possible Names
+- Eucalyptus
+- Balmy
+- Tonic bot
+- Lavender
+
 > a GitHub bot built with [probot](https://github.com/probot/probot) that lessens
 the burden of OSS maintainers
 
