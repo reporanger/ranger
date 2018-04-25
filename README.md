@@ -1,24 +1,16 @@
-# issue-bot
+# Eucalyptus 🐨🍃
 
-> a GitHub App built with [probot](https://github.com/probot/probot) that
-
-## Setup
-
-```sh
-# Install dependencies
-npm install
-
-# Run the bot
-npm start
-```
+> a GitHub bot built with [probot](https://github.com/probot/probot) that lessens
+the burden of OSS maintainers
 
 ## Usage
 
-1. **[Configure the GitHub App](https://github.com/apps/stale)**
-2. (Optional) Create `.github/maintainence.yml` based on the following template
+1. **[Configure the GitHub App](https://github.com/apps/issue-bot-dev)**
+2. (Optional) Create `.github/maintainence.yml` based on the following template:
 
 ```yml
 # Configuration for issue-bot - https://github.com/probot
+# > The defaults are shown below
 
 # Labels to mark closed after the configured amount of time
 labels:
@@ -44,6 +36,10 @@ labelConfig:
     comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
   stale: false # disable for this label name
   invalid: true # use defaults for comment and delay time
-
-
 ```
+
+## Contributing
+Issues and PRs are welcome! To get started:
+
+1. `npm install`
+2. `npm start`
