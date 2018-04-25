@@ -19,7 +19,7 @@ describe('Bot', () => {
     robot.auth = () => Promise.resolve(github)
   })
 
-  test('Will schedule a job', async (done) => {
+  test('Will schedule a job', async () => {
     await robot.receive(payload)
   })
 })
