@@ -5,7 +5,8 @@ const app = require('..')
 const payload = require('./fixtures/labeled')
 
 class MockJob {
-  constructor (data) {
+  constructor (data, queue) {
+    this.queue = queue
     this.data = data
     this.save = jest.fn(() => {
       return this
@@ -13,7 +14,9 @@ class MockJob {
     this.id = Math.random().toString(36).slice(2)
   }
   setId (id) {
+    delete this.queue.jobs[this.id]
     this.id = id
+    this.queue.jobs[this.id] = this
     return this
   }
   delayUntil (delay) {
@@ -31,7 +34,7 @@ class MockQueue {
       return this.jobs[id]
     })
     this.createJob = jest.fn(data => {
-      const job = new MockJob(data)
+      const job = new MockJob(data, this)
       this.jobs[job.id] = job
       return job
     })
@@ -58,6 +61,9 @@ labelConfig:
     comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
   stale: false
   invalid: true
+  wontfix:
+    delayTime: 10s
+    comment: false
 `
 
 describe('Bot', () => {
@@ -118,6 +124,20 @@ describe('Bot', () => {
 
     expect(queue.createJob).not.toHaveBeenCalled()
     expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:7')
+  })
+
+  test('Labels with `false` comment config should not send comment', async () => {
+    await robot.receive(payload({ labels: ['wontfix'] }))
+
+    expect(github.issues.createComment).not.toHaveBeenCalled()
+    expect(queue.createJob).toHaveBeenCalled()
+  })
+
+  test('If comment was sent, comment should not be send again', async () => {
+    await robot.receive(payload())
+    await robot.receive(payload())
+
+    expect(github.issues.createComment).toHaveBeenCalledTimes(1)
   })
 })
 
