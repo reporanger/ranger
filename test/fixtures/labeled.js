@@ -1,9 +1,10 @@
 module.exports = ({
+  event = 'issues',
   action = 'labeled',
   labels = ['duplicate'],
   state = 'open'
 }= {}) => ({
-  "event": "issues",
+  "event": event,
   "payload": {
     "action": action,
     "issue": {

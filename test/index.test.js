@@ -35,6 +35,10 @@ class MockQueue {
       this.jobs[job.id] = job
       return job
     })
+    this.removeJob = jest.fn(id => {
+      delete this.jobs[id]
+      return id
+    })
   }
 }
 
@@ -94,15 +98,29 @@ describe('Bot', () => {
     expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7')
     expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
   })
+
+  test('Will not act on closed issues when labeled', async () => {
+    await robot.receive(payload({ state: 'closed' }))
+
+    expect(queue.createJob).not.toHaveBeenCalled()
+    expect(queue.removeJob).not.toHaveBeenCalledWith()
+  })
+
+  test('Will remove a job if an issue is closed', async () => {
+    await robot.receive(payload({ action: 'closed' }))
+
+    expect(queue.createJob).not.toHaveBeenCalled()
+    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:7')
+  })
+
+  test('Will delete a job all actionable labels are removed', async () => {
+    await robot.receive(payload({ labels: [] }))
+
+    expect(queue.createJob).not.toHaveBeenCalled()
+    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:7')
+  })
 })
 
-test.skip('Will delete a job if an issue is closed', () => {
-
-})
-
-test.skip('Will delete a job all actionable labels are removed', () => {
-
-})
 
 // For more information about testing with Jest see:
 // https://facebook.github.io/jest/
