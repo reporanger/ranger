@@ -1,4 +1,8 @@
-module.exports = ({ action = 'labeled', labels = ['duplicate']}= {}) => ({
+module.exports = ({
+  action = 'labeled',
+  labels = ['duplicate'],
+  state = 'open'
+}= {}) => ({
   "event": "issues",
   "payload": {
     "action": action,
@@ -38,7 +42,7 @@ module.exports = ({ action = 'labeled', labels = ['duplicate']}= {}) => ({
         "color": "d73a4a",
         "default": true
       })),
-      "state": "open",
+      "state": state,
       "locked": false,
       "assignee": null,
       "assignees": [

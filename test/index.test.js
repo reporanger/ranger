@@ -96,5 +96,13 @@ describe('Bot', () => {
   })
 })
 
+test.skip('Will delete a job if an issue is closed', () => {
+
+})
+
+test.skip('Will delete a job all actionable labels are removed', () => {
+
+})
+
 // For more information about testing with Jest see:
 // https://facebook.github.io/jest/
