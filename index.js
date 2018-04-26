@@ -3,7 +3,7 @@ const Queue = require('bee-queue')
 const { closeIssue } = require('./src/api')
 const issue = require('./src/issue')
 
-const queue = new Queue('issues', {
+const setup = () => new Queue('issues', {
   removeOnSuccess: true,
   removeOnFailure: true,
   activateDelayedJobs: true,
@@ -16,7 +16,7 @@ const queue = new Queue('issues', {
   }
 })
 
-module.exports = async robot => {
+module.exports = async (robot, queue = setup()) => {
   queue.process(async ({ id, data }) => {
     try {
       const github = await robot.auth(data.installation_id)

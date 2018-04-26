@@ -2,7 +2,7 @@ const ms = require('ms')
 
 const TIME = process.env.NODE_ENV === 'production' ? '7 days' : '10s'
 
-const CONFIG_FILE = 'maintainence.yml'
+const CONFIG_FILE = 'tonic.yml'
 const DEFAULT_COMMENT = '⚠️ This issue has been marked to be closed in $CLOSE_TIME.'
 const DEFAULT_CLOSE_TIME = ms(TIME)
 const DEFAULT_LABELS = [

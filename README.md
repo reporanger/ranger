@@ -1,20 +1,16 @@
-# Tonic 🍃
+# Tonic 🌿
 
-### Possible Names
-- Balmy
-- Eucalyptus
-- Lavender
+> a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
 
-> a GitHub bot built with [probot](https://github.com/probot/probot) that lessens
-the burden of OSS maintainers
+Unlike other issue bots, Tonic listens to prompts by maintaners in the form of labels being applied, and responses according. Tonic can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users.
 
 ## Usage
 
 1. **[Configure the GitHub App](https://github.com/apps/TODO)**
-2. (Optional) Create `.github/maintainence.yml` based on the following template:
+2. (Optional) Create `.github/tonic.yml` based on the following template:
 
 ```yml
-# Configuration for issue-bot - https://github.com/probot
+# Configuration for tonic - https://github.com/mfix22/tonic
 # > The defaults are shown below
 
 # Labels to mark closed after the configured amount of time
@@ -43,7 +39,7 @@ labelConfig:
   invalid: true # use defaults for comment and delay time
 ```
 
-## Contributing
+## Contributing ✍️
 Issues and PRs are welcome! To get started:
 
 1. `npm install`

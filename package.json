@@ -1,5 +1,5 @@
 {
-  "name": "tonic",
+  "name": "tonic-bot",
   "version": "1.0.0",
   "description": "",
   "author": "Mike Fix <mrfix84@gmail.com> (dawnlabs.io)",
@@ -9,7 +9,7 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "PRIVATE_KEY=$(echo $PRIVATE_KEY | base64 -d) probot run ./index.js",
     "lint": "standard --fix",
-    "test": "jest && standard",
+    "test": "jest",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "redis:clear": "redis-cli flushall",
     "deploy": "now --public"
