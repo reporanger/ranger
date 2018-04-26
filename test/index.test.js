@@ -14,7 +14,6 @@ class MockJob {
   }
   setId (id) {
     this.id = id
-
     return this
   }
   delayUntil (delay) {
@@ -51,7 +50,7 @@ comment: This issue has been marked to be closed in $CLOSE_TIME.
 
 labelConfig:
   duplicate:
-    delayTime: 15s
+    delayTime: 1s
     comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
   stale: false
   invalid: true
@@ -78,12 +77,12 @@ describe('Bot', () => {
   })
 
   test('Will schedule a job', async () => {
-    await robot.receive(payload)
+    await robot.receive(payload())
     expect(github.issues.createComment).toHaveBeenCalledWith({
       number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
-      body: 'duplicate issue created! Closing in 15 seconds . . .'
+      body: 'duplicate issue created! Closing in 1 second . . .'
     })
     const data = {
       number: 7,

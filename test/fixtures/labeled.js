@@ -1,7 +1,7 @@
-{
+module.exports = ({ action = 'labeled', labels = ['duplicate']}= {}) => ({
   "event": "issues",
   "payload": {
-    "action": "labeled",
+    "action": action,
     "issue": {
       "url": "https://api.github.com/repos/mfix22/test-issue-bot/issues/7",
       "repository_url": "https://api.github.com/repos/mfix22/test-issue-bot",
@@ -31,22 +31,13 @@
         "type": "User",
         "site_admin": false
       },
-      "labels": [
-        {
-          "id": 910420476,
-          "url": "https://api.github.com/repos/mfix22/test-issue-bot/labels/bug",
-          "name": "bug",
-          "color": "d73a4a",
-          "default": true
-        },
-        {
-          "id": 910420477,
-          "url": "https://api.github.com/repos/mfix22/test-issue-bot/labels/duplicate",
-          "name": "duplicate",
-          "color": "cfd3d7",
-          "default": true
-        }
-      ],
+      "labels": labels.map((l, i) => ({
+        "id": i,
+        "url": "https://api.github.com/repos/mfix22/test-issue-bot/labels/bug",
+        "name": l,
+        "color": "d73a4a",
+        "default": true
+      })),
       "state": "open",
       "locked": false,
       "assignee": null,
@@ -182,4 +173,4 @@
       "id": 135737
     }
   }
-}
+})
