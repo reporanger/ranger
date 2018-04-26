@@ -1,9 +1,8 @@
-# Eucalyptus 🐨🍃
+# Tonic 🍃
 
 ### Possible Names
-- Eucalyptus
 - Balmy
-- Tonic bot
+- Eucalyptus
 - Lavender
 
 > a GitHub bot built with [probot](https://github.com/probot/probot) that lessens
@@ -11,7 +10,7 @@ the burden of OSS maintainers
 
 ## Usage
 
-1. **[Configure the GitHub App](https://github.com/apps/issue-bot-dev)**
+1. **[Configure the GitHub App](https://github.com/apps/TODO)**
 2. (Optional) Create `.github/maintainence.yml` based on the following template:
 
 ```yml

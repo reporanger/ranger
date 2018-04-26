@@ -1,10 +1,10 @@
 {
-  "name": "issue-bot",
+  "name": "tonic",
   "version": "1.0.0",
   "description": "",
   "author": "Mike Fix <mrfix84@gmail.com> (dawnlabs.io)",
   "license": "ISC",
-  "repository": "https://github.com/mfix22/issue-bot.git",
+  "repository": "https://github.com/mfix22/tonic.git",
   "scripts": {
     "dev": "nodemon --exec \"npm start\"",
     "start": "PRIVATE_KEY=$(echo $PRIVATE_KEY | base64 -d) probot run ./index.js",
