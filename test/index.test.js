@@ -7,21 +7,21 @@ const payload = require('./fixtures/labeled')
 class MockJob {
   constructor (data, queue) {
     this.queue = queue
+    this.id = Math.random().toString(36).slice(2)
     this.data = data
     this.save = jest.fn(() => {
       return this
     })
-    this.id = Math.random().toString(36).slice(2)
-  }
-  setId (id) {
-    delete this.queue.jobs[this.id]
-    this.id = id
-    this.queue.jobs[this.id] = this
-    return this
-  }
-  delayUntil (delay) {
-    this.delay = delay
-    return this
+    this.setId = jest.fn((id) => {
+      delete this.queue.jobs[this.id]
+      this.id = id
+      this.queue.jobs[this.id] = this
+      return this
+    })
+    this.delayUntil = jest.fn((delay) =>{
+      this.delay = delay
+      return this
+    })
   }
 }
 
