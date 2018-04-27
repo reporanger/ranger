@@ -2,7 +2,8 @@ module.exports = ({
   event = 'issues',
   action = 'labeled',
   labels = ['duplicate'],
-  state = 'open'
+  state = 'open',
+  number = 7
 }= {}) => ({
   "event": event,
   "payload": {
@@ -15,7 +16,7 @@ module.exports = ({
       "events_url": "https://api.github.com/repos/mfix22/test-issue-bot/issues/7/events",
       "html_url": "https://github.com/mfix22/test-issue-bot/issues/7",
       "id": 316635441,
-      "number": 7,
+      "number": number,
       "title": "Delete",
       "user": {
         "login": "mfix22",
