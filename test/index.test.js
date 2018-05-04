@@ -3,7 +3,7 @@ const { createRobot } = require('probot')
 const app = require('..')
 
 const payload = require('./fixtures/labeled')
-const wait = x => new Promise(res => setTimeout(res, x))
+const wait = x => new Promise(resolve => setTimeout(resolve, x))
 
 class MockJob {
   constructor (data, queue) {
@@ -11,7 +11,7 @@ class MockJob {
     this.id = Math.random().toString(36).slice(2)
     this.data = data
     this.save = jest.fn(() => {
-      this.to = setTimeout(this.queue.processor, this.delay - Date.now(), this);
+      this.to = setTimeout(this.queue.processor, this.delay - Date.now(), this)
       return this
     })
     this.setId = jest.fn((id) => {
@@ -20,7 +20,7 @@ class MockJob {
       this.queue.jobs[this.id] = this
       return this
     })
-    this.delayUntil = jest.fn((delay) =>{
+    this.delayUntil = jest.fn(delay => {
       this.delay = delay
       return this
     })
@@ -117,7 +117,7 @@ describe('Bot', () => {
     await wait(20)
 
     expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).not.toHaveBeenCalledWith()
+    expect(queue.removeJob).not.toHaveBeenCalled()
   })
 
   test('Will remove a job if an issue is closed', async () => {
@@ -154,7 +154,3 @@ describe('Bot', () => {
     expect(github.issues.edit).toHaveBeenCalledTimes(2)
   })
 })
-
-
-// For more information about testing with Jest see:
-// https://facebook.github.io/jest/
