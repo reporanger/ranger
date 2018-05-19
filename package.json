@@ -46,5 +46,8 @@
       "REDIS_PORT": "@issues_redis_port",
       "REDIS_PASSWORD": "@issues_redis_password"
     }
+  },
+  "jest": {
+    "collectCoverageFrom": ["src/**/*.js"]
   }
 }
