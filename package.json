@@ -18,13 +18,13 @@
     "bee-queue": "^1.2.2",
     "moment": "^2.22.1",
     "ms": "^2.1.1",
-    "probot": "^6.0.0",
+    "probot": "^6.2.0",
     "smee-client": "^1.0.1"
   },
   "devDependencies": {
-    "jest": "^22.4.3",
-    "nodemon": "^1.17.2",
-    "now": "^11.1.7",
+    "jest": "^22.4.4",
+    "nodemon": "^1.17.4",
+    "now": "^11.1.12",
     "standard": "^10.0.3"
   },
   "engines": {
@@ -48,6 +48,8 @@
     }
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.js"]
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
   }
 }
