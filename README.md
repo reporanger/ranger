@@ -2,7 +2,7 @@
 
 > a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
 
-Unlike other issue bots, Tonic listens to prompts by maintaners in the form of labels being applied, and responses according. Tonic can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users.
+Unlike other issue bots, Tonic listens to prompts by maintaners in the form of labels being applied, and responds according. Tonic can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users with preset messages.
 
 ## Usage
 
@@ -43,4 +43,7 @@ labelConfig:
 Issues and PRs are welcome! To get started:
 
 1. `npm install`
-2. `npm start`
+2. Create a `.env` file following `.env.example`.
+3. Start a new webhook proxy at https://smee.io and set `WEBHOOK_PROXY_URL` in your `.env`
+4. `npx smee -u <WEBHOOK_PROXY_URL>`
+3. `npm start`
