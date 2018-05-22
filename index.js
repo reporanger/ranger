@@ -20,7 +20,7 @@ module.exports = async (robot, queue = setup()) => {
   queue.process(async ({ id, data }) => {
     try {
       const github = await robot.auth(data.installation_id)
-      return await closeIssue(github, data)
+      return closeIssue(github, data)
     } catch (e) {
       robot.log.error(e)
     }

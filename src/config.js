@@ -16,7 +16,7 @@ const defaultConfig = {
   labels: DEFAULT_LABELS,
   delayTime: DEFAULT_CLOSE_TIME,
   comment: DEFAULT_COMMENT,
-  labelComments: {}
+  labelConfig: {}
 }
 
 exports.CONFIG_FILE = CONFIG_FILE
