@@ -36,6 +36,7 @@
     ]
   },
   "now": {
+    "name": "tonic",
     "env": {
       "NODE_ENV": "production",
       "PRIVATE_KEY": "@issues_private_key",
