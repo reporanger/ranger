@@ -46,8 +46,3 @@ module.exports = async (robot, queue = setup()) => {
   // To get your app running against GitHub, see:
   // https://probot.github.io/docs/development/
 }
-
-// Keep alive
-setInterval(() => {
-  https.get('https://tonic.now.sh', () => {})
-}, 10 * 60 * 1000);
