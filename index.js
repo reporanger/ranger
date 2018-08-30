@@ -1,4 +1,3 @@
-const https = require('https')
 const Queue = require('bee-queue')
 
 const { closeIssue } = require('./src/api')
