@@ -37,6 +37,7 @@
   },
   "now": {
     "name": "tonic",
+    "alias": "tonic.now.sh",
     "env": {
       "NODE_ENV": "production",
       "PRIVATE_KEY": "@issues_private_key",
