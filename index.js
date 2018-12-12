@@ -3,18 +3,19 @@ const Queue = require('bee-queue')
 const { closeIssue } = require('./src/api')
 const issue = require('./src/issue')
 
-const setup = () => new Queue('issues', {
-  removeOnSuccess: true,
-  removeOnFailure: true,
-  activateDelayedJobs: true,
-  redis: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-    db: 0,
-    password: process.env.REDIS_PASSWORD,
-    options: { password: process.env.REDIS_PASSWORD }
-  }
-})
+const setup = () =>
+  new Queue('issues', {
+    removeOnSuccess: true,
+    removeOnFailure: true,
+    activateDelayedJobs: true,
+    redis: {
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      db: 0,
+      password: process.env.REDIS_PASSWORD,
+      options: { password: process.env.REDIS_PASSWORD }
+    }
+  })
 
 module.exports = async (robot, queue = setup()) => {
   queue.process(async ({ id, data }) => {
@@ -35,9 +36,13 @@ module.exports = async (robot, queue = setup()) => {
   })
 
   // Listeners
-  robot.on(['issues.labeled', 'issues.unlabeled'], issue(queue))
-  // Kill job when issue is closed
-  robot.on('issues.closed', issue.close(queue))
+  robot.on(
+    // All pull requests are issues in GitHub REST V3
+    ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
+    issue(queue)
+  )
+  // Kill job when issue/pull is closed
+  robot.on(['issues.closed', 'pull_request.closed'], issue.close(queue))
 
   // For more information on building apps:
   // https://probot.github.io/docs/

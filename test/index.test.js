@@ -6,15 +6,17 @@ const payload = require('./fixtures/labeled')
 const wait = x => new Promise(resolve => setTimeout(resolve, x))
 
 class MockJob {
-  constructor (data, queue) {
+  constructor(data, queue) {
     this.queue = queue
-    this.id = Math.random().toString(36).slice(2)
+    this.id = Math.random()
+      .toString(36)
+      .slice(2)
     this.data = data
     this.save = jest.fn(() => {
       this.to = setTimeout(this.queue.processor, this.delay - Date.now(), this)
       return this
     })
-    this.setId = jest.fn((id) => {
+    this.setId = jest.fn(id => {
       delete this.queue.jobs[this.id]
       this.id = id
       this.queue.jobs[this.id] = this
@@ -28,7 +30,7 @@ class MockJob {
 }
 
 class MockQueue {
-  constructor (name) {
+  constructor(name) {
     this.name = name
     this.jobs = {}
     this.process = jest.fn(fn => {
@@ -91,66 +93,68 @@ describe('Bot', () => {
     robot.auth = () => Promise.resolve(github)
   })
 
-  test('Will schedule a job', async () => {
-    await robot.receive(payload())
-    await wait(20)
+  describe.each(['issue', 'pull_request'])('%s', threadType => {
+    test('Will schedule a job', async () => {
+      await robot.receive(payload({ threadType }))
+      await wait(20)
 
-    expect(github.issues.createComment).toHaveBeenCalledWith({
-      number: 7,
-      owner: 'mfix22',
-      repo: 'test-issue-bot',
-      body: 'duplicate issue created! Closing in 5 ms . . .'
+      expect(github.issues.createComment).toHaveBeenCalledWith({
+        number: 7,
+        owner: 'mfix22',
+        repo: 'test-issue-bot',
+        body: 'duplicate issue created! Closing in 5 ms . . .'
+      })
+      const data = {
+        number: 7,
+        owner: 'mfix22',
+        repo: 'test-issue-bot',
+        installation_id: 135737
+      }
+      expect(queue.createJob).toHaveBeenCalledWith(data)
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7')
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
     })
-    const data = {
-      number: 7,
-      owner: 'mfix22',
-      repo: 'test-issue-bot',
-      installation_id: 135737
-    }
-    expect(queue.createJob).toHaveBeenCalledWith(data)
-    expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7')
-    expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
-  })
 
-  test('Will not act on closed issues when labeled', async () => {
-    await robot.receive(payload({ state: 'closed', number: 8 }))
-    await wait(20)
+    test('Will not act on closed issues when labeled', async () => {
+      await robot.receive(payload({ state: 'closed', number: 8, threadType }))
+      await wait(20)
 
-    expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).not.toHaveBeenCalled()
-  })
+      expect(queue.createJob).not.toHaveBeenCalled()
+      expect(queue.removeJob).not.toHaveBeenCalled()
+    })
 
-  test('Will remove a job if an issue is closed', async () => {
-    await robot.receive(payload({ action: 'closed', number: 9 }))
+    test('Will remove a job if an issue is closed', async () => {
+      await robot.receive(payload({ action: 'closed', number: 9, threadType }))
 
-    expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9')
-  })
+      expect(queue.createJob).not.toHaveBeenCalled()
+      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9')
+    })
 
-  test('Will delete a job all actionable labels are removed', async () => {
-    await robot.receive(payload({ labels: [], number: 10 }))
+    test('Will delete a job all actionable labels are removed', async () => {
+      await robot.receive(payload({ labels: [], number: 10, threadType }))
 
-    expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:10')
-  })
+      expect(queue.createJob).not.toHaveBeenCalled()
+      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:10')
+    })
 
-  test('Labels with `false` comment config should not send comment', async () => {
-    await robot.receive(payload({ labels: ['wontfix'], number: 11 }))
+    test('Labels with `false` comment config should not send comment', async () => {
+      await robot.receive(payload({ labels: ['wontfix'], number: 11, threadType }))
 
-    expect(github.issues.createComment).not.toHaveBeenCalled()
-    expect(queue.createJob).toHaveBeenCalled()
+      expect(github.issues.createComment).not.toHaveBeenCalled()
+      expect(queue.createJob).toHaveBeenCalled()
 
-    await wait(20)
-    expect(github.issues.edit).toHaveBeenCalledTimes(1)
-  })
+      await wait(20)
+      expect(github.issues.edit).toHaveBeenCalledTimes(1)
+    })
 
-  test('If comment was sent, comment should not be send again', async () => {
-    await robot.receive(payload())
-    await robot.receive(payload())
+    test('If comment was sent, comment should not be send again', async () => {
+      await robot.receive(payload({ threadType }))
+      await robot.receive(payload({ threadType }))
 
-    expect(github.issues.createComment).toHaveBeenCalledTimes(1)
+      expect(github.issues.createComment).toHaveBeenCalledTimes(1)
 
-    await wait(20)
-    expect(github.issues.edit).toHaveBeenCalledTimes(2)
+      await wait(20)
+      expect(github.issues.edit).toHaveBeenCalledTimes(2)
+    })
   })
 })

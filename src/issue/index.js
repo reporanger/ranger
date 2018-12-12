@@ -1,3 +1,7 @@
+/*
+ * context.issue() is used for both issues and PRs
+ */
+
 const ms = require('ms')
 
 const { getId, getLabelConfig, getEffectiveLabel } = require('./util')
@@ -6,7 +10,10 @@ const getConfig = require('../config')
 module.exports = queue => async context => {
   const ID = getId(context)
 
-  if (context.payload.issue.state === 'closed') {
+  // Pull requests are issues, but info is set under `pull_request` field
+  const thread = context.payload.issue || context.payload.pull_request
+
+  if (thread.state === 'closed') {
     return
   }
 
@@ -14,8 +21,7 @@ module.exports = queue => async context => {
 
   const closableLabels = new Set(config.labels)
 
-  const withClosableLabels = context.payload.issue.labels
-    .filter(l => closableLabels.has(l.name))
+  const withClosableLabels = thread.labels.filter(l => closableLabels.has(l.name))
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)
