@@ -1,5 +1,5 @@
 // You can import your modules
-const { createRobot } = require('probot')
+const { Application } = require('probot')
 const app = require('..')
 
 const payload = require('./fixtures/labeled')
@@ -79,15 +79,16 @@ describe('Bot', () => {
   let queue
   beforeEach(() => {
     queue = new MockQueue()
-    robot = createRobot()
+    robot = new Application()
     app(robot, queue)
     github = {
       issues: {
         createComment: jest.fn(),
-        edit: jest.fn((_, data) => Promise.resolve({ data }))
+        update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       repos: {
-        getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } }))
+        getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
+        getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } }))
       }
     }
     robot.auth = () => Promise.resolve(github)
@@ -144,7 +145,7 @@ describe('Bot', () => {
       expect(queue.createJob).toHaveBeenCalled()
 
       await wait(20)
-      expect(github.issues.edit).toHaveBeenCalledTimes(1)
+      expect(github.issues.update).toHaveBeenCalledTimes(1)
     })
 
     test('If comment was sent, comment should not be send again', async () => {
@@ -154,7 +155,7 @@ describe('Bot', () => {
       expect(github.issues.createComment).toHaveBeenCalledTimes(1)
 
       await wait(20)
-      expect(github.issues.edit).toHaveBeenCalledTimes(2)
+      expect(github.issues.update).toHaveBeenCalledTimes(2)
     })
   })
 })

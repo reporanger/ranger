@@ -18,7 +18,7 @@
     "bee-queue": "^1.2.2",
     "moment": "^2.22.1",
     "ms": "^2.1.1",
-    "probot": "^6.2.0",
+    "probot": "^7.4.0",
     "smee-client": "^1.0.1"
   },
   "devDependencies": {

@@ -1,12 +1,12 @@
 module.exports = ({
-  event = 'issues',
+  name = 'issues',
   action = 'labeled',
   labels = ['duplicate'],
   state = 'open',
   number = 7,
   threadType = 'issue'
 } = {}) => ({
-  event: event,
+  name,
   payload: {
     action: action,
     [threadType]: {

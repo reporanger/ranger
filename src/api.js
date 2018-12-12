@@ -2,7 +2,7 @@ exports.closeIssue = function closeIssue(github, data) {
   const { owner, repo, number, state = 'closed' } = data
 
   return github.issues
-    .edit({
+    .update({
       owner,
       repo,
       number,
