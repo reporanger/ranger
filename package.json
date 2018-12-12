@@ -12,7 +12,7 @@
     "test": "jest",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "redis:clear": "redis-cli flushall",
-    "deploy": "now --public"
+    "deploy": "now"
   },
   "dependencies": {
     "bee-queue": "^1.2.2",
