@@ -1,6 +1,5 @@
 const Queue = require('bee-queue')
 
-const { closeIssue } = require('./src/api')
 const issue = require('./src/issue')
 
 const setup = () =>
@@ -18,14 +17,7 @@ const setup = () =>
   })
 
 module.exports = async (robot, queue = setup()) => {
-  queue.process(async ({ id, data }) => {
-    try {
-      const github = await robot.auth(data.installation_id)
-      return closeIssue(github, data)
-    } catch (e) {
-      robot.log.error(e)
-    }
-  })
+  queue.process(issue.process(robot))
 
   queue.on('succeeded', (job, result) => {
     robot.log.debug(`Job ${job.id} succeeded with result: ${JSON.stringify(result, null, 2)}`)

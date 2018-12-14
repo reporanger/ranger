@@ -109,7 +109,8 @@ describe('Bot', () => {
         number: 7,
         owner: 'mfix22',
         repo: 'test-issue-bot',
-        installation_id: 135737
+        installation_id: 135737,
+        action: 'CLOSE'
       }
       expect(queue.createJob).toHaveBeenCalledWith(data)
       expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7')

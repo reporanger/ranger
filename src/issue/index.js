@@ -1,11 +1,12 @@
 /*
  * context.issue() is used for both issues and PRs
  */
-
 const ms = require('ms')
 
+const { closeIssue } = require('../api')
 const { getId, getLabelConfig, getEffectiveLabel } = require('./util')
 const getConfig = require('../config')
+const { CLOSE } = require('../constants')
 
 module.exports = queue => async context => {
   const ID = getId(context)
@@ -39,7 +40,10 @@ module.exports = queue => async context => {
     }
 
     return queue
-      .createJob(context.issue({ installation_id: context.payload.installation.id }))
+      .createJob({
+        ...context.issue({ installation_id: context.payload.installation.id }),
+        action: CLOSE
+      })
       .setId(ID)
       .delayUntil(Date.now() + time)
       .save()
@@ -53,4 +57,17 @@ module.exports.close = queue => context => {
   const ID = getId(context)
 
   return queue.removeJob(ID)
+}
+
+module.exports.process = robot => async ({ id, data }) => {
+  switch (data.action) {
+    case CLOSE:
+    default:
+      try {
+        const github = await robot.auth(data.installation_id)
+        return closeIssue(github, data)
+      } catch (e) {
+        robot.log.error(e)
+      }
+  }
 }

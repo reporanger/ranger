@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "nodemon --exec \"npm start\"",
     "start": "PRIVATE_KEY=$(echo $PRIVATE_KEY | base64 -d) probot run ./index.js",
-    "lint": "standard --fix",
     "test": "jest",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "redis:clear": "redis-cli flushall",
@@ -24,8 +23,7 @@
   "devDependencies": {
     "jest": "^23.6.0",
     "nodemon": "^1.18.8",
-    "now": "^12.1.12",
-    "standard": "^12.0.1"
+    "now": "^12.1.12"
   },
   "engines": {
     "node": ">= 8.3.0"
