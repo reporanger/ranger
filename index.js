@@ -2,6 +2,16 @@ const Queue = require('bee-queue')
 
 const issue = require('./src/issue')
 
+function wrapPaymentProtection(fn) {
+  return context => {
+    if (context.payload.repository.private) {
+      // TODO support in paid plans
+      return
+    }
+    return fn(context)
+  }
+}
+
 const setup = () =>
   new Queue('issues', {
     removeOnSuccess: true,
@@ -31,10 +41,10 @@ module.exports = async (robot, queue = setup()) => {
   robot.on(
     // All pull requests are issues in GitHub REST V3
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    issue(queue)
+    wrapPaymentProtection(issue(queue))
   )
   // Kill job when issue/pull is closed
-  robot.on(['issues.closed', 'pull_request.closed'], issue.close(queue))
+  robot.on(['issues.closed', 'pull_request.closed'], wrapPaymentProtection(issue.close(queue)))
 
   // For more information on building apps:
   // https://probot.github.io/docs/
