@@ -53,12 +53,6 @@ module.exports = queue => async context => {
   return queue.removeJob(ID)
 }
 
-module.exports.close = queue => context => {
-  const ID = getId(context)
-
-  return queue.removeJob(ID)
-}
-
 module.exports.process = robot => async ({ id, data }) => {
   switch (data.action) {
     case CLOSE:
