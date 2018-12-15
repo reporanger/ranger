@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "author": "Mike Fix <mrfix84@gmail.com> (dawnlabs.io)",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "repository": "https://github.com/mfix22/tonic.git",
   "scripts": {
     "dev": "nodemon --exec \"npm start\"",
