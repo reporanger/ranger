@@ -19,7 +19,7 @@ const setup = () =>
     }
   })
 
-const getMaxRepositories = plan => {
+function getMaxRepositories(plan) {
   // e.g. ['Unlimited public repositories', '5 private repositories']
   const privateRepoBullet = plan.bullets.find(b => b.match(/(\d+).+?private repo/i))
 
@@ -28,6 +28,52 @@ const getMaxRepositories = plan => {
   }
 
   return 0
+}
+
+// TODO add DEV flag
+async function verifyPaymentPlan(robot, context) {
+  if (!context.payload.repository.private) {
+    return true
+  }
+
+  try {
+    const github = await robot.auth()
+
+    const { data: account } = await github.apps.checkAccountIsAssociatedWithAny({
+      account_id: context.payload.repository.owner.id
+    })
+
+    if (!(account && account.marketplace_purchase)) {
+      return false
+    }
+
+    if (account.type !== context.payload.repository.owner.type) {
+      return false
+    }
+
+    if (account.marketplace_purchase.on_free_trial) {
+      return true
+    }
+
+    if (account.marketplace_purchase.plan.number === 1) {
+      return false
+    }
+
+    const { data } = await context.github.apps.listRepos({ per_page: 100 })
+
+    const count = data.repositories.filter(r => r.private).length
+
+    const max = getMaxRepositories(account.marketplace_purchase.plan)
+
+    if (max === 100 && count === 100) {
+      return false
+    }
+
+    return count <= max
+  } catch (error) {
+    robot.log.error(error)
+    return false
+  }
 }
 
 module.exports = async (robot, queue = setup()) => {
@@ -45,40 +91,9 @@ module.exports = async (robot, queue = setup()) => {
 
   function wrapPaymentCheck(fn) {
     return async context => {
-      // TODO add DEV flag
-      if (context.payload.repository.private) {
-        try {
-          const github = await robot.auth()
-
-          const { data: account } = await github.apps.checkAccountIsAssociatedWithAny({
-            account_id: context.payload.repository.owner.id
-          })
-
-          if (!(account && account.marketplace_purchase)) {
-            return
-          }
-
-          if (account.type !== context.payload.repository.owner.type) {
-            return
-          }
-
-          if (!account.marketplace_purchase.on_free_trial) {
-            const { data } = await context.github.apps.listRepos({ per_page: 100 })
-
-            const count = data.repositories.filter(r => r.private).length
-
-            const max = getMaxRepositories(account.marketplace_purchase.plan)
-            if (count > max || (max === 100 && count === 100)) {
-              return
-            }
-          }
-        } catch (error) {
-          robot.log.error(error)
-          return
-        }
+      if (await verifyPaymentPlan(robot, context)) {
+        fn(context)
       }
-
-      return fn(context)
     }
   }
 
