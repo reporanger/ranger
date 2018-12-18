@@ -89,12 +89,25 @@ describe('Bot', () => {
       repos: {
         getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
         getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } }))
+      },
+      apps: {
+        listRepos() {
+          return {
+            data: {
+              total_count: 5,
+              repositories: Array(5).fill({
+                private: true
+              })
+            }
+          }
+        }
       }
     }
     robot.auth = () => Promise.resolve(github)
   })
 
   describe.each(['issue', 'pull_request'])('%s', threadType => {
+    test('Will not schedule is billing fails', () => {})
     test('Will schedule a job', async () => {
       await robot.receive(payload({ threadType }))
       await wait(20)
@@ -157,6 +170,69 @@ describe('Bot', () => {
 
       await wait(20)
       expect(github.issues.update).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  describe('billing', () => {
+    test.each([
+      // Paid plan
+      {
+        type: 'User',
+        marketplace_purchase: {
+          on_free_trial: false,
+          plan: {
+            bullets: ['Unlimited public repositories', '5 private repositories']
+          }
+        }
+      },
+      // On free trial
+      {
+        type: 'User',
+        marketplace_purchase: {
+          on_free_trial: true,
+          plan: {
+            bullets: ['Unlimited public repositories', '1 private repositories']
+          }
+        }
+      }
+    ])('Will schedule job is private billing is correct: %#', async data => {
+      github.apps.checkAccountIsAssociatedWithAny = () => ({ data })
+
+      await robot.receive(payload({ isPrivate: true }))
+      expect(queue.createJob).toHaveBeenCalledWith({
+        number: 7,
+        owner: 'mfix22',
+        repo: 'test-issue-bot',
+        installation_id: 135737,
+        action: 'CLOSE'
+      })
+    })
+
+    test.each([
+      ['Account must contain marketplace purchase', {}],
+      [
+        'Repo owner must match account type',
+        {
+          type: 'Organization',
+          marketplace_purchase: {}
+        }
+      ],
+      [
+        'Number of installed repos must be less than maximum for purchase',
+        {
+          type: 'User',
+          marketplace_purchase: {
+            on_free_trial: false,
+            plan: {
+              bullets: ['Unlimited public repositories', '1 private repositories']
+            }
+          }
+        }
+      ]
+    ])('%s', async (_, data) => {
+      github.apps.checkAccountIsAssociatedWithAny = () => ({ data })
+      await robot.receive(payload({ isPrivate: true }))
+      expect(queue.createJob).not.toHaveBeenCalled()
     })
   })
 })

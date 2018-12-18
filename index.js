@@ -5,16 +5,6 @@ const closed = require('./src/issue/closed')
 
 const privacyPolicy = require('fs').readFileSync('site/privacy.html', { encoding: 'utf8' })
 
-function wrapPaymentCheck(fn) {
-  return context => {
-    if (context.payload.repository.private) {
-      // TODO support in paid plans
-      return
-    }
-    return fn(context)
-  }
-}
-
 const setup = () =>
   new Queue('issues', {
     removeOnSuccess: true,
@@ -29,6 +19,17 @@ const setup = () =>
     }
   })
 
+const getMaxRepositories = plan => {
+  // e.g. ['Unlimited public repositories', '5 private repositories']
+  const privateRepoBullet = plan.bullets.find(b => b.match(/(\d+).+?private repo/i))
+
+  if (privateRepoBullet) {
+    return Number(privateRepoBullet.match(/(\d+).+?private repo/i)[1])
+  }
+
+  return 0
+}
+
 module.exports = async (robot, queue = setup()) => {
   robot.route('/').get('/privacy', (req, res) => res.send(privacyPolicy))
 
@@ -41,6 +42,47 @@ module.exports = async (robot, queue = setup()) => {
   queue.on('failed', (job, err) => {
     robot.log.error(`Job ${job.id} failed with error ${err.message}`)
   })
+
+  function wrapPaymentCheck(fn) {
+    return async context => {
+      // TODO add DEV flag
+      if (context.payload.repository.private) {
+        try {
+          const github = await robot.auth()
+
+          const { data: account } = await github.apps.checkAccountIsAssociatedWithAny({
+            account_id: context.payload.repository.owner.id
+          })
+
+          if (!(account && account.marketplace_purchase)) {
+            return
+          }
+
+          if (account.type !== context.payload.repository.owner.type) {
+            return
+          }
+
+          if (!account.marketplace_purchase.on_free_trial) {
+            const {
+              data: { repositories }
+            } = await context.github.apps.listRepos({})
+
+            const count = repositories.filter(r => r.private).length
+
+            const max = getMaxRepositories(account.marketplace_purchase.plan)
+            if (count > max) {
+              return
+            }
+          }
+        } catch (error) {
+          console.log(error)
+          return
+        }
+      }
+
+      return fn(context)
+    }
+  }
 
   // Listeners
   robot.on(
