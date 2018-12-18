@@ -54,15 +54,6 @@ class MockQueue {
 
 const config = `
 labels:
-  - duplicate
-  - wontfix
-  - invalid
-  - stale
-delayTime: 1ms
-
-comment: This issue has been marked to be closed in $CLOSE_TIME.
-
-labelConfig:
   duplicate:
     delayTime: 5ms
     comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
@@ -71,6 +62,10 @@ labelConfig:
   wontfix:
     delayTime: 10ms
     comment: false
+
+delayTime: 1ms
+
+comment: This issue has been marked to be closed in $CLOSE_TIME.
 `
 
 describe('Bot', () => {

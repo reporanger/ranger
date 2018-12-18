@@ -20,7 +20,7 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  const closableLabels = new Set(config.labels)
+  const closableLabels = new Set(Object.keys(config.labels))
 
   const withClosableLabels = thread.labels.filter(l => closableLabels.has(l.name))
 

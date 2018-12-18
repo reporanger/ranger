@@ -6,19 +6,12 @@ Unlike other issue bots, Tonic listens to prompts by maintaners in the form of l
 
 ## Usage
 
-1. **[Configure the GitHub App](https://github.com/apps/TODO)**
+1. **[Configure the GitHub App](https://github.com/marketplace/tonic) TODO**
 2. (Optional) Create `.github/tonic.yml` based on the following template:
 
 ```yml
 # Configuration for tonic - https://github.com/mfix22/tonic
 # > The defaults are shown below
-
-# Labels to mark closed after the configured amount of time
-labels:
-  - duplicate
-  - wontfix
-  - invalid
-  - stale
 
 # Default time to wait before closing the label. Can either be a number in milliseconds
 # or a string specified by the `ms` package (https://www.npmjs.com/package/ms)
@@ -30,8 +23,8 @@ delayTime: "7 days"
 #   $LABEL will automatically be replaced with the label's name
 comment: "⚠️ This issue has been marked to be closed in $CLOSE_TIME".
 
-# Map of extra, granular configurations you can set for each label
-labelConfig:
+# Map granular configurations you can set for each label
+labels:
   duplicate:
     delayTime: 15s
     comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
@@ -40,10 +33,11 @@ labelConfig:
 ```
 
 ## Contributing ✍️
+
 Issues and PRs are welcome! To get started:
 
 1. `npm install`
 2. Create a `.env` file following `.env.example`.
 3. Start a new webhook proxy at https://smee.io and set `WEBHOOK_PROXY_URL` in your `.env`
 4. `npx smee -u <WEBHOOK_PROXY_URL>`
-3. `npm start`
+5. `npm start`

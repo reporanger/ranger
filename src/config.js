@@ -5,13 +5,17 @@ const TIME = process.env.NODE_ENV === 'production' ? '7 days' : '10s'
 const CONFIG_FILE = 'tonic.yml'
 const DEFAULT_COMMENT = '⚠️ This has been marked to be closed in $CLOSE_TIME.'
 const DEFAULT_CLOSE_TIME = ms(TIME)
-const DEFAULT_LABELS = ['duplicate', 'wontfix', 'invalid', 'stale']
+const DEFAULT_LABELS = {
+  duplicate: true,
+  wontfix: true,
+  invalid: true,
+  stale: true
+}
 
 const defaultConfig = {
   labels: DEFAULT_LABELS,
   delayTime: DEFAULT_CLOSE_TIME,
-  comment: DEFAULT_COMMENT,
-  labelConfig: {}
+  comment: DEFAULT_COMMENT
 }
 
 exports.CONFIG_FILE = CONFIG_FILE
