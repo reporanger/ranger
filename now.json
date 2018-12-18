@@ -5,10 +5,10 @@
   "alias": "tonic.now.sh",
   "env": {
     "NODE_ENV": "production",
+    "LOG_LEVEL": "info",
     "PRIVATE_KEY": "@issues_private_key",
     "APP_ID": "@issues_app_id",
     "WEBHOOK_SECRET": "@issues_secret",
-    "WEBHOOK_PROXY_URL": "@issues_webhook_proxy_url",
     "REDIS_HOST": "@issues_redis_host",
     "REDIS_PORT": "@issues_redis_port",
     "REDIS_PASSWORD": "@issues_redis_password"

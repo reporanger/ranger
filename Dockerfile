@@ -8,4 +8,4 @@ FROM mhart/alpine-node:base-10
 WORKDIR /usr/src
 ENV NODE_ENV="production"
 COPY --from=base /usr/src .
-CMD PRIVATE_KEY=$(echo $PRIVATE_KEY | base64 -d) node ./node_modules/.bin/probot run ./index.js
+CMD node ./node_modules/.bin/probot run ./index.js
