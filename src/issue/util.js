@@ -15,7 +15,7 @@ function getLabelConfig(config, labelName) {
 }
 
 function timeToNumber(time) {
-  return isNaN(time) ? ms(time.trim()) : time
+  return isNaN(time) ? ms(time.trim()) : Number(time)
 }
 
 function getEffectiveLabel(config, labels) {
@@ -26,6 +26,12 @@ function getEffectiveLabel(config, labels) {
       if (time < accum.time) {
         return { label, time }
       }
+
+      // if time === Infinity, set the label
+      if (time === accum.time && !accum.label) {
+        return { label, time }
+      }
+
       return accum
     },
     { label: null, time: Infinity }

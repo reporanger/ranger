@@ -39,14 +39,16 @@ module.exports = queue => async context => {
       }
     }
 
-    return queue
-      .createJob({
-        ...context.issue({ installation_id: context.payload.installation.id }),
-        action: CLOSE
-      })
-      .setId(ID)
-      .delayUntil(Date.now() + time)
-      .save()
+    if (time >= 0 && isFinite(time)) {
+      return queue
+        .createJob({
+          ...context.issue({ installation_id: context.payload.installation.id }),
+          action: CLOSE
+        })
+        .setId(ID)
+        .delayUntil(Date.now() + time)
+        .save()
+    }
   }
 
   // If closable labels are removed, delete job for this issue

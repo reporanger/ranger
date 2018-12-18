@@ -62,6 +62,12 @@ labels:
   wontfix:
     delayTime: 10ms
     comment: false
+  -1:
+    delayTime: -1
+    comment: Test comment
+  Infinity:
+    delayTime: Infinity
+    comment: Test comment
 
 delayTime: 1ms
 
@@ -165,6 +171,13 @@ describe('Bot', () => {
 
       await wait(20)
       expect(github.issues.update).toHaveBeenCalledTimes(2)
+    })
+
+    test.each(['-1', 'Infinity'])('Using %s for delayTime should not create a job', async label => {
+      await robot.receive(payload({ labels: [label], number: 11, threadType }))
+
+      expect(github.issues.createComment).toHaveBeenCalled()
+      expect(queue.createJob).not.toHaveBeenCalled()
     })
   })
 
