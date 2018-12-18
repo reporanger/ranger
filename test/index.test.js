@@ -108,7 +108,6 @@ describe('Bot', () => {
   })
 
   describe.each(['issue', 'pull_request'])('%s', threadType => {
-    test('Will not schedule is billing fails', () => {})
     test('Will schedule a job', async () => {
       await robot.receive(payload({ threadType }))
       await wait(20)
@@ -151,6 +150,21 @@ describe('Bot', () => {
 
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:10')
+    })
+
+    test('Labels with `true` config should take action', async () => {
+      await robot.receive(payload({ labels: ['invalid'], number: 19, threadType }))
+      await wait(20)
+
+      expect(github.issues.createComment).toHaveBeenCalled()
+      expect(queue.createJob).toHaveBeenCalled()
+    })
+
+    test('Labels with `false` config should not take actions', async () => {
+      await robot.receive(payload({ labels: ['stale'], number: 20, threadType }))
+
+      expect(github.issues.createComment).not.toHaveBeenCalled()
+      expect(queue.createJob).not.toHaveBeenCalled()
     })
 
     test('Labels with `false` comment config should not send comment', async () => {

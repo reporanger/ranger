@@ -20,9 +20,7 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  const closableLabels = new Set(Object.keys(config.labels))
-
-  const withClosableLabels = thread.labels.filter(l => closableLabels.has(l.name))
+  const withClosableLabels = thread.labels.filter(l => !!config.labels[l.name])
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)

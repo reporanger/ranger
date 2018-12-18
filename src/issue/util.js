@@ -11,7 +11,12 @@ function getId(context) {
 }
 
 function getLabelConfig(config, labelName) {
-  return config.labels[labelName] || config
+  // `true` signifies use default
+  if (config.labels[labelName] && config.labels[labelName] !== true) {
+    return config.labels[labelName]
+  }
+
+  return config
 }
 
 function timeToNumber(time) {
