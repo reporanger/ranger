@@ -49,7 +49,7 @@ module.exports = async (robot, queue = setup()) => {
     wrapPaymentCheck(labeled(queue))
   )
   // Kill job when issue/pull is closed
-  robot.on(['issues.closed', 'pull_request.closed'], wrapPaymentCheck(closed(queue)))
+  robot.on(['issues.closed', 'pull_request.closed'], closed(queue))
 
   // For more information on building apps:
   // https://probot.github.io/docs/
