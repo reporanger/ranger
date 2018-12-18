@@ -75,7 +75,7 @@ module.exports = async (robot, queue = setup()) => {
             }
           }
         } catch (error) {
-          console.log(error)
+          robot.log.error(error)
           return
         }
       }

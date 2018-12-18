@@ -174,6 +174,10 @@ describe('Bot', () => {
   })
 
   describe('billing', () => {
+    beforeEach(() => {
+      robot.log.error = jest.fn()
+    })
+
     test.each([
       // Paid plan
       {
@@ -209,6 +213,12 @@ describe('Bot', () => {
     })
 
     test.each([
+      [
+        'Repo must have an associated account',
+        () => {
+          throw new Error('No associated account')
+        }
+      ],
       ['Account must contain marketplace purchase', {}],
       [
         'Repo owner must match account type',
@@ -230,7 +240,9 @@ describe('Bot', () => {
         }
       ]
     ])('%s', async (_, data) => {
-      github.apps.checkAccountIsAssociatedWithAny = () => ({ data })
+      github.apps.checkAccountIsAssociatedWithAny = () => ({
+        data: typeof data === 'function' ? data() : data
+      })
       await robot.receive(payload({ isPrivate: true }))
       expect(queue.createJob).not.toHaveBeenCalled()
     })
