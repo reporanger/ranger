@@ -63,14 +63,12 @@ module.exports = async (robot, queue = setup()) => {
           }
 
           if (!account.marketplace_purchase.on_free_trial) {
-            const {
-              data: { repositories }
-            } = await context.github.apps.listRepos({})
+            const { data } = await context.github.apps.listRepos({ per_page: 100 })
 
-            const count = repositories.filter(r => r.private).length
+            const count = data.repositories.filter(r => r.private).length
 
             const max = getMaxRepositories(account.marketplace_purchase.plan)
-            if (count > max) {
+            if (count > max || (max === 100 && count === 100)) {
               return
             }
           }
