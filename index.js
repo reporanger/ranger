@@ -3,6 +3,8 @@ const Queue = require('bee-queue')
 const labeled = require('./src/issue/labeled')
 const closed = require('./src/issue/closed')
 
+const privacyPolicy = require('fs').readFileSync('site/privacy.html', { encoding: 'utf8' })
+
 function wrapPaymentCheck(fn) {
   return context => {
     if (context.payload.repository.private) {
@@ -28,6 +30,8 @@ const setup = () =>
   })
 
 module.exports = async (robot, queue = setup()) => {
+  robot.route('/').get('/privacy', (req, res) => res.send(privacyPolicy))
+
   queue.process(labeled.process(robot))
 
   queue.on('succeeded', (job, result) => {
