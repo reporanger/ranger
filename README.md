@@ -1,16 +1,16 @@
-# Tonic 🌿
+# Ranger 🌿
 
 > a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
 
-Unlike other issue bots, Tonic listens to prompts by maintaners in the form of labels being applied, and responds according. Tonic can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users with preset messages.
+Unlike other issue bots, Ranger listens to prompts by maintaners in the form of labels being applied, and responds according. Ranger can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users with preset messages.
 
 ## Usage
 
-1. **[Configure the GitHub App](https://github.com/marketplace/tonic) TODO**
-2. (Optional) Create `.github/tonic.yml` based on the following template:
+1. **[Configure the GitHub App](https://github.com/marketplace/ranger) TODO**
+2. (Optional) Create `.github/ranger.yml` based on the following template:
 
 ```yml
-# Configuration for tonic - https://github.com/mfix22/tonic
+# Configuration for Ranger - https://github.com/dawnlabs/ranger
 # > The defaults are shown below
 
 # Default time to wait before closing the label. Can either be a number in milliseconds

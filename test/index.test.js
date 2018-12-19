@@ -199,9 +199,9 @@ describe('Bot', () => {
   describe('comment', () => {
     test('Will remove the job if the comment is deleted', async () => {
       const number = 55
-      
+
       await robot.receive(commentPayload({ number }))
-  
+
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}`)
     })
