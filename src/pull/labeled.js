@@ -18,7 +18,8 @@ module.exports = queue => async context => {
   const jobExists = await queue.getJob(ID)
 
   if (jobExists) {
-    return
+    // restart job if new label event occurs
+    queue.removeJob(ID)
   }
 
   const config = await getConfig(context)
@@ -67,7 +68,8 @@ module.exports.process = robot => async ({
     await github.pullRequests.merge({
       owner,
       repo,
-      number
+      number,
+      sha: pull.head.sha
       /*
       merge_method: merge | rebase | squash
       commit_title,
