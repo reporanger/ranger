@@ -9,6 +9,7 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "probot run ./index.js",
     "test": "jest",
+    "lint": "eslint src",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "redis:clear": "redis-cli flushall",
     "deploy": "now"
@@ -21,6 +22,8 @@
     "smee-client": "^1.0.1"
   },
   "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-plugin-import": "^2.14.0",
     "jest": "^23.6.0",
     "nodemon": "^1.18.8",
     "now": "^12.1.12"

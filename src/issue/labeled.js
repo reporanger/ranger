@@ -54,7 +54,7 @@ module.exports = queue => async context => {
   return queue.removeJob(ID)
 }
 
-module.exports.process = robot => async ({ id, data }) => {
+module.exports.process = robot => async ({ data /* id */ }) => {
   try {
     const github = await robot.auth(data.installation_id)
     return closeIssue(github, data)

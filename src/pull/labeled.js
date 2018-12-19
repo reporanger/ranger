@@ -46,10 +46,7 @@ module.exports = queue => async context => {
   return queue.removeJob(ID)
 }
 
-module.exports.process = robot => async ({
-  id,
-  data: { installation_id, owner, repo, number }
-}) => {
+module.exports.process = robot => async ({ data: { installation_id, owner, repo, number } }) => {
   let github
   let pull
   try {
