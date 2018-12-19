@@ -10,3 +10,15 @@ exports.closeIssue = function closeIssue(github, data) {
     })
     .then(_ => _.data)
 }
+
+exports.getPullRequest = function getPullRequest(github, data) {
+  const { owner, repo, number } = data
+
+  return github.pullRequests
+    .get({
+      owner,
+      repo,
+      number
+    })
+    .then(_ => _.data)
+}

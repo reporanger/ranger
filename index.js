@@ -1,7 +1,10 @@
 const Queue = require('bee-queue')
 
-const labeled = require('./src/issue/labeled')
+const issueLabeled = require('./src/issue/labeled')
+const pullLabeled = require('./src/pull/labeled')
 const closed = require('./src/issue/closed')
+
+const { CLOSE, MERGE } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
@@ -24,7 +27,15 @@ const setup = () =>
 module.exports = async (robot, queue = setup()) => {
   robot.route('/').get('/privacy', (req, res) => res.send(privacyPolicy))
 
-  queue.process(labeled.process(robot))
+  queue.process(job => {
+    switch (job.data.action) {
+      case MERGE:
+        return pullLabeled.process(robot)(job)
+      case CLOSE:
+      default:
+        return issueLabeled.process(robot)(job)
+    }
+  })
 
   queue.on('succeeded', (job, result) => {
     robot.log.debug(`Job ${job.id} succeeded with result: ${JSON.stringify(result, null, 2)}`)
@@ -45,12 +56,18 @@ module.exports = async (robot, queue = setup()) => {
   // Listeners
   robot.on(
     // All pull requests are issues in GitHub REST V3
-    ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(labeled(queue))
+    ['issues.labeled', 'issues.unlabeled'],
+    wrapPaymentCheck(issueLabeled(queue))
   )
+
+  robot.on(
+    // All pull requests are issues in GitHub REST V3
+    ['pull_request.labeled', 'pull_request.unlabeled'],
+    wrapPaymentCheck(pullLabeled(queue))
+  )
+
   // Kill job when issue/pull is closed
   robot.on(['issues.closed', 'pull_request.closed'], closed(queue))
-
   // For more information on building apps:
   // https://probot.github.io/docs/
 

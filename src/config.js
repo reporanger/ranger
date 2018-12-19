@@ -9,7 +9,10 @@ const DEFAULT_LABELS = {
   duplicate: true,
   wontfix: true,
   invalid: true,
-  stale: true
+  stale: true,
+  automerge: {
+    action: 'merge'
+  }
 }
 
 const defaultConfig = {

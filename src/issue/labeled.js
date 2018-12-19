@@ -54,14 +54,10 @@ module.exports = queue => async context => {
 }
 
 module.exports.process = robot => async ({ id, data }) => {
-  switch (data.action) {
-    case CLOSE:
-    default:
-      try {
-        const github = await robot.auth(data.installation_id)
-        return closeIssue(github, data)
-      } catch (e) {
-        robot.log.error(e)
-      }
+  try {
+    const github = await robot.auth(data.installation_id)
+    return closeIssue(github, data)
+  } catch (e) {
+    robot.log.error(e)
   }
 }
