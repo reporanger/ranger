@@ -1,4 +1,5 @@
 const Queue = require('bee-queue')
+console.log('test')
 
 const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
