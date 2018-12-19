@@ -3,6 +3,7 @@ const { Application } = require('probot')
 const app = require('..')
 
 const payload = require('./fixtures/labeled')
+const commentPayload = require('./fixtures/comment')
 const wait = x => new Promise(resolve => setTimeout(resolve, x))
 
 class MockJob {
@@ -138,14 +139,14 @@ describe('Bot', () => {
       expect(queue.removeJob).not.toHaveBeenCalled()
     })
 
-    test('Will remove a job if an issue is closed', async () => {
+    test('Will remove the job if an issue is closed', async () => {
       await robot.receive(payload({ action: 'closed', number: 9, threadType }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9')
     })
 
-    test('Will delete a job all actionable labels are removed', async () => {
+    test('Will remove the job if all actionable labels are removed', async () => {
       await robot.receive(payload({ labels: [], number: 10, threadType }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
@@ -177,7 +178,7 @@ describe('Bot', () => {
       expect(github.issues.update).toHaveBeenCalledTimes(1)
     })
 
-    test('If comment was sent, comment should not be send again', async () => {
+    test('If comment was sent, comment should not be sent again', async () => {
       await robot.receive(payload({ threadType }))
       await robot.receive(payload({ threadType }))
 
@@ -192,6 +193,17 @@ describe('Bot', () => {
 
       expect(github.issues.createComment).toHaveBeenCalled()
       expect(queue.createJob).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('comment', () => {
+    test('Will remove the job if the comment is deleted', async () => {
+      const number = 55
+      
+      await robot.receive(commentPayload({ number }))
+  
+      expect(queue.createJob).not.toHaveBeenCalled()
+      expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}`)
     })
   })
 
