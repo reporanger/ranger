@@ -1,4 +1,4 @@
-const { getId } = require('./util')
+const getId = require('../get-job-id')
 
 module.exports = queue => context => {
   const ID = getId(context)

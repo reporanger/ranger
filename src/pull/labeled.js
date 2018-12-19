@@ -1,4 +1,4 @@
-const { getId } = require('../issue/util')
+const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { MERGE } = require('../constants')
 

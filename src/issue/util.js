@@ -1,14 +1,8 @@
 const ms = require('ms')
 
-exports.getId = getId
 exports.getLabelConfig = getLabelConfig
 exports.timeToNumber = timeToNumber
 exports.getEffectiveLabel = getEffectiveLabel
-
-function getId(context) {
-  const { owner, repo, number } = context.issue()
-  return `${owner}:${repo}:${number}`
-}
 
 function getLabelConfig(config, labelName) {
   // `true` signifies use default
