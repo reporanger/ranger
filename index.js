@@ -63,7 +63,13 @@ module.exports = async (robot, queue = setup()) => {
 
   robot.on(
     // All pull requests are issues in GitHub REST V3
-    ['pull_request.labeled', 'pull_request.unlabeled'],
+    [
+      'pull_request.labeled',
+      'pull_request.unlabeled',
+      'pull_request.synchronize',
+      'pull_request_review.submitted'
+      // `pull_request.edited`
+    ],
     wrapPaymentCheck(pullLabeled(queue))
   )
 

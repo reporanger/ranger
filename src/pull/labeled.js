@@ -1,10 +1,24 @@
+const ms = require('ms')
+
 const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { MERGE } = require('../constants')
 
 const { getPullRequest } = require('../api')
 
-const RETRY_PERIOD = 60 * 1000
+const RETRY_PERIOD = ms('3m')
+const RETRY_HORIZON = ms('12h')
+
+// https://developer.github.com/v4/enum/mergestatestatus/
+const status = {
+  BEHIND: 'behind', // sometimes good to merge, depending on repo config
+  BLOCKED: 'blocked', // cannot merge
+  CLEAN: 'clean', // good to go 👍
+  DIRTY: 'dirty', // merge conflicts
+  HAS_HOOKS: 'has_hooks', // good-to-go, even with extra checks
+  UNKNOWN: 'unknown', // in between states
+  UNSTABLE: 'unstable' // can merge, but build is failing 🚫
+}
 
 module.exports = queue => async context => {
   const ID = getId(context)
@@ -31,18 +45,15 @@ module.exports = queue => async context => {
   )
 
   if (withMergeableLabels.length) {
-    return (
-      queue
-        .createJob({
-          ...context.issue({ installation_id: context.payload.installation.id }),
-          action: MERGE
-        })
-        .setId(ID)
-        .retries((60 * 60 * 1000) / RETRY_PERIOD)
-        // TODO use 'exponential'?
-        .backoff('fixed', RETRY_PERIOD)
-        .save()
-    )
+    return queue
+      .createJob({
+        ...context.issue({ installation_id: context.payload.installation.id }),
+        action: MERGE
+      })
+      .setId(ID)
+      .retries(RETRY_HORIZON / RETRY_PERIOD)
+      .backoff('fixed', RETRY_PERIOD)
+      .save()
   }
 
   // If closable labels are removed, delete job for this pull
@@ -62,7 +73,10 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
     return
   }
 
-  const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === 'clean'
+  const isMergeable =
+    pull.mergeable &&
+    !pull.merged &&
+    (pull.mergeable_state === status.CLEAN || pull.mergeable_state === status.HAS_HOOKS)
 
   if (isMergeable) {
     await github.pullRequests.merge({
@@ -76,6 +90,9 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
       commit_message,
       */
     })
+  } else if (pull.mergeable_state === status.DIRTY) {
+    // don't retry if there are merge conflicts
+    return
   } else {
     throw new Error('Retry job')
   }
