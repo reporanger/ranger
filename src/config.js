@@ -6,12 +6,10 @@ const CONFIG_FILE = 'tonic.yml'
 const DEFAULT_COMMENT = '⚠️ This has been marked to be closed in $CLOSE_TIME.'
 const DEFAULT_CLOSE_TIME = ms(TIME)
 const DEFAULT_LABELS = {
-  duplicate: true,
-  wontfix: true,
-  invalid: true,
-  automerge: {
-    action: 'merge'
-  }
+  duplicate: 'close',
+  wontfix: 'close',
+  invalid: 'close',
+  automerge: 'merge'
 }
 
 const defaultConfig = {

@@ -5,11 +5,11 @@ exports.timeToNumber = timeToNumber
 exports.getEffectiveLabel = getEffectiveLabel
 
 function getLabelConfig(config, labelName) {
-  // `true` signifies use default
-  if (config.labels[labelName] && config.labels[labelName] !== true) {
+  if (typeof config.labels[labelName] === 'object') {
     return config.labels[labelName]
   }
 
+  // TODO return config.default here
   return config
 }
 

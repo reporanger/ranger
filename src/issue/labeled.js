@@ -20,13 +20,10 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  // TODO potentially remove 'close' as default action and clean up filter
   const withClosableLabels = thread.labels.filter(
     l =>
       config.labels[l.name] &&
-      (!config.labels[l.name].action ||
-        (config.labels[l.name].action &&
-          config.labels[l.name].action.trim().toLowerCase() === CLOSE))
+      (config.labels[l.name].action || config.labels[l.name]).trim().toLowerCase() === CLOSE
   )
 
   if (withClosableLabels.length) {
