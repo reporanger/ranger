@@ -4,7 +4,8 @@ const { MERGE } = require('../constants')
 
 const { getPullRequest } = require('../api')
 
-const RETRY_PERIOD = 60 * 1000
+const RETRY_PERIOD = 3 * 60 * 1000
+const RETRY_HORIZON = 12 * 60 * 60 * 1000 // 12 hours
 
 // https://developer.github.com/v4/enum/mergestatestatus/
 const status = {
@@ -49,7 +50,7 @@ module.exports = queue => async context => {
           action: MERGE
         })
         .setId(ID)
-        .retries((60 * 60 * 1000) / RETRY_PERIOD)
+        .retries(RETRY_HORIZON / RETRY_PERIOD)
         // TODO use 'exponential'?
         .backoff('fixed', RETRY_PERIOD)
         .save()
