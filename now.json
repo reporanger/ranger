@@ -2,7 +2,7 @@
   "name": "ranger",
   "public": true,
   "type": "docker",
-  "alias": "ranger.now.sh",
+  "alias": "reporanger.com",
   "env": {
     "NODE_ENV": "production",
     "LOG_LEVEL": "info",
