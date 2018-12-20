@@ -6,6 +6,17 @@ const { getPullRequest } = require('../api')
 
 const RETRY_PERIOD = 60 * 1000
 
+// https://developer.github.com/v4/enum/mergestatestatus/
+const status = {
+  BEHIND: 'behind', // sometimes good to merge, depending on repo config
+  BLOCKED: 'blocked', // cannot merge
+  CLEAN: 'clean', // good to go 👍
+  DIRTY: 'dirty', // merge conflicts
+  HAS_HOOKS: 'has_hooks', // good-to-go, even with extra checks
+  UNKNOWN: 'unknown', // in between states
+  UNSTABLE: 'unstable' // can merge, but build is failing 🚫
+}
+
 module.exports = queue => async context => {
   const ID = getId(context)
 
@@ -62,7 +73,10 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
     return
   }
 
-  const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === 'clean'
+  const isMergeable =
+    pull.mergeable &&
+    !pull.merged &&
+    (pull.mergeable_state === status.CLEAN || pull.mergeable_state === status.HAS_HOOKS)
 
   if (isMergeable) {
     await github.pullRequests.merge({
@@ -76,6 +90,9 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
       commit_message,
       */
     })
+  } else if (pull.mergeable_state === status.DIRTY) {
+    // don't retry if there are merge conflicts
+    return
   } else {
     throw new Error('Retry job')
   }
