@@ -108,9 +108,9 @@ describe('Bot', () => {
     robot.auth = () => Promise.resolve(github)
   })
 
-  describe.each(['issue', 'pull_request'])('%s', threadType => {
+  describe('issue', () => {
     test('Will schedule a job', async () => {
-      await robot.receive(payload({ threadType }))
+      await robot.receive(payload())
       await wait(20)
 
       expect(github.issues.createComment).toHaveBeenCalledWith({
@@ -124,7 +124,7 @@ describe('Bot', () => {
         owner: 'mfix22',
         repo: 'test-issue-bot',
         installation_id: 135737,
-        action: 'CLOSE'
+        action: 'close'
       }
       expect(queue.createJob).toHaveBeenCalledWith(data)
       expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7')
@@ -132,7 +132,7 @@ describe('Bot', () => {
     })
 
     test('Will not act on closed issues when labeled', async () => {
-      await robot.receive(payload({ state: 'closed', number: 8, threadType }))
+      await robot.receive(payload({ state: 'closed', number: 8 }))
       await wait(20)
 
       expect(queue.createJob).not.toHaveBeenCalled()
@@ -140,21 +140,21 @@ describe('Bot', () => {
     })
 
     test('Will remove the job if an issue is closed', async () => {
-      await robot.receive(payload({ action: 'closed', number: 9, threadType }))
+      await robot.receive(payload({ action: 'closed', number: 9 }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9')
     })
 
     test('Will remove the job if all actionable labels are removed', async () => {
-      await robot.receive(payload({ labels: [], number: 10, threadType }))
+      await robot.receive(payload({ labels: [], number: 10 }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:10')
     })
 
     test('Labels with `true` config should take action', async () => {
-      await robot.receive(payload({ labels: ['invalid'], number: 19, threadType }))
+      await robot.receive(payload({ labels: ['invalid'], number: 19 }))
       await wait(20)
 
       expect(github.issues.createComment).toHaveBeenCalled()
@@ -162,14 +162,14 @@ describe('Bot', () => {
     })
 
     test('Labels with `false` config should not take actions', async () => {
-      await robot.receive(payload({ labels: ['stale'], number: 20, threadType }))
+      await robot.receive(payload({ labels: ['stale'], number: 20 }))
 
       expect(github.issues.createComment).not.toHaveBeenCalled()
       expect(queue.createJob).not.toHaveBeenCalled()
     })
 
     test('Labels with `false` comment config should not send comment', async () => {
-      await robot.receive(payload({ labels: ['wontfix'], number: 11, threadType }))
+      await robot.receive(payload({ labels: ['wontfix'], number: 11 }))
 
       expect(github.issues.createComment).not.toHaveBeenCalled()
       expect(queue.createJob).toHaveBeenCalled()
@@ -179,8 +179,8 @@ describe('Bot', () => {
     })
 
     test('If comment was sent, comment should not be sent again', async () => {
-      await robot.receive(payload({ threadType }))
-      await robot.receive(payload({ threadType }))
+      await robot.receive(payload())
+      await robot.receive(payload())
 
       expect(github.issues.createComment).toHaveBeenCalledTimes(1)
 
@@ -189,7 +189,7 @@ describe('Bot', () => {
     })
 
     test.each(['-1', 'Infinity'])('Using %s for delayTime should not create a job', async label => {
-      await robot.receive(payload({ labels: [label], number: 11, threadType }))
+      await robot.receive(payload({ labels: [label], number: 11 }))
 
       expect(github.issues.createComment).toHaveBeenCalled()
       expect(queue.createJob).not.toHaveBeenCalled()
@@ -199,9 +199,9 @@ describe('Bot', () => {
   describe('comment', () => {
     test('Will remove the job if the comment is deleted', async () => {
       const number = 55
-      
+
       await robot.receive(commentPayload({ number }))
-  
+
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}`)
     })
@@ -242,7 +242,7 @@ describe('Bot', () => {
         owner: 'mfix22',
         repo: 'test-issue-bot',
         installation_id: 135737,
-        action: 'CLOSE'
+        action: 'close'
       })
     })
 

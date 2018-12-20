@@ -12,8 +12,7 @@ const { CLOSE } = require('../constants')
 module.exports = queue => async context => {
   const ID = getId(context)
 
-  // Pull requests are issues, but info is set under `pull_request` field
-  const thread = context.payload.issue || context.payload.pull_request
+  const thread = context.payload.issue
 
   if (thread.state === 'closed') {
     return
