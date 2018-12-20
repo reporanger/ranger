@@ -21,7 +21,7 @@ module.exports = queue => async context => {
   const config = await getConfig(context)
 
   // TODO check for action === undefined or 'close' here
-  const withClosableLabels = thread.labels.filter(l => !!config.labels[l.name])
+  const withClosableLabels = thread.labels.filter(l => config.labels[l.name])
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)

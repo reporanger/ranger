@@ -58,7 +58,6 @@ labels:
   duplicate:
     delayTime: 5ms
     comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
-  stale: false
   invalid: true
   wontfix:
     delayTime: 10ms
@@ -159,13 +158,6 @@ describe('Bot', () => {
 
       expect(github.issues.createComment).toHaveBeenCalled()
       expect(queue.createJob).toHaveBeenCalled()
-    })
-
-    test('Labels with `false` config should not take actions', async () => {
-      await robot.receive(payload({ labels: ['stale'], number: 20 }))
-
-      expect(github.issues.createComment).not.toHaveBeenCalled()
-      expect(queue.createJob).not.toHaveBeenCalled()
     })
 
     test('Labels with `false` comment config should not send comment', async () => {

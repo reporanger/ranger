@@ -2,7 +2,7 @@
 
 > a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
 
-Unlike other issue bots, Tonic listens to prompts by maintaners in the form of labels being applied, and responds according. Tonic can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users with preset messages.
+Unlike other issue bots, Tonic listens to prompts by maintaners in the form of labels being applied, and responds according. Tonic can close invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users with preset messages.
 
 ## Usage
 
@@ -28,7 +28,6 @@ labels:
   duplicate:
     delayTime: 15s
     comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
-  stale: false # disable for this label name
   invalid: true # use defaults for comment and delay time
 ```
 
