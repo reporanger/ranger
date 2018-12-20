@@ -101,7 +101,7 @@ describe('Bot', () => {
         get: jest.fn(({ number }) => Promise.resolve({ 
           data: {
             mergeable: number === 99 ? false : true,
-            mergeable_state: 'clean',
+            mergeable_state: number === 98 ? 'dirty' : 'clean',
             head: { sha: 0 }
           }
         })),
@@ -245,11 +245,20 @@ describe('Bot', () => {
       })
     })
 
+    test('Will not merge a pull request with state `dirty`', async () => {
+      await robot.receive(payload({ name: 'pull_request', threadType: 'pull_request', labels: ['automerge'], number: 98 }))
+
+      await wait(20)
+
+      expect(github.pullRequests.merge).not.toHaveBeenCalled()
+    })
+
     test('Will remove the existing job if a new label event occurs', async () => {
       await robot.receive(payload({ name: 'pull_request', threadType: 'pull_request', labels: ['automerge'], number: 99 }))
 
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99')
     })
+
   })
 
   describe('comment', () => {
