@@ -28,7 +28,6 @@ labels:
   duplicate:
     delayTime: 15s
     comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
-  stale: false # disable for this label name
   invalid: true # use defaults for comment and delay time
 ```
 

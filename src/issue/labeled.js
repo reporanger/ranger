@@ -12,8 +12,7 @@ const { CLOSE } = require('../constants')
 module.exports = queue => async context => {
   const ID = getId(context)
 
-  // Pull requests are issues, but info is set under `pull_request` field
-  const thread = context.payload.issue || context.payload.pull_request
+  const thread = context.payload.issue
 
   if (thread.state === 'closed') {
     return
@@ -21,7 +20,14 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  const withClosableLabels = thread.labels.filter(l => !!config.labels[l.name])
+  // TODO potentially remove 'close' as default action and clean up filter
+  const withClosableLabels = thread.labels.filter(
+    l =>
+      config.labels[l.name] &&
+      (!config.labels[l.name].action ||
+        (config.labels[l.name].action &&
+          config.labels[l.name].action.trim().toLowerCase() === CLOSE))
+  )
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)
