@@ -1,8 +1,8 @@
 {
-  "name": "tonic",
+  "name": "ranger",
   "public": true,
   "type": "docker",
-  "alias": "tonic.now.sh",
+  "alias": "api.reporanger.com",
   "env": {
     "NODE_ENV": "production",
     "LOG_LEVEL": "info",
