@@ -40,8 +40,7 @@ module.exports = queue => async context => {
   const withMergeableLabels = thread.labels.filter(
     l =>
       config.labels[l.name] &&
-      config.labels[l.name].action &&
-      config.labels[l.name].action.trim().toLowerCase() === MERGE
+      (config.labels[l.name].action || config.labels[l.name]).trim().toLowerCase() === MERGE
   )
 
   if (withMergeableLabels.length) {

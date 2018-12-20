@@ -56,16 +56,20 @@ class MockQueue {
 const config = `
 labels:
   duplicate:
+    action: close
     delayTime: 5ms
     comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
-  invalid: true
+  invalid: close
   wontfix:
+    action: close
     delayTime: 10ms
     comment: false
   -1:
+    action: close
     delayTime: -1
     comment: Test comment
   Infinity:
+    action: close
     delayTime: Infinity
     comment: Test comment
 
