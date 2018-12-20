@@ -254,6 +254,19 @@ describe('Bot', () => {
         }
       ],
       [
+        'Private repos are not supported in open source plan',
+        {
+          // On Open Source plan
+          type: 'User',
+          marketplace_purchase: {
+            on_free_trial: false,
+            plan: {
+              number: 1
+            }
+          }
+        }
+      ],
+      [
         'Number of installed repos must be less than maximum for purchase',
         {
           type: 'User',
