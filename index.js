@@ -4,6 +4,7 @@ const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
 const closed = require('./src/issue/closed')
 const commentDeleted = require('./src/comment/deleted')
+const installationAdded = require('./src/installation/added')
 
 const { CLOSE, MERGE } = require('./src/constants')
 
@@ -72,7 +73,9 @@ module.exports = async (robot, queue = setup()) => {
   // Kill job when issue/pull is closed
   robot.on(['issues.closed', 'pull_request.closed'], closed(queue))
 
-  robot.on(['issue_comment.deleted'], commentDeleted(queue))
+  robot.on('issue_comment.deleted', commentDeleted(queue))
+
+  robot.on('installation_repositories.added', installationAdded(robot))
 
   // For more information on building apps:
   // https://probot.github.io/docs/

@@ -4,6 +4,8 @@ const app = require('..')
 
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
+const addedPayload = require('./fixtures/added')
+
 const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
 
 class MockJob {
@@ -115,6 +117,7 @@ describe('Bot', () => {
     github = {
       issues: {
         createComment: jest.fn(),
+        createLabel: jest.fn(),
         update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       pullRequests: {
@@ -355,6 +358,14 @@ describe('Bot', () => {
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:close`)
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:merge`)
+    })
+  })
+
+  describe('installation', () => {
+    test('Will take action when a repo is added', async () => {
+      await robot.receive(addedPayload())
+
+      expect(github.issues.createLabel).toHaveBeenCalled()
     })
   })
 
