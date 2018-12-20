@@ -21,7 +21,7 @@ const status = {
 }
 
 module.exports = queue => async context => {
-  const ID = getId(context)
+  const ID = getId(context, { action: MERGE })
 
   const thread = context.payload.pull_request
 

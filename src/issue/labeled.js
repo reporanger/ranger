@@ -10,7 +10,7 @@ const getConfig = require('../config')
 const { CLOSE } = require('../constants')
 
 module.exports = queue => async context => {
-  const ID = getId(context)
+  const ID = getId(context, { action: CLOSE })
 
   const thread = context.payload.issue
 
