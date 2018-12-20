@@ -9,8 +9,7 @@ function getLabelConfig(config, labelName) {
     return config.labels[labelName]
   }
 
-  // TODO return config.default here
-  return config
+  return config.default.close
 }
 
 function timeToNumber(time) {
