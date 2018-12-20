@@ -1,7 +1,7 @@
+const { CLOSE, MERGE } = require('../constants')
 const getId = require('../get-job-id')
 
 module.exports = queue => context => {
-  const ID = getId(context)
-
-  return queue.removeJob(ID)
+  queue.removeJob(getId(context, { action: CLOSE }))
+  queue.removeJob(getId(context, { action: MERGE }))
 }

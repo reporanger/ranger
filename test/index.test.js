@@ -151,6 +151,7 @@ describe('Bot', () => {
 
   describe.each(['issue', 'pull_request'])('%s', threadType => {
     const name = threadType === 'pull_request' ? threadType : 'issues'
+    const action = threadType === 'pull_request' ? 'merge' : 'close'
 
     test('Will not schedule a job for labels not defined in the config', async () => {
       await robot.receive(payload({ name, threadType, labels: ['not-a-valid-label'] }))
@@ -171,7 +172,7 @@ describe('Bot', () => {
       await robot.receive(payload({ name, threadType, labels: [] }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
-      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:7')
+      expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:7:${action}`)
     })
   })
 
@@ -194,7 +195,7 @@ describe('Bot', () => {
         action: 'close'
       }
       expect(queue.createJob).toHaveBeenCalledWith(data)
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7')
+      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7:close')
       expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
     })
 
@@ -202,7 +203,8 @@ describe('Bot', () => {
       await robot.receive(payload({ action: 'closed', number: 9 }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
-      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9')
+      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:close')
+      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:merge')
     })
 
     test('Labels with `true` config should take action', async () => {
@@ -261,7 +263,7 @@ describe('Bot', () => {
       }
 
       expect(queue.createJob).toHaveBeenCalledWith(data)
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7')
+      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7:merge')
       expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
 
       await wait(2)
@@ -317,7 +319,7 @@ describe('Bot', () => {
       )
       expect(github.pullRequests.merge).not.toHaveBeenCalled()
 
-      expect(queue.jobs['mfix22:test-issue-bot:97'].retryFormat).toBe('fixed')
+      expect(queue.jobs['mfix22:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
 
       await wait(20)
       expect(github.pullRequests.merge).toHaveBeenCalledWith({
@@ -329,7 +331,7 @@ describe('Bot', () => {
     })
 
     test('Will remove the existing job if a new label event occurs', async () => {
-      queue.jobs['mfix22:test-issue-bot:99'] = true
+      queue.jobs['mfix22:test-issue-bot:99:merge'] = true
 
       await robot.receive(
         payload({
@@ -340,7 +342,7 @@ describe('Bot', () => {
         })
       )
 
-      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99')
+      expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99:merge')
     })
   })
 
@@ -351,7 +353,8 @@ describe('Bot', () => {
       await robot.receive(commentPayload({ number }))
 
       expect(queue.createJob).not.toHaveBeenCalled()
-      expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}`)
+      expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:close`)
+      expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:merge`)
     })
   })
 
