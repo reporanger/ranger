@@ -1,11 +1,13 @@
+const ms = require('ms')
+
 const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { MERGE } = require('../constants')
 
 const { getPullRequest } = require('../api')
 
-const RETRY_PERIOD = 3 * 60 * 1000
-const RETRY_HORIZON = 12 * 60 * 60 * 1000 // 12 hours
+const RETRY_PERIOD = ms('3m')
+const RETRY_HORIZON = ms('12h')
 
 // https://developer.github.com/v4/enum/mergestatestatus/
 const status = {
