@@ -45,18 +45,15 @@ module.exports = queue => async context => {
   )
 
   if (withMergeableLabels.length) {
-    return (
-      queue
-        .createJob({
-          ...context.issue({ installation_id: context.payload.installation.id }),
-          action: MERGE
-        })
-        .setId(ID)
-        .retries(RETRY_HORIZON / RETRY_PERIOD)
-        // TODO use 'exponential'?
-        .backoff('fixed', RETRY_PERIOD)
-        .save()
-    )
+    return queue
+      .createJob({
+        ...context.issue({ installation_id: context.payload.installation.id }),
+        action: MERGE
+      })
+      .setId(ID)
+      .retries(RETRY_HORIZON / RETRY_PERIOD)
+      .backoff('fixed', RETRY_PERIOD)
+      .save()
   }
 
   // If closable labels are removed, delete job for this pull
