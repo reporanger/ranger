@@ -1,4 +1,4 @@
-# Ranger 🌿
+# Ranger 🤠
 
 > a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
 
@@ -6,29 +6,32 @@ Unlike other issue bots, Ranger listens to prompts by maintaners in the form of 
 
 ## Usage
 
-1. **[Configure the GitHub App](https://github.com/marketplace/ranger) TODO**
+1. **[Configure the GitHub App](https://github.com/marketplace/ranger)**
 2. (Optional) Create `.github/ranger.yml` based on the following template:
 
 ```yml
 # Configuration for Ranger - https://github.com/dawnlabs/ranger
 # > The defaults are shown below
+default
+  close:
+    # Default time to wait before closing the label. Can either be a number in milliseconds
+    # or a string specified by the `ms` package (https://www.npmjs.com/package/ms)
+    delayTime: "7 days" 
 
-# Default time to wait before closing the label. Can either be a number in milliseconds
-# or a string specified by the `ms` package (https://www.npmjs.com/package/ms)
-delayTime: "7 days"
-
-# Default comment to post when an issue is first marked with a closing label
-#
-#   $ClOSE_TIME will automatically be replaced with `delayTime` as a formatted string (e.g. '7 days')
-#   $LABEL will automatically be replaced with the label's name
-comment: "⚠️ This issue has been marked to be closed in $CLOSE_TIME".
+    # Default comment to post when an issue is first marked with a closing label
+    #
+    #   $ClOSE_TIME will automatically be replaced with `delayTime` as a formatted string (e.g. '7 days')
+    #   $LABEL will automatically be replaced with the label's name
+    comment: "⚠️ This issue has been marked to be closed in $CLOSE_TIME".
 
 # Map granular configurations you can set for each label
 labels:
   duplicate:
+    action: close
     delayTime: 15s
     comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
-  invalid: true # use defaults for comment and delay time
+  invalid: close # use defaults for comment and delay time
+  'merge when passing': merge
 ```
 
 ## Contributing ✍️
