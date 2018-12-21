@@ -2,7 +2,22 @@
 
 > a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
 
-Unlike other issue bots, Ranger listens to prompts by maintaners in the form of labels being applied, and responds according. Ranger can close stale/invalid/wontfix (or any other) labeled issues after a preconfigured amount of time, and automatically notify users with preset messages.
+## Inspiration / Use Cases
+
+#### Merging PRs
+Potential labels: `merge when passing`, `docs`
+
+Plotly allows all PRs marked :dancer: and with a passing build to be merged. Instead they could use Ranger and add a :dancer: label. 
+
+#### Closing issues
+Potential labels: `wontfix`, `invalid`, `stale`
+
+In Carbon, issues labeled `theme/language` are closed after some time to allow other users to not only see the comments, but potentially offer PRs to solve the issue.
+
+#### Reopening issues
+Potential labels: `snooze`, `backlog`
+
+Some issues, for example those labeled "future" in this repository, could be closed and marked to be reopened for consideration in the future 
 
 ## Usage
 
