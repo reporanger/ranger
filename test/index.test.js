@@ -374,7 +374,7 @@ describe('Bot', () => {
           repo,
           name: 'merge when passing',
           color: 'FF851B',
-          description: 'Merge the PR once it passes'
+          description: 'Merge the PR once all status checks have passed'
         }
       ])
 
@@ -392,7 +392,7 @@ describe('Bot', () => {
           repo,
           name: 'merge when passing',
           color: 'FF851B',
-          description: 'Merge the PR once it passes'
+          description: 'Merge the PR once all status checks have passed'
         }
       ])
 

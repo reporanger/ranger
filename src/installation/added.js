@@ -1,6 +1,6 @@
 const { createLabel } = require('../api')
 
-module.exports = (robot) => async (context) => {
+module.exports = robot => async context => {
   try {
     const github = await robot.auth(context.payload.installation.id)
 
@@ -12,7 +12,7 @@ module.exports = (robot) => async (context) => {
         repo,
         name: 'merge when passing',
         color: 'FF851B',
-        description: 'Merge the PR once it passes'
+        description: 'Merge the PR once all status checks have passed'
       }
 
       return createLabel(github, data)
