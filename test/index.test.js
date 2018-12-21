@@ -54,7 +54,7 @@ class MockJob {
   }
 }
 
-class MockQueue {
+jest.mock('bee-queue', () => class MockQueue {
   constructor(name) {
     this.name = name
     this.jobs = {}
@@ -75,7 +75,7 @@ class MockQueue {
       return id
     })
   }
-}
+})
 
 const config = `
 labels:
@@ -108,10 +108,11 @@ describe('Bot', () => {
   let robot
   let github
   let queue
-  beforeEach(() => {
-    queue = new MockQueue()
+  beforeEach(async () => {
     robot = new Application()
-    app(robot, queue)
+    const setup = await app(robot)
+    queue = setup.queue
+
     github = {
       issues: {
         createComment: jest.fn(),
