@@ -12,7 +12,7 @@ Unlike other issue bots, Ranger listens to prompts by maintaners in the form of 
 ```yml
 # Configuration for Ranger - https://github.com/dawnlabs/ranger
 # > The defaults are shown below
-default
+default:
   close:
     # Default time to wait before closing the label. Can either be a number in milliseconds
     # or a string specified by the `ms` package (https://www.npmjs.com/package/ms)
