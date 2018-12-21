@@ -365,7 +365,15 @@ describe('Bot', () => {
     test('Will take action when a repo is added', async () => {
       await robot.receive(addedPayload())
 
-      expect(github.issues.createLabel).toHaveBeenCalled()
+      const data = {
+        owner: 'mfix22',
+        repo: 'test-issue-bot',
+        name: 'automerge',
+        color: '#FF851B',
+        description: 'Auto Merge the PR'
+      }
+
+      expect(github.issues.createLabel).toHaveBeenCalledWith(data)
     })
   })
 
