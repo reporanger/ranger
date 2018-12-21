@@ -4,7 +4,7 @@ const app = require('..')
 
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
-const wait = x => new Promise(resolve => setTimeout(resolve, x))
+const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
 
 class MockJob {
   constructor(data, queue) {
