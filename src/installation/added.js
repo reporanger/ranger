@@ -7,9 +7,9 @@ module.exports = (robot) => async (context) => {
     const data = {
       owner: context.payload.installation.account.login,
       repo: context.payload.repositories_added[0].name,
-      name: 'automerge',
+      name: 'merge when passing',
       color: '#FF851B',
-      description: 'Auto Merge the PR'
+      description: 'Merge the PR once it passes'
     }
 
     return createLabel(github, data)

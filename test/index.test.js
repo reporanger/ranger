@@ -368,9 +368,9 @@ describe('Bot', () => {
       const data = {
         owner: 'mfix22',
         repo: 'test-issue-bot',
-        name: 'automerge',
+        name: 'merge when passing',
         color: '#FF851B',
-        description: 'Auto Merge the PR'
+        description: 'Merge the PR once it passes'
       }
 
       expect(github.issues.createLabel).toHaveBeenCalledWith(data)
