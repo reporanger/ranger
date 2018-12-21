@@ -1,4 +1,10 @@
-module.exports = () => ({
+module.exports = ({
+  repositories = [
+    {
+      name: 'ranger'
+    }
+  ]
+}) => ({
   name: 'installation',
   payload: {
     action: 'created',
@@ -8,10 +14,6 @@ module.exports = () => ({
         login: 'ranger'
       }
     },
-    repositories: [
-      {
-        name: 'ranger-test',
-      }
-    ]
-  },
+    repositories
+  }
 })

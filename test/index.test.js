@@ -364,31 +364,39 @@ describe('Bot', () => {
 
   describe('installation', () => {
     test('Will take action when repos are added', async () => {
-      await robot.receive(addedPayload())
+      const repositories_added = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
 
-      const data = {
-        owner: 'mfix22',
-        repo: 'test-issue-bot',
-        name: 'merge when passing',
-        color: 'FF851B',
-        description: 'Merge the PR once it passes'
-      }
+      await robot.receive(addedPayload({ repositories_added }))
 
-      expect(github.issues.createLabel).toHaveBeenCalledWith(data)
+      const data = repositories_added.map(({ name: repo }) => [
+        {
+          owner: 'ranger',
+          repo,
+          name: 'merge when passing',
+          color: 'FF851B',
+          description: 'Merge the PR once it passes'
+        }
+      ])
+
+      expect(github.issues.createLabel.mock.calls).toEqual(data)
     })
 
     test('Will take action when an installation is created', async () => {
-      await robot.receive(createdPayload())
+      const repositories = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
 
-      const data = {
-        owner: 'ranger',
-        repo: 'ranger-test',
-        name: 'merge when passing',
-        color: 'FF851B',
-        description: 'Merge the PR once it passes'
-      }
+      await robot.receive(createdPayload({ repositories }))
 
-      expect(github.issues.createLabel).toHaveBeenCalledWith(data)
+      const data = repositories.map(({ name: repo }) => [
+        {
+          owner: 'ranger',
+          repo,
+          name: 'merge when passing',
+          color: 'FF851B',
+          description: 'Merge the PR once it passes'
+        }
+      ])
+
+      expect(github.issues.createLabel.mock.calls).toEqual(data)
     })
   })
 
