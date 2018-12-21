@@ -15,7 +15,7 @@ Potential labels: `wontfix`, `invalid`, `stale`
 In Carbon, issues labeled `theme/language` are closed after some time to allow other users to not only see the comments, but potentially offer PRs to solve the issue.
 
 #### Reopening issues
-Potential labels: `snooze`, `backlog`
+Potential labels: `snooze`, `backlog`, `future`
 
 Some issues, for example those labeled "future" in this repository, could be closed and marked to be reopened for consideration in the future 
 
