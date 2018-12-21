@@ -4,6 +4,9 @@ const app = require('..')
 
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
+const addedPayload = require('./fixtures/added')
+const createdPayload = require('./fixtures/created')
+
 const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
 
 class MockJob {
@@ -116,6 +119,7 @@ describe('Bot', () => {
     github = {
       issues: {
         createComment: jest.fn(),
+        createLabel: jest.fn(),
         update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       pullRequests: {
@@ -196,8 +200,8 @@ describe('Bot', () => {
         action: 'close'
       }
       expect(queue.createJob).toHaveBeenCalledWith(data)
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7:close')
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:close')
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
     })
 
     test('Will remove the job if an issue is closed', async () => {
@@ -264,8 +268,8 @@ describe('Bot', () => {
       }
 
       expect(queue.createJob).toHaveBeenCalledWith(data)
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7:merge')
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:merge')
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
 
       await wait(2)
 
@@ -356,6 +360,44 @@ describe('Bot', () => {
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:close`)
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:merge`)
+    })
+  })
+
+  describe('installation', () => {
+    test('Will take action when repos are added', async () => {
+      const repositories_added = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
+
+      await robot.receive(addedPayload({ repositories_added }))
+
+      const data = repositories_added.map(({ name: repo }) => [
+        {
+          owner: 'ranger',
+          repo,
+          name: 'merge when passing',
+          color: 'FF851B',
+          description: 'Merge the PR once all status checks have passed'
+        }
+      ])
+
+      expect(github.issues.createLabel.mock.calls).toEqual(data)
+    })
+
+    test('Will take action when an installation is created', async () => {
+      const repositories = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
+
+      await robot.receive(createdPayload({ repositories }))
+
+      const data = repositories.map(({ name: repo }) => [
+        {
+          owner: 'ranger',
+          repo,
+          name: 'merge when passing',
+          color: 'FF851B',
+          description: 'Merge the PR once all status checks have passed'
+        }
+      ])
+
+      expect(github.issues.createLabel.mock.calls).toEqual(data)
     })
   })
 
