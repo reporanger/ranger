@@ -35,7 +35,7 @@ class MockJob {
 class MockQueue {
   constructor(name) {
     this.name = name
-    this.jobs = {},
+    this.jobs = {}
     this.process = jest.fn(fn => {
       this.processor = fn
     })
@@ -96,13 +96,15 @@ describe('Bot', () => {
         update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       pullRequests: {
-        get: jest.fn(({ number }) => Promise.resolve({ 
-          data: {
-            mergeable: number === 99 ? false : true,
-            mergeable_state: number === 98 ? 'dirty' : 'clean',
-            head: { sha: 0 }
-          }
-        })),
+        get: jest.fn(({ number }) =>
+          Promise.resolve({
+            data: {
+              mergeable: number === 99 ? false : true,
+              mergeable_state: number === 98 ? 'dirty' : 'clean',
+              head: { sha: 0 }
+            }
+          })
+        ),
         merge: jest.fn()
       },
       repos: {
@@ -219,7 +221,14 @@ describe('Bot', () => {
 
   describe('pull_request', () => {
     test('Will take action if a label has action `merge`', async () => {
-      await robot.receive(payload({ name: 'pull_request', threadType: 'pull_request', labels: ['automerge'], number: 7 }))
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['automerge'],
+          number: 7
+        })
+      )
 
       const data = {
         number: 7,
@@ -244,7 +253,14 @@ describe('Bot', () => {
     })
 
     test('Will not merge a pull request with state `dirty`', async () => {
-      await robot.receive(payload({ name: 'pull_request', threadType: 'pull_request', labels: ['automerge'], number: 98 }))
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['automerge'],
+          number: 98
+        })
+      )
 
       await wait(20)
 
@@ -253,12 +269,18 @@ describe('Bot', () => {
 
     test('Will remove the existing job if a new label event occurs', async () => {
       queue.jobs['mfix22:test-issue-bot:99'] = true
-      
-      await robot.receive(payload({ name: 'pull_request', threadType: 'pull_request', labels: ['automerge'], number: 99 }))
+
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['automerge'],
+          number: 99
+        })
+      )
 
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99')
     })
-
   })
 
   describe('comment', () => {
