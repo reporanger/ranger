@@ -75,7 +75,7 @@ module.exports = async (robot, queue = setup()) => {
 
   robot.on('issue_comment.deleted', commentDeleted(queue))
 
-  robot.on('installation_repositories.added', installationAdded(robot))
+  robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
 
   // For more information on building apps:
   // https://probot.github.io/docs/

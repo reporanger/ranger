@@ -5,6 +5,7 @@ const app = require('..')
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
 const addedPayload = require('./fixtures/added')
+const createdPayload = require('./fixtures/created')
 
 const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
 
@@ -198,8 +199,8 @@ describe('Bot', () => {
         action: 'close'
       }
       expect(queue.createJob).toHaveBeenCalledWith(data)
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7:close')
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:close')
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
     })
 
     test('Will remove the job if an issue is closed', async () => {
@@ -266,8 +267,8 @@ describe('Bot', () => {
       }
 
       expect(queue.createJob).toHaveBeenCalledWith(data)
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7:merge')
-      expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:merge')
+      expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
 
       await wait(2)
 
@@ -362,14 +363,28 @@ describe('Bot', () => {
   })
 
   describe('installation', () => {
-    test('Will take action when a repo is added', async () => {
+    test('Will take action when repos are added', async () => {
       await robot.receive(addedPayload())
 
       const data = {
         owner: 'mfix22',
         repo: 'test-issue-bot',
         name: 'merge when passing',
-        color: '#FF851B',
+        color: 'FF851B',
+        description: 'Merge the PR once it passes'
+      }
+
+      expect(github.issues.createLabel).toHaveBeenCalledWith(data)
+    })
+
+    test('Will take action when an installation is created', async () => {
+      await robot.receive(createdPayload())
+
+      const data = {
+        owner: 'ranger',
+        repo: 'ranger-test',
+        name: 'merge when passing',
+        color: 'FF851B',
         description: 'Merge the PR once it passes'
       }
 

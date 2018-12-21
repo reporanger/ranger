@@ -26,12 +26,11 @@ exports.getPullRequest = function getPullRequest(github, data) {
 exports.createLabel = function createLabel(github, data) {
   const { owner, repo, name, color, description } = data
 
-  return github.issues
-    .createLabel({
-      owner,
-      repo,
-      name,
-      color,
-      description
-    })
+  return github.issues.createLabel({
+    owner,
+    repo,
+    name,
+    color,
+    description
+  })
 }
