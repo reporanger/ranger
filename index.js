@@ -9,8 +9,6 @@ const { CLOSE, MERGE } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
-const privacyPolicy = require('fs').readFileSync('site/privacy.html', { encoding: 'utf8' })
-
 const setup = () =>
   new Queue('issues', {
     removeOnSuccess: true,
@@ -26,8 +24,6 @@ const setup = () =>
   })
 
 module.exports = async (robot, queue = setup()) => {
-  robot.route('/').get('/privacy', (req, res) => res.send(privacyPolicy))
-
   queue.process(job => {
     switch (job.data.action) {
       case MERGE:
