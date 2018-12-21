@@ -14,7 +14,22 @@ class MockJob {
       .slice(2)
     this.data = data
     this.save = jest.fn(() => {
-      this.to = setTimeout(this.queue.processor, this.delay - Date.now(), this)
+      let fn
+      fn = async data => {
+        try {
+          await this.queue.processor(data)
+        } catch (e) {
+          if (this.retriesLeft) {
+            await fn(this)
+            // setTimeout(fn, this.retryDelay, this)
+          }
+        } finally {
+          if (this.retriesLeft) {
+            this.retriesLeft--
+          }
+        }
+      }
+      this.to = setTimeout(fn, this.delay - Date.now(), this)
       return this
     })
     this.setId = jest.fn(id => {
@@ -27,8 +42,15 @@ class MockJob {
       this.delay = delay
       return this
     })
-    this.retries = jest.fn(() => this)
-    this.backoff = jest.fn(() => this)
+    this.retries = jest.fn(retriesLeft => {
+      this.retriesLeft = retriesLeft
+      return this
+    })
+    this.backoff = jest.fn((retryFormat, retryDelay) => {
+      this.retryFormat = retryFormat
+      this.retryDelay = retryDelay
+      return this
+    })
   }
 }
 
@@ -265,6 +287,45 @@ describe('Bot', () => {
       await wait(20)
 
       expect(github.pullRequests.merge).not.toHaveBeenCalled()
+    })
+
+    test('Will retry job if merge is blocked until it is clean', async () => {
+      github.pullRequests.get = jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: {
+            mergeable: true,
+            mergeable_state: 'blocked',
+            head: { sha: 0 }
+          }
+        })
+        .mockResolvedValueOnce({
+          data: {
+            mergeable: true,
+            mergeable_state: 'clean',
+            head: { sha: 0 }
+          }
+        })
+
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['automerge'],
+          number: 97
+        })
+      )
+      expect(github.pullRequests.merge).not.toHaveBeenCalled()
+
+      expect(queue.jobs['mfix22:test-issue-bot:97'].retryFormat).toBe('fixed')
+
+      await wait(20)
+      expect(github.pullRequests.merge).toHaveBeenCalledWith({
+        number: 97,
+        owner: 'mfix22',
+        repo: 'test-issue-bot',
+        sha: 0
+      })
     })
 
     test('Will remove the existing job if a new label event occurs', async () => {
