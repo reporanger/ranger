@@ -57,28 +57,32 @@ class MockJob {
   }
 }
 
-jest.mock('bee-queue', () => class MockQueue {
-  constructor(name) {
-    this.name = name
-    this.jobs = {}
-    this.process = jest.fn(fn => {
-      this.processor = fn
-    })
-    this.on = jest.fn()
-    this.getJob = jest.fn(id => {
-      return this.jobs[id]
-    })
-    this.createJob = jest.fn(data => {
-      const job = new MockJob(data, this)
-      this.jobs[job.id] = job
-      return job
-    })
-    this.removeJob = jest.fn(id => {
-      delete this.jobs[id]
-      return id
-    })
-  }
-})
+jest.mock(
+  'bee-queue',
+  () =>
+    class MockQueue {
+      constructor(name) {
+        this.name = name
+        this.jobs = {}
+        this.process = jest.fn(fn => {
+          this.processor = fn
+        })
+        this.on = jest.fn()
+        this.getJob = jest.fn(id => {
+          return this.jobs[id]
+        })
+        this.createJob = jest.fn(data => {
+          const job = new MockJob(data, this)
+          this.jobs[job.id] = job
+          return job
+        })
+        this.removeJob = jest.fn(id => {
+          delete this.jobs[id]
+          return id
+        })
+      }
+    }
+)
 
 const config = `
 labels:
@@ -364,40 +368,23 @@ describe('Bot', () => {
   })
 
   describe('installation', () => {
-    test('Will take action when repos are added', async () => {
-      const repositories_added = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
+    test.each([
+      repos => addedPayload({ repositories_added: repos }),
+      repos => createdPayload({ repositories: repos })
+    ])('Will take action when repos are added', async createPayload => {
+      const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
 
-      await robot.receive(addedPayload({ repositories_added }))
+      await robot.receive(createPayload(repos))
 
-      const data = repositories_added.map(({ name: repo }) => [
-        {
+      repos.forEach(({ name: repo }) => {
+        expect(github.issues.createLabel).toHaveBeenCalledWith({
           owner: 'ranger',
           repo,
           name: 'merge when passing',
           color: 'FF851B',
           description: 'Merge the PR once all status checks have passed'
-        }
-      ])
-
-      expect(github.issues.createLabel.mock.calls).toEqual(data)
-    })
-
-    test('Will take action when an installation is created', async () => {
-      const repositories = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
-
-      await robot.receive(createdPayload({ repositories }))
-
-      const data = repositories.map(({ name: repo }) => [
-        {
-          owner: 'ranger',
-          repo,
-          name: 'merge when passing',
-          color: 'FF851B',
-          description: 'Merge the PR once all status checks have passed'
-        }
-      ])
-
-      expect(github.issues.createLabel.mock.calls).toEqual(data)
+        })
+      })
     })
   })
 
