@@ -9,6 +9,8 @@ Potential labels: `merge when passing`, `docs`
 
 Plotly allows all PRs marked :dancer: and with a passing build to be merged. Instead they could use Ranger and add a :dancer: label. 
 
+Kent C. Dodds also merges tons of PRs from his phone without testing the branch directly, relying solely on CI. Using Ranger would make this a lot simpler since he could just apply the label and then forget about the PR completely.
+
 #### Closing issues
 Potential labels: `wontfix`, `invalid`, `stale`
 
