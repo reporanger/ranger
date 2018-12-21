@@ -35,9 +35,7 @@ class MockJob {
 class MockQueue {
   constructor(name) {
     this.name = name
-    this.jobs = {
-      'mfix22:test-issue-bot:99': true
-    },
+    this.jobs = {},
     this.process = jest.fn(fn => {
       this.processor = fn
     })
@@ -250,6 +248,8 @@ describe('Bot', () => {
     })
 
     test('Will remove the existing job if a new label event occurs', async () => {
+      queue.jobs['mfix22:test-issue-bot:99'] = true
+      
       await robot.receive(payload({ name: 'pull_request', threadType: 'pull_request', labels: ['automerge'], number: 99 }))
 
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99')
