@@ -9,8 +9,8 @@ const { CLOSE, MERGE } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
-const setup = () =>
-  new Queue('issues', {
+module.exports = async robot => {
+  const queue = new Queue('issues', {
     removeOnSuccess: true,
     removeOnFailure: true,
     activateDelayedJobs: true,
@@ -23,7 +23,6 @@ const setup = () =>
     }
   })
 
-module.exports = async (robot, queue = setup()) => {
   queue.process(job => {
     switch (job.data.action) {
       case MERGE:
@@ -79,4 +78,8 @@ module.exports = async (robot, queue = setup()) => {
 
   // To get your app running against GitHub, see:
   // https://probot.github.io/docs/development/
+
+  return {
+    queue
+  }
 }
