@@ -235,7 +235,7 @@ describe('Bot', () => {
       expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].id).toBe('mfix22:test-issue-bot:7')
       expect(queue.jobs[Object.keys(queue.jobs).slice(-1)[0]].data).toEqual(data)
 
-      await wait(20)
+      await wait(2)
 
       expect(github.pullRequests.merge).toHaveBeenCalledWith({
         number: 7,
