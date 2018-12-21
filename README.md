@@ -1,6 +1,6 @@
 # Ranger 🤠
 
-> a GitHub bot that eases the burden of OSS maintainers, built with [Probot](https://github.com/probot/probot)
+> Ease the burden of repository maintainers
 
 ## Inspiration / Use Cases
 
