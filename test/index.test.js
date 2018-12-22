@@ -282,7 +282,7 @@ describe('Bot', () => {
     })
 
     test('Will not merge a pull request with state `dirty`', async () => {
-      github.pullRequests.get.mockResolvedValueOnce({
+      github.pullRequests.get.mockResolvedValue({
         data: {
           mergeable: true,
           mergeable_state: 'dirty',
@@ -343,7 +343,7 @@ describe('Bot', () => {
     })
 
     test('Will remove the existing job if a new label event occurs', async () => {
-      github.pullRequests.get.mockResolvedValueOnce({
+      github.pullRequests.get.mockResolvedValue({
         data: {
           mergeable: false,
           mergeable_state: 'clean',
