@@ -127,15 +127,13 @@ describe('Bot', () => {
         update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       pullRequests: {
-        get: jest.fn(({ number }) =>
-          Promise.resolve({
-            data: {
-              mergeable: number === 99 ? false : true,
-              mergeable_state: number === 98 ? 'dirty' : 'clean',
-              head: { sha: 0 }
-            }
-          })
-        ),
+        get: jest.fn().mockResolvedValue({
+          data: {
+            mergeable: true,
+            mergeable_state: 'clean',
+            head: { sha: 0 }
+          }
+        }),
         merge: jest.fn()
       },
       repos: {
@@ -143,16 +141,14 @@ describe('Bot', () => {
         getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } }))
       },
       apps: {
-        listRepos() {
-          return {
-            data: {
-              total_count: 5,
-              repositories: Array(5).fill({
-                private: true
-              })
-            }
+        listRepos: jest.fn().mockResolvedValue({
+          data: {
+            total_count: 5,
+            repositories: Array(5).fill({
+              private: true
+            })
           }
-        }
+        })
       }
     }
     robot.auth = () => Promise.resolve(github)
@@ -286,6 +282,14 @@ describe('Bot', () => {
     })
 
     test('Will not merge a pull request with state `dirty`', async () => {
+      github.pullRequests.get.mockResolvedValueOnce({
+        data: {
+          mergeable: true,
+          mergeable_state: 'dirty',
+          head: { sha: 0 }
+        }
+      })
+
       await robot.receive(
         payload({
           name: 'pull_request',
@@ -301,8 +305,7 @@ describe('Bot', () => {
     })
 
     test('Will retry job if merge is blocked until it is clean', async () => {
-      github.pullRequests.get = jest
-        .fn()
+      github.pullRequests.get
         .mockResolvedValueOnce({
           data: {
             mergeable: true,
@@ -340,6 +343,14 @@ describe('Bot', () => {
     })
 
     test('Will remove the existing job if a new label event occurs', async () => {
+      github.pullRequests.get.mockResolvedValueOnce({
+        data: {
+          mergeable: false,
+          mergeable_state: 'clean',
+          head: { sha: 0 }
+        }
+      })
+
       queue.jobs['mfix22:test-issue-bot:99:merge'] = true
 
       await robot.receive(
