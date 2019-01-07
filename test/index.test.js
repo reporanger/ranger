@@ -88,18 +88,18 @@ const config = `
 labels:
   duplicate:
     action: close
-    delayTime: 5ms
+    delay: 5ms
     comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
   invalid: close
   wontfix:
     action: close
-    delayTime: 10ms
+    delay: 10ms
     comment: false
   automerge:
     action: merge
   -1:
     action: close
-    delayTime: -1
+    delay: -1
     comment: Test comment
   comment:
     action: comment
@@ -108,7 +108,7 @@ labels:
     action: comment
     message: boop
 
-delayTime: 1ms
+delay: 1ms
 
 comment: This issue has been marked to be closed in $CLOSE_TIME.
 `

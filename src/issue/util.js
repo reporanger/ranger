@@ -19,7 +19,7 @@ function timeToNumber(time) {
 function getEffectiveLabel(config, labels) {
   return labels.reduce(
     (accum, label) => {
-      const time = timeToNumber(getLabelConfig(config, label.name).delayTime)
+      const time = timeToNumber(getLabelConfig(config, label.name).delay)
 
       if (time < accum.time) {
         return { label, time }
