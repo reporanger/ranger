@@ -18,7 +18,7 @@ const defaultConfig = {
   default: {
     [CLOSE]: {
       comment: DEFAULT_COMMENT,
-      delayTime: DEFAULT_CLOSE_TIME
+      delay: DEFAULT_CLOSE_TIME
     }
   },
   labels: DEFAULT_LABELS
