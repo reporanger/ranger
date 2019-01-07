@@ -41,7 +41,7 @@ module.exports = queue => async context => {
       }
     }
 
-    if (time >= 0 && isFinite(time)) {
+    if (time >= 0) {
       return queue
         .createJob({
           ...context.issue({ installation_id: context.payload.installation.id }),
