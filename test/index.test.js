@@ -32,7 +32,7 @@ class MockJob {
           }
         }
       }
-      this.to = setTimeout(fn, this.delay - Date.now(), this)
+      this.to = setTimeout(fn, Math.min(this.delay - Date.now(), 2147483647), this)
       return this
     })
     this.setId = jest.fn(id => {
@@ -101,10 +101,12 @@ labels:
     action: close
     delayTime: -1
     comment: Test comment
-  Infinity:
-    action: close
-    delayTime: Infinity
-    comment: Test comment
+  comment:
+    action: comment
+    message: beep
+  comment2:
+    action: comment
+    message: boop
 
 delayTime: 1ms
 
@@ -179,6 +181,18 @@ describe('Bot', () => {
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:7:${action}`)
     })
+
+    test('Will comment for each actionable label', async () => {
+      await robot.receive(payload({ name, threadType, labels: ['comment', 'comment2'] }))
+      ;['beep', 'boop'].forEach(body => {
+        expect(github.issues.createComment).toHaveBeenCalledWith({
+          body,
+          number: 7,
+          owner: 'mfix22',
+          repo: 'test-issue-bot'
+        })
+      })
+    })
   })
 
   describe('issue', () => {
@@ -240,8 +254,8 @@ describe('Bot', () => {
       expect(github.issues.update).toHaveBeenCalledTimes(2)
     })
 
-    test.each(['-1', 'Infinity'])('Using %s for delayTime should not create a job', async label => {
-      await robot.receive(payload({ labels: [label], number: 11 }))
+    test('Using negative numbers for delay should not create a job', async () => {
+      await robot.receive(payload({ labels: ['-1'], number: 11 }))
 
       expect(github.issues.createComment).toHaveBeenCalled()
       expect(queue.createJob).not.toHaveBeenCalled()

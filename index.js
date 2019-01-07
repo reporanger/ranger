@@ -1,8 +1,9 @@
 const Queue = require('bee-queue')
 
+const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
-const closed = require('./src/issue/closed')
+const threadClosed = require('./src/thread/closed')
 const commentDeleted = require('./src/comment/deleted')
 const installationAdded = require('./src/installation/added')
 
@@ -53,9 +54,11 @@ module.exports = async robot => {
   // Listeners
   robot.on(
     // All pull requests are issues in GitHub REST V3
-    ['issues.labeled', 'issues.unlabeled'],
-    wrapPaymentCheck(issueLabeled(queue))
+    ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
+    wrapPaymentCheck(threadLabeled(queue))
   )
+
+  robot.on(['issues.labeled', 'issues.unlabeled'], wrapPaymentCheck(issueLabeled(queue)))
 
   robot.on(
     // All pull requests are issues in GitHub REST V3
@@ -70,7 +73,7 @@ module.exports = async robot => {
   )
 
   // Kill job when issue/pull is closed
-  robot.on(['issues.closed', 'pull_request.closed'], closed(queue))
+  robot.on(['issues.closed', 'pull_request.closed'], threadClosed(queue))
 
   robot.on('issue_comment.deleted', commentDeleted(queue))
 
