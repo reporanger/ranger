@@ -2,7 +2,7 @@
   "name": "ranger",
   "version": "0.0.3",
   "description": "",
-  "author": "Mike Fix <mrfix84@gmail.com> (dawnlabs.io)",
+  "author": "Mike Fix <mike@dawnlabs.io> (dawnlabs.io)",
   "license": "UNLICENSED",
   "repository": "https://github.com/dawnlabs/ranger.git",
   "scripts": {
@@ -12,7 +12,7 @@
     "lint": "eslint src",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "redis:clear": "redis-cli flushall",
-    "deploy": "now"
+    "deploy": "git push heroku master"
   },
   "dependencies": {
     "@sentry/node": "4.4.2",
@@ -29,7 +29,6 @@
     "jest": "^23.6.0",
     "lint-staged": "^8.1.0",
     "nodemon": "^1.18.9",
-    "now": "^12.1.14",
     "prettier": "^1.15.3"
   },
   "engines": {
