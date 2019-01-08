@@ -34,11 +34,6 @@
   "engines": {
     "node": ">= 8.3.0"
   },
-  "standard": {
-    "env": [
-      "jest"
-    ]
-  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.js"
