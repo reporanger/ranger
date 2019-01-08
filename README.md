@@ -52,6 +52,9 @@ labels:
     comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
   invalid: close # use defaults for comment and delay time
   'merge when passing': merge
+  #comment:
+  # action: comment
+  # message: This is the comment to make
 ```
 
 ## Contributing ✍️

@@ -31,19 +31,19 @@ module.exports = queue => async context => {
     const jobId = `${ID}:${label.name}`
     const jobExists = await queue.getJob(jobId)
 
-    // Don't create a comment if one already exist
+    // Don't create a comment if one already exists
     if (!jobExists) {
       const { message } = getLabelConfig(config, label.name)
 
       if (message && message.trim() !== 'false') {
-        const body = message.replace('$LABEL', label.name)
-
         await queue
-          .createJob({ action: COMMENT })
+          .createJob({ installation_id: context.payload.installation.id, action: COMMENT })
           .setId(jobId)
           // allow comment to be commented again after 30 days
           .delayUntil(Date.now() + ms('30d'))
           .save()
+
+        const body = message.replace('$LABEL', label.name)
 
         return context.github.issues.createComment(context.issue({ body }))
       }
