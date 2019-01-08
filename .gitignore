@@ -6,5 +6,4 @@ package-lock.json
 
 coverage
 
-# too large for `now` to upload
 brand/*
