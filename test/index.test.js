@@ -107,6 +107,7 @@ labels:
   comment2:
     action: comment
     message: boop
+  comment3: comment
 
 delay: 1ms
 
@@ -192,6 +193,11 @@ describe('Bot', () => {
           repo: 'test-issue-bot'
         })
       })
+    })
+
+    test('Will will not comment if no default is provided', async () => {
+      await robot.receive(payload({ name, threadType, labels: ['comment3'] }))
+      expect(github.issues.createComment).not.toHaveBeenCalled()
     })
   })
 
@@ -410,6 +416,26 @@ describe('Bot', () => {
           description: 'Merge the PR once all status checks have passed'
         })
       })
+    })
+
+    test('will only throw on createLabel if error is not of type "already_exists"', async () => {
+      robot.log.error = jest.fn()
+      github.issues.createLabel.mockRejectedValueOnce({
+        message: JSON.stringify({ errors: [{ code: 'already_exists' }] })
+      })
+
+      const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
+
+      await robot.receive(createdPayload({ repositories: repos }))
+
+      expect(robot.log.error).not.toHaveBeenCalled()
+
+      github.issues.createLabel.mockRejectedValueOnce({
+        message: JSON.stringify({ errors: [{ code: 'unknown error' }] })
+      })
+
+      await robot.receive(createdPayload({ repositories: repos }))
+      expect(robot.log.error).toHaveBeenCalled()
     })
   })
 

@@ -26,7 +26,7 @@ module.exports = robot => async context => {
       })
     })
 
-    return Promise.all(promises)
+    await Promise.all(promises)
   } catch (e) {
     robot.log.error(e)
   }

@@ -11,7 +11,11 @@ function getLabelConfig(config, labelName) {
     return config.labels[labelName]
   }
 
-  return config.default.comment
+  if (config.default && config.default.comment) {
+    return config.default.comment
+  }
+
+  return {}
 }
 
 module.exports = queue => async context => {
