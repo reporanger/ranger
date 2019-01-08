@@ -5,8 +5,7 @@ const { CLOSE, MERGE } = require('./constants')
 const TIME = process.env.NODE_ENV === 'production' ? '7 days' : '10s'
 
 const CONFIG_FILE = 'ranger.yml'
-const DEFAULT_COMMENT = '⚠️ This has been marked to be closed in $CLOSE_TIME.'
-const DEFAULT_CLOSE_TIME = ms(TIME)
+
 const DEFAULT_LABELS = {
   duplicate: CLOSE,
   wontfix: CLOSE,
@@ -17,8 +16,8 @@ const DEFAULT_LABELS = {
 const defaultConfig = {
   default: {
     [CLOSE]: {
-      comment: DEFAULT_COMMENT,
-      delay: DEFAULT_CLOSE_TIME
+      comment: '⚠️ This has been marked to be closed in $CLOSE_TIME.',
+      delay: ms(TIME)
     }
   },
   labels: DEFAULT_LABELS
