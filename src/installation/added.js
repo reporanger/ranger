@@ -15,7 +15,15 @@ module.exports = robot => async context => {
         description: 'Merge the PR once all status checks have passed'
       }
 
-      return createLabel(github, data)
+      return createLabel(github, data).catch(err => {
+        if (
+          !(
+            err.message && JSON.parse(err.message).errors.find(err => err.code === 'already_exists')
+          )
+        ) {
+          throw err
+        }
+      })
     })
 
     return Promise.all(promises)

@@ -125,7 +125,7 @@ describe('Bot', () => {
     github = {
       issues: {
         createComment: jest.fn(),
-        createLabel: jest.fn(),
+        createLabel: jest.fn().mockResolvedValue(),
         update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       pullRequests: {
