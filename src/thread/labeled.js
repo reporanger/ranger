@@ -21,11 +21,16 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  const commentableLabels = thread.labels.filter(
-    l =>
-      config.labels[l.name] &&
-      (config.labels[l.name].action || config.labels[l.name]).trim().toLowerCase() === COMMENT
-  )
+  const commentableLabels = thread.labels.filter(l => {
+    if (!config.labels[l.name]) return false
+
+    const action =
+      typeof config.labels[l.name] === 'string'
+        ? config.labels[l.name]
+        : config.labels[l.name].action
+
+    return action && action.trim().toLowerCase() === COMMENT
+  })
 
   commentableLabels.forEach(async label => {
     const jobId = `${ID}:${label.name}`

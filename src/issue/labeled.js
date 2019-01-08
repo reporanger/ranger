@@ -20,11 +20,16 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  const withClosableLabels = thread.labels.filter(
-    l =>
-      config.labels[l.name] &&
-      (config.labels[l.name].action || config.labels[l.name]).trim().toLowerCase() === CLOSE
-  )
+  const withClosableLabels = thread.labels.filter(l => {
+    if (!config.labels[l.name]) return false
+
+    const action =
+      typeof config.labels[l.name] === 'string'
+        ? config.labels[l.name]
+        : config.labels[l.name].action
+
+    return action && action.trim().toLowerCase() === CLOSE
+  })
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)
