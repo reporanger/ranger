@@ -19,12 +19,8 @@ module.exports = async robot => {
     removeOnFailure: true,
     activateDelayedJobs: true,
     redis: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
       db: 0,
-      user: process.env.REDIS_USER,
-      password: process.env.REDIS_PASSWORD,
-      options: { password: process.env.REDIS_PASSWORD }
+      url: process.env.REDIS_URL
     }
   })
 
