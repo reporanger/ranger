@@ -109,9 +109,10 @@ labels:
     message: boop
   comment3: comment
 
-delay: 1ms
-
-comment: This issue has been marked to be closed in $DELAY.
+default:
+  close:
+    delay: 1ms
+    comment: This issue has been marked to be closed in $DELAY.
 `
 
 describe('Bot', () => {
