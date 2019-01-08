@@ -35,7 +35,7 @@ module.exports = queue => async context => {
 
       if (comment && comment.trim() !== 'false') {
         const body = comment
-          .replace('$CLOSE_TIME', ms(time, { long: true }))
+          .replace('$DELAY', ms(time, { long: true }))
           .replace('$LABEL', label.name)
         context.github.issues.createComment(context.issue({ body }))
       }

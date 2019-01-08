@@ -89,7 +89,7 @@ labels:
   duplicate:
     action: close
     delay: 5ms
-    comment: $LABEL issue created! Closing in $CLOSE_TIME . . .
+    comment: $LABEL issue created! Closing in $DELAY . . .
   invalid: close
   wontfix:
     action: close
@@ -110,7 +110,7 @@ labels:
 
 delay: 1ms
 
-comment: This issue has been marked to be closed in $CLOSE_TIME.
+comment: This issue has been marked to be closed in $DELAY.
 `
 
 describe('Bot', () => {

@@ -40,16 +40,16 @@ default:
 
     # Default comment to post when an issue is first marked with a closing label
     #
-    #   $ClOSE_TIME will automatically be replaced with `delay` as a formatted string (e.g. '7 days')
+    #   $DELAY will automatically be replaced with `delay` as a formatted string (e.g. '7 days')
     #   $LABEL will automatically be replaced with the label's name
-    comment: "⚠️ This issue has been marked to be closed in $CLOSE_TIME".
+    comment: "⚠️ This issue has been marked to be closed in $DELAY".
 
 # Map granular configurations you can set for each label
 labels:
   duplicate:
     action: close
     delay: 15s
-    comment: "Duplicate issue created! Closing in $CLOSE_TIME . . ."
+    comment: "Duplicate issue created! Closing in $DELAY . . ."
   invalid: close # use defaults for comment and delay time
   'merge when passing': merge
   #comment:
