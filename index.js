@@ -12,6 +12,8 @@ const { CLOSE, MERGE } = require('./src/constants')
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
 module.exports = async robot => {
+  robot.route('/').get('/health', (req, res) => res.send('OK'))
+
   const queue = new Queue('issues', {
     removeOnSuccess: true,
     removeOnFailure: true,
