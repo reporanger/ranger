@@ -1,4 +1,5 @@
 const Queue = require('bee-queue')
+const Sentry = require('@sentry/node')
 
 const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
@@ -10,6 +11,9 @@ const installationAdded = require('./src/installation/added')
 const { CLOSE, MERGE } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
+
+// Probot will also send errors to Sentry DNS: https://probot.github.io/docs/configuration/
+Sentry.init({ dsn: process.env.SENTRY_DSN })
 
 module.exports = async robot => {
   robot.route('/').get('/health', (req, res) => res.send('OK'))
@@ -40,6 +44,7 @@ module.exports = async robot => {
 
   queue.on('failed', (job, err) => {
     robot.log.error(`Job ${job.id} failed with error ${err.message}`)
+    Sentry.captureException(err, { job })
   })
 
   function wrapPaymentCheck(fn) {

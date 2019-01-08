@@ -11,7 +11,8 @@
     "WEBHOOK_SECRET": "@issues_secret",
     "REDIS_HOST": "@issues_redis_host",
     "REDIS_PORT": "@issues_redis_port",
-    "REDIS_PASSWORD": "@issues_redis_password"
+    "REDIS_PASSWORD": "@issues_redis_password",
+    "SENTRY_DSN": "@ranger_sentry_dsn"
   },
   "features": {
     "cloud": "v2"

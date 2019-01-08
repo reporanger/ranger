@@ -15,6 +15,7 @@
     "deploy": "now"
   },
   "dependencies": {
+    "@sentry/node": "4.4.2",
     "bee-queue": "^1.2.2",
     "moment": "^2.23.0",
     "ms": "^2.1.1",
