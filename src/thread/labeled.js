@@ -22,6 +22,7 @@ module.exports = queue => async context => {
   const config = await getConfig(context)
 
   const commentableLabels = thread.labels.filter(l => {
+    if (typeof config.labels !== 'object') return false
     if (!config.labels[l.name]) return false
 
     const action =

@@ -9,6 +9,20 @@ const { closeIssue } = require('../api')
 const getConfig = require('../config')
 const { CLOSE } = require('../constants')
 
+function getLabelByAction(config, actionName) {
+  return label => {
+    if (typeof config.labels !== 'object') return false
+    if (!config.labels[label.name]) return false
+
+    const action =
+      typeof config.labels[label.name] === 'string'
+        ? config.labels[label.name]
+        : config.labels[label.name].action
+
+    return action && action.trim().toLowerCase() === actionName
+  }
+}
+
 module.exports = queue => async context => {
   const ID = getId(context, { action: CLOSE })
 
@@ -20,16 +34,7 @@ module.exports = queue => async context => {
 
   const config = await getConfig(context)
 
-  const withClosableLabels = thread.labels.filter(l => {
-    if (!config.labels[l.name]) return false
-
-    const action =
-      typeof config.labels[l.name] === 'string'
-        ? config.labels[l.name]
-        : config.labels[l.name].action
-
-    return action && action.trim().toLowerCase() === CLOSE
-  })
+  const withClosableLabels = thread.labels.filter(getLabelByAction(config, CLOSE))
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)
