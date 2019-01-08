@@ -5,7 +5,7 @@ const app = require('..')
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
 const addedPayload = require('./fixtures/added')
-const createdPayload = require('./fixtures/created')
+const installedPayload = require('./fixtures/installed')
 
 const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
 
@@ -84,6 +84,23 @@ jest.mock(
     }
 )
 
+jest.mock(
+  'airtable',
+  () =>
+    class MockAirtable {
+      constructor() {
+        this.create = jest.fn(() => {
+          return Promise.resolve()
+        })
+        this.base = () => () => {
+          return {
+            create: this.create
+          }
+        }
+      }
+    }
+)
+
 const config = `
 labels:
   duplicate:
@@ -119,10 +136,12 @@ describe('Bot', () => {
   let robot
   let github
   let queue
+  let airtable
   beforeEach(async () => {
     robot = new Application()
     const setup = await app(robot)
     queue = setup.queue
+    airtable = setup.airtable
 
     github = {
       issues: {
@@ -402,7 +421,7 @@ describe('Bot', () => {
   describe('installation', () => {
     test.each([
       repos => addedPayload({ repositories_added: repos }),
-      repos => createdPayload({ repositories: repos })
+      repos => installedPayload({ repositories: repos })
     ])('Will take action when repos are added', async createPayload => {
       const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
 
@@ -419,7 +438,7 @@ describe('Bot', () => {
       })
     })
 
-    test('will only throw on createLabel if error is not of type "already_exists"', async () => {
+    test('Will only throw on createLabel if error is not of type "already_exists"', async () => {
       robot.log.error = jest.fn()
       github.issues.createLabel.mockRejectedValueOnce({
         message: JSON.stringify({ errors: [{ code: 'already_exists' }] })
@@ -427,7 +446,7 @@ describe('Bot', () => {
 
       const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
 
-      await robot.receive(createdPayload({ repositories: repos }))
+      await robot.receive(installedPayload({ repositories: repos }))
 
       expect(robot.log.error).not.toHaveBeenCalled()
 
@@ -435,7 +454,7 @@ describe('Bot', () => {
         message: JSON.stringify({ errors: [{ code: 'unknown error' }] })
       })
 
-      await robot.receive(createdPayload({ repositories: repos }))
+      await robot.receive(installedPayload({ repositories: repos }))
       expect(robot.log.error).toHaveBeenCalled()
     })
   })
@@ -525,6 +544,29 @@ describe('Bot', () => {
       })
       await robot.receive(payload({ isPrivate: true }))
       expect(queue.createJob).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('analytics', () => {
+    test.each([
+      repos => addedPayload({ repositories_added: repos }),
+      repos => installedPayload({ repositories: repos })
+    ])('Will track installations', async createPayload => {
+      const repos = [
+        { full_name: 'ranger/test-0', private: true },
+        { full_name: 'ranger/test-1', private: false }
+      ]
+
+      await robot.receive(createPayload(repos))
+
+      repos.forEach(repo => {
+        expect(airtable('installed').create).toHaveBeenCalledWith({
+          login: 'ranger',
+          type: 'User',
+          repo: repo.full_name,
+          private: repo.private
+        })
+      })
     })
   })
 })

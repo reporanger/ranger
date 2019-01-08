@@ -1,5 +1,5 @@
-module.exports = ({ action = 'added', repositories_added }) => ({
-  name: 'installation_repositories',
+module.exports = ({ action = 'created', repositories }) => ({
+  name: 'installation',
   payload: {
     action,
     installation: {
@@ -10,6 +10,6 @@ module.exports = ({ action = 'added', repositories_added }) => ({
         type: 'User'
       }
     },
-    repositories_added
+    repositories
   }
 })
