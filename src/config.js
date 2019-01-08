@@ -16,7 +16,7 @@ const DEFAULT_LABELS = {
 const defaultConfig = {
   default: {
     [CLOSE]: {
-      comment: '⚠️ This has been marked to be closed in $CLOSE_TIME.',
+      comment: '⚠️ This has been marked to be closed in $DELAY.',
       delay: ms(TIME)
     }
   },
