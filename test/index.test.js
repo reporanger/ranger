@@ -89,14 +89,8 @@ jest.mock(
   () =>
     class MockAirtable {
       constructor() {
-        this.create = jest.fn(() => {
-          return Promise.resolve()
-        })
-        this.base = () => () => {
-          return {
-            create: this.create
-          }
-        }
+        this.create = jest.fn().mockResolvedValue()
+        this.base = () => () => ({ create: this.create })
       }
     }
 )
@@ -553,8 +547,8 @@ describe('Bot', () => {
       repos => installedPayload({ repositories: repos })
     ])('Will track installations', async createPayload => {
       const repos = [
-        { full_name: 'ranger/test-0', private: true },
-        { full_name: 'ranger/test-1', private: false }
+        { name: 'ranger/test-0', private: true },
+        { name: 'ranger/test-1', private: false }
       ]
 
       await robot.receive(createPayload(repos))
@@ -563,8 +557,9 @@ describe('Bot', () => {
         expect(airtable('installed').create).toHaveBeenCalledWith({
           login: 'ranger',
           type: 'User',
-          repo: repo.full_name,
-          private: repo.private
+          repo: repo.name,
+          private: repo.private,
+          installationId: 42
         })
       })
     })

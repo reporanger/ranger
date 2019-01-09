@@ -2,6 +2,7 @@ exports.installed = (robot, airtable) => async ({
   payload: { installation, repositories, repositories_added }
 }) => {
   const {
+    id: installationId,
     account: { login, type }
   } = installation
 
@@ -10,7 +11,13 @@ exports.installed = (robot, airtable) => async ({
   try {
     await Promise.all(
       repos.map(repo =>
-        airtable('installed').create({ login, type, repo: repo.full_name, private: repo.private })
+        airtable('installed').create({
+          login,
+          type,
+          repo: repo.name,
+          private: repo.private,
+          installationId
+        })
       )
     )
   } catch (e) {

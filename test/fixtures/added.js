@@ -3,7 +3,7 @@ module.exports = ({ action = 'added', repositories_added }) => ({
   payload: {
     action,
     installation: {
-      id: 533899,
+      id: 42,
       account: {
         login: 'ranger',
         id: 1,
