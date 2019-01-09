@@ -10,6 +10,7 @@ module.exports = {
   },
   plugins: ['import'],
   rules: {
-    'import/no-unresolved': 2
+    'import/no-unresolved': 'error',
+    'no-duplicate-imports': 'error'
   }
 }
