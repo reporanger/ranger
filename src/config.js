@@ -6,13 +6,6 @@ const TIME = process.env.NODE_ENV === 'production' ? '7 days' : '10s'
 
 const CONFIG_FILE = 'ranger.yml'
 
-const DEFAULT_LABELS = {
-  duplicate: CLOSE,
-  wontfix: CLOSE,
-  invalid: CLOSE,
-  automerge: MERGE
-}
-
 const defaultConfig = {
   default: {
     [CLOSE]: {
@@ -20,7 +13,17 @@ const defaultConfig = {
       delay: ms(TIME)
     }
   },
-  labels: DEFAULT_LABELS
+  labels: {
+    duplicate: CLOSE,
+    wontfix: CLOSE,
+    invalid: CLOSE,
+    automerge: MERGE
+  },
+  comments: {
+    '/duplicate of/i': {
+      labels: 'duplicate'
+    }
+  }
 }
 
 exports.CONFIG_FILE = CONFIG_FILE

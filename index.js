@@ -6,6 +6,7 @@ const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
 const threadClosed = require('./src/thread/closed')
 const commentDeleted = require('./src/comment/deleted')
+const commentCreated = require('./src/comment/created')
 const installationAdded = require('./src/installation/added')
 
 const { CLOSE, MERGE } = require('./src/constants')
@@ -80,6 +81,8 @@ module.exports = async robot => {
   robot.on(['issues.closed', 'pull_request.closed'], threadClosed(queue))
 
   robot.on('issue_comment.deleted', commentDeleted(queue))
+
+  robot.on(['issue_comment.created', 'issue_comment.edited'], commentCreated())
 
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
 
