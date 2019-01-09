@@ -7,6 +7,8 @@ const commentPayload = require('./fixtures/comment')
 const addedPayload = require('./fixtures/added')
 const createdPayload = require('./fixtures/created')
 
+const { MAINTAINERS } = require('../src/constants')
+
 const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
 
 class MockJob {
@@ -128,6 +130,7 @@ describe('Bot', () => {
       issues: {
         createComment: jest.fn(),
         createLabel: jest.fn().mockResolvedValue(),
+        addLabels: jest.fn().mockResolvedValue(),
         update: jest.fn((_, data) => Promise.resolve({ data }))
       },
       pullRequests: {
@@ -396,6 +399,47 @@ describe('Bot', () => {
       expect(queue.createJob).not.toHaveBeenCalled()
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:close`)
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:merge`)
+    })
+    describe('created', () => {
+      test.each(MAINTAINERS)(
+        `by %s's will trigger actions if the payload is correct`,
+        async author_association => {
+          const number = 55
+
+          await robot.receive(
+            commentPayload({
+              number,
+              action: 'created',
+              body: 'Duplicate of #54',
+              author_association
+            })
+          )
+
+          expect(github.issues.addLabels).toHaveBeenCalledWith({
+            number,
+            labels: ['duplicate'],
+            owner: 'mfix22',
+            repo: 'test-issue-bot'
+          })
+        }
+      )
+      test.each(['duplicate', 'duplicate #54'])(
+        'will not trigger if payload is invalid %#',
+        async body => {
+          const number = 55
+
+          await robot.receive(
+            commentPayload({
+              number,
+              action: 'created',
+              author_association: 'OWNER',
+              body
+            })
+          )
+
+          expect(github.issues.addLabels).not.toHaveBeenCalled()
+        }
+      )
     })
   })
 
