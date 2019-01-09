@@ -10,6 +10,3 @@ exports.MAINTAINERS = ['COLLABORATOR', 'MEMBER', 'OWNER']
 
 // Payment Plans
 exports.OPEN_SOURCE = 1
-
-// Airtable Bases
-exports.AIRTABLE_EVENTS = 'appobbLH4DyF1gHd2'
