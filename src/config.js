@@ -1,6 +1,6 @@
 const ms = require('ms')
 
-const { CLOSE, MERGE } = require('./constants')
+const { CLOSE, MERGE, LABEL } = require('./constants')
 
 const TIME = process.env.NODE_ENV === 'production' ? '7 days' : '10s'
 
@@ -19,11 +19,13 @@ const defaultConfig = {
     invalid: CLOSE,
     automerge: MERGE
   },
-  comments: {
-    '/duplicate of/i': {
+  comments: [
+    {
+      action: LABEL,
+      pattern: '/duplicate of/i',
       labels: ['duplicate']
     }
-  }
+  ]
 }
 
 exports.CONFIG_FILE = CONFIG_FILE
