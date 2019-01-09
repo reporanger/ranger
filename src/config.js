@@ -21,7 +21,7 @@ const defaultConfig = {
   },
   comments: {
     '/duplicate of/i': {
-      labels: 'duplicate'
+      labels: ['duplicate']
     }
   }
 }
