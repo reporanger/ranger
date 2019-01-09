@@ -24,4 +24,11 @@ const defaultConfig = {
 
 exports.CONFIG_FILE = CONFIG_FILE
 
-module.exports = context => context.config(CONFIG_FILE, defaultConfig)
+module.exports = async context => {
+  const config = await context.config(CONFIG_FILE, defaultConfig)
+
+  // merge defaults
+  Object.assign(config.default, defaultConfig.default, config.default)
+
+  return config
+}
