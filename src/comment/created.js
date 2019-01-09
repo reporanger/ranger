@@ -17,7 +17,8 @@ function parseRegex(string) {
     return new RegExp(match[1], match[2])
   }
 
-  return () => ({ test: () => {} })
+  // matches nothing
+  return /$^/
 }
 
 module.exports = () => async context => {
