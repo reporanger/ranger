@@ -1,7 +1,7 @@
 const Queue = require('bee-queue')
 const Sentry = require('@sentry/node')
 
-const analytics = require('./src/analytics')
+const { installed, airtable } = require('./src/analytics')
 
 const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
@@ -20,8 +20,6 @@ Sentry.init({ dsn: process.env.SENTRY_DSN })
 
 module.exports = async robot => {
   robot.route('/').get('/health', (req, res) => res.send('OK'))
-
-  const { airtable } = analytics(robot)
 
   const queue = new Queue('issues', {
     removeOnSuccess: true,
@@ -89,6 +87,8 @@ module.exports = async robot => {
   robot.on(['issue_comment.created', 'issue_comment.edited'], commentCreated())
 
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
+
+  robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
 
   // For more information on building apps:
   // https://probot.github.io/docs/
