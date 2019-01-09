@@ -111,6 +111,12 @@ labels:
     message: boop
   comment3: comment
 
+comments:
+  - action: label
+    pattern: /duplicate of/i
+    labels: 
+      - duplicate
+
 default:
   close:
     delay: 1ms
