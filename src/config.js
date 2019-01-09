@@ -17,7 +17,7 @@ const defaultConfig = {
     duplicate: CLOSE,
     wontfix: CLOSE,
     invalid: CLOSE,
-    automerge: MERGE
+    'merge when passing': MERGE
   },
   comments: [
     {
