@@ -1,4 +1,4 @@
-const { MAINTAINERS } = require('../constants')
+const { MAINTAINERS, LABEL } = require('../constants')
 const getConfig = require('../config')
 
 function isMaintainer(association) {
@@ -26,16 +26,17 @@ module.exports = () => async context => {
 
   const { author_association, body } = context.payload.comment
 
-  if (isMaintainer(author_association)) {
-    if (typeof config.comments === 'object') {
-      Object.keys(config.comments).forEach(async key => {
-        if (body.includes(key) || parseRegex(key).test(body)) {
-          const { labels } = config.comments[key]
-          if (labels) {
-            await context.github.issues.addLabels(context.issue({ labels: many(labels) }))
-          }
-        }
-      })
-    }
-  }
+  if (!isMaintainer(author_association)) return
+
+  if (!Array.isArray(config.comments)) return
+
+  await Promise.all(
+    config.comments.map(async ({ action, pattern, labels } = {}) => {
+      if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
+      if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+      if (!labels) return
+
+      return context.github.issues.addLabels(context.issue({ labels: many(labels) }))
+    })
+  )
 }
