@@ -2,6 +2,8 @@
 
 > Ease the burden of repository maintainers
 
+* [Docs](https://www.notion.so/dawnlabs/Docs-8d7627bb1f3c42b7b1820e8d6f157a57)
+
 ## Usage
 
 1. **[Configure the GitHub App](https://github.com/marketplace/ranger)**
