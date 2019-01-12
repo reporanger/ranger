@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A GitHub bot that eases the burden of repository maintainers"
+    />
+    <title>Repo Ranger</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <style type="text/css">
+      p {
+        max-width: 28rem;
+        text-align: center;
+      }
+
+      .splash {
+        align-self: stretch;
+        align-items: center;
+        background-color: #2093F3;
+        flex-direction: column;
+      }
+
+      .splash .button {
+        color: #2093F3;
+      }
+
+      .hero {
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 46rem;
+        padding: 2rem;
+      }
+
+      .hero p {
+        max-width: 32rem;
+        font-size: 1.25rem;
+        line-height: 1.5rem;
+      }
+
+      .hero .button {
+        margin-top: 3rem;
+      }
+
+      .img-hero {
+        background: #2093F3;
+        min-height: 500px;
+        width: 100%;
+      }
+
+      .img-screen {
+        border-radius: 4px;
+        margin: 2rem;
+        width: 40rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="splash">
+      <header>
+        <a href="/" class="logo">
+          <img src="/assets/hat.png" class="img-hat" />
+          <span>Ranger</span>
+        </a>
+        <nav>
+          <a href="#about">About</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+        </nav>
+      </header>
+      <div class="hero">
+        <h1>
+            REPO MAINtenance is HARD you could use a hand
+        </h1>
+        <p>
+            Ranger is a bot that provides a set of fire-and-forget tools to help make repository management easier
+        </p>
+
+        <a href="https://github.com/marketplace/ranger" class="button">
+          <img src="/assets/github.svg" />
+          Add to Github
+        </a>
+      </div>
+    </div>
+    <img src="/assets/hero.png" class="img-hero" />
+
+    <div class="container" id="about">
+      <h2>Maintainer-First Automation</h2>
+      <p>
+        Ranger provides maintainers a set of fire-and-forget tools to help make common actions friendly and consistent. 
+      </p>
+      <p>
+        Simply apply labels to close issues, merge pull requests, or create typical comments automatically. All configurable through a simple YAML file.
+      </p>
+    </div>
+
+    <div class="container" id="features">
+      <h3>Auto-Merge Pull Requests</h3>
+
+      <p>
+        Stop checking if tests have passed and guessing when your build will finish. 
+        Just add the appropriate label and Ranger will know when to merge your pull request.
+      </p>
+
+      <img src="/assets/screen-automerge.png" class="img-screen" />
+    </div>
+
+    <div class="container">
+      <h3>Friendly Issue Auto-Close</h3>
+
+      <p>
+        Instead of slamming an issue "closed", give potential contributors a chance to speak up before closing. 
+      </p>
+      <p>
+        Ranger let's you apply a label to mark an issue for closure with a configurable delay as well as a custom comment to explain why an issue is being closed.
+      </p>
+
+      <img src="/assets/screen-autoclose.png" class="img-screen" />
+    </div>
+
+    <div class="container">
+      <h3>Standardize Your Replies</h3>
+
+      <p>
+        Leave robotic comments to the bots.
+        Ranger let's you quickly send preconfigured responses while being explicit about the fact that they're standardized. 
+      </p>
+
+      <img src="/assets/screen-replies.png" class="img-screen" />
+    </div>
+
+    <div class="container">
+      <h3>And So Much More</h3>
+
+      <p>
+        Ranger can help in many other ways too! Almost any automation can be added through a custom label. 
+        Check out the docs to see a full list of Ranger's capabilities.
+      </p>
+      <p>
+        Have a feature idea or repetitive action that should be added to Ranger's defaults? Let us know!
+      </p>
+    </div>
+
+    <div class="container" id="pricing">
+      <h2>Pricing</h2>
+
+      <p>
+        Ranger is currently in beta and still learning how it can be most helpful.
+        While in beta, Ranger will be free for all public repositories, for individuals and organizations. 
+        Additionally, Ranger will always be free for open-source individuals and not-for-profit communities.
+      </p>
+    </div>
+
+    <a href="https://github.com/marketplace/ranger" class="button">
+      <img src="/assets/github.svg" />
+      Add To Github
+    </a>
+
+    <footer>
+      <div class="footer-nav">
+        <a href="/feedback.html">Feedback</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+      </div>
+      <div class="footer-author">
+        a project by <a href="https://dawnlabs.io">Dawn Labs</a> ¬
+      </div>
+    </footer>
+  </body>
+</html>

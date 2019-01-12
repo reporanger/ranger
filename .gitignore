@@ -7,3 +7,5 @@ package-lock.json
 coverage
 
 brand/*
+
+.DS_Store

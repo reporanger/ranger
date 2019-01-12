@@ -1,0 +1,161 @@
+html {
+  color: white;
+  background-color: #002B1A;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+div, button, footer, header, nav, form {
+  display: flex;
+}
+
+header {
+  width: 100%;
+  max-width: 800px;
+  margin: 4rem 0rem 8rem 0rem;
+  justify-content: space-between;
+}
+
+nav {
+  align-items: center;
+  justify-content: space-between;
+  text-transform: uppercase;
+}
+
+nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+}
+
+footer {
+  align-items: center;
+  flex-direction: column;
+  margin: 12rem 0;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.8rem;
+  margin: 1rem;
+}
+
+p, ul, ol {
+  max-width: 42rem;
+}
+
+li {
+  margin-bottom: 1rem;
+}
+
+h1, h2, h3, h4 {
+  color: #FDE106;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+h1 {
+  margin: 1rem 0;
+  font-size: 3rem;
+  line-height: 3.5rem;
+  word-spacing: 1rem;
+}
+h2 {
+  font-size: 2rem;
+  margin: .5rem 0;
+}
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1.25rem;
+  margin: 4rem 0 0 0;
+}
+
+a {
+  color: white;
+  text-decoration: underline;
+  margin: 0 .5rem;
+}
+
+p a {
+  margin: 0;
+}
+
+a:active {
+
+}
+
+a:hover {
+
+}
+
+img {
+  max-width: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+button, .button {
+  align-items: center;
+  background: white;
+  border: 0;
+  border-radius: 4px;
+  color: #002B1A;
+  cursor: pointer;
+  justify-content: center;
+  outline: 0;
+  padding: 1rem 1.5rem;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.button img {
+  width: 1rem;
+  margin-right: 1rem;
+}
+
+.button {
+  text-decoration: none;
+}
+
+.container {
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  margin: 6rem 0;
+  max-width: 50rem;
+}
+
+.logo {
+  align-items: center;
+  color: white;
+  display: flex;
+  text-transform: uppercase;
+  user-select: none;
+  text-decoration: none;
+}
+
+.img-hat {
+  height: 100%;
+  margin-right: .5rem;
+  width: 2rem;
+}
+
+.footer-nav {
+  margin-bottom: 2rem;
+}
+
+.footer-author {
+  color: rgba(255,255,255,.5);
+}
+
+.footer-author a {
+  color: #FDE106;
+}
