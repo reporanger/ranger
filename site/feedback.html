@@ -7,7 +7,7 @@
       name="description"
       content="A GitHub bot that eases the burden of repository maintainers"
     />
-    <title>Repo Ranger - Feedback</title>
+    <title>Submit Feedback | Ranger</title>
     <link rel="icon" type="image/png" href="/assets/favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="/assets/favicon-16x16.png" sizes="16x16" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
@@ -15,28 +15,27 @@
     <style>
       p {
         text-align: center;
-        max-width: 32rem;
+        max-width: 33rem;
       }
 
       button {
         background: #FDE106;
+        padding: 1.25rem 0;
       }
 
       form {
         flex-direction: column;
         flex: 1;
+        width: 100%;
+        max-width: 33rem;
         margin: 4rem 0 0 0;
       }
 
       form > div {
+        display: flex;
         flex: 1;
         justify-content: space-between;
         margin-bottom: 1rem;
-      }
-
-      input {
-        border: none;
-        outline: none;
       }
 
       input:first-of-type {
@@ -46,10 +45,14 @@
       input, textarea {
         border-radius: 4px;
         padding: 1rem;
+        font-size: 1.25rem;
+        width: 100%;
+        border: none;
+        outline: none;
       }
 
       textarea {
-        height: 8rem;
+        height: 12rem;
         margin-bottom: 2rem;
         resize: none;
       }
@@ -59,8 +62,7 @@
   <body>
     <header>
       <a href="/" class="logo">
-        <img src="/assets/hat.png" class="img-hat" />
-        Ranger
+        <img src="/assets/logo.svg" />
       </a>
       <nav>
         <a href="/index.html#about">About</a>

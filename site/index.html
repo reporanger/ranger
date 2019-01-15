@@ -12,13 +12,20 @@
     <link rel="icon" type="image/png" href="/assets/favicon-16x16.png" sizes="16x16" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="index.css" />
+    <link rel="stylesheet" type="text/css" href="/lib/zoom.css" />
+    <script type="text/javascript" src="/lib/zoom.min.js"></script>
     <style type="text/css">
       p {
-        max-width: 34rem;
+        max-width: 33rem;
         text-align: center;
       }
 
+      nav a:hover {
+        color: rgba(0,0,0,0.4);
+      }
+
       .splash {
+        display: flex;
         align-self: stretch;
         align-items: center;
         background-color: #2093F3;
@@ -30,16 +37,17 @@
       }
 
       .hero {
+        display: flex;
         align-items: center;
         flex-direction: column;
         justify-content: center;
-        max-width: 46rem;
-        padding: 2rem;
+        margin-bottom: -4rem;
+        z-index: 1;
       }
 
       .hero p {
-        max-width: 32rem;
-        font-size: 1.25rem;
+        max-width: 33rem;
+        font-size: 1.375rem;
       }
 
       .hero .button {
@@ -54,8 +62,7 @@
 
       .img-screen {
         border-radius: 4px;
-        margin: 2rem;
-        width: 40rem;
+        margin: 1.5rem 0;
       }
     </style>
   </head>
@@ -63,7 +70,7 @@
     <div class="splash">
       <header>
         <a href="/" class="logo">
-          <img src="/assets/logo.svg" class="logo" />
+          <img src="/assets/logo.svg" />
         </a>
         <nav>
           <a href="#about">About</a>
@@ -80,7 +87,7 @@
         </p>
 
         <a href="https://github.com/marketplace/ranger" class="button">
-          <img src="/assets/github.svg" />
+          <img src="/assets/github-hero.svg" />
           Add to Github
         </a>
       </div>
@@ -105,7 +112,7 @@
         Just add the appropriate label and Ranger will know when to merge your pull request.
       </p>
 
-      <img src="/assets/screen-automerge.png" class="img-screen" />
+      <img src="/assets/screen-automerge.png" class="img-screen" data-action="zoom" />
     </div>
 
     <div class="container">
@@ -118,7 +125,7 @@
         Ranger let's you apply a label to mark an issue for closure with a configurable delay as well as a custom comment to explain why an issue is being closed.
       </p>
 
-      <img src="/assets/screen-autoclose.png" class="img-screen" />
+      <img src="/assets/screen-autoclose.png" class="img-screen" data-action="zoom" />
     </div>
 
     <div class="container">
@@ -129,7 +136,7 @@
         Ranger let's you quickly send preconfigured responses while being explicit about the fact that they're standardized. 
       </p>
 
-      <img src="/assets/screen-replies.png" class="img-screen" />
+      <img src="/assets/screen-replies.png" class="img-screen" data-action="zoom" />
     </div>
 
     <div class="container">
@@ -152,12 +159,12 @@
         While in beta, Ranger will be free for all public repositories, for individuals and organizations. 
         Additionally, Ranger will always be free for open-source individuals and not-for-profit communities.
       </p>
-    </div>
 
-    <a href="https://github.com/marketplace/ranger" class="button">
-      <img src="/assets/github.svg" />
-      Add To Github
-    </a>
+      <a href="https://github.com/marketplace/ranger" class="button">
+        <img src="/assets/github-footer.svg" />
+        Add To Github
+      </a>
+    </div>
 
     <footer>
       <div class="footer-nav">
