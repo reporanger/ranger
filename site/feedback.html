@@ -77,13 +77,13 @@
       We read all feedback carefully, but are sometimes unable to respond to every submission.
     </p>
 
-    <form>
+    <form name="feedback" method="POST" action="/feedback-success.html" data-netlify="true">
       <div>
-        <input type="" placeholder="Your name" />
-        <input type="email" placeholder="Your email" />
+        <input name="name" type="text" placeholder="Your name" />
+        <input name="email" type="email" placeholder="Your email" />
       </div>
-      <textarea placeholder="Your feedback (question, suggestion, problem, etc)"></textarea>
-      <button>Submit Feedback</button>
+      <textarea name="message" placeholder="Your feedback (question, suggestion, problem, etc)"></textarea>
+      <button type="submit">Submit Feedback</button>
     </form>
 
     <footer>
