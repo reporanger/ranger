@@ -1,8 +1,27 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 html {
   color: white;
   background-color: #002B1A;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 75%;
+}
+
+@media (min-width: 768px) {
+  html { font-size: 80%; }
+}
+
+@media (min-width: 1024px) {
+  html { font-size: 90%; }
+}
+
+@media (min-width: 1200px) {
+  html { font-size: 100%; }
 }
 
 body {
@@ -18,7 +37,7 @@ div, button, footer, header, nav, form {
 
 header {
   width: 100%;
-  max-width: 800px;
+  max-width: 912px;
   margin: 4rem 0rem 8rem 0rem;
   justify-content: space-between;
 }
@@ -32,6 +51,8 @@ nav {
 nav a {
   margin: 0 1rem;
   text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.03rem;
 }
 
 footer {
@@ -41,8 +62,8 @@ footer {
 }
 
 p {
-  font-size: 1rem;
-  line-height: 1.8rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
   margin: 1rem;
 }
 
@@ -64,7 +85,6 @@ h1 {
   margin: 1rem 0;
   font-size: 3rem;
   line-height: 3.5rem;
-  word-spacing: 1rem;
 }
 h2 {
   font-size: 2rem;
@@ -103,12 +123,16 @@ img {
 }
 
 button, .button {
+  display: flex;
   align-items: center;
   background: white;
   border: 0;
   border-radius: 4px;
   color: #002B1A;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
   justify-content: center;
   outline: 0;
   padding: 1rem 1.5rem;
@@ -117,7 +141,7 @@ button, .button {
 }
 
 .button img {
-  width: 1rem;
+  width: 1.25rem;
   margin-right: 1rem;
 }
 
@@ -142,10 +166,10 @@ button, .button {
   text-decoration: none;
 }
 
-.img-hat {
-  height: 100%;
+.logo {
+  padding-top: 0.125rem;
   margin-right: .5rem;
-  width: 2rem;
+  width: 8rem;
 }
 
 .footer-nav {
