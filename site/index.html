@@ -41,8 +41,6 @@
         align-items: center;
         flex-direction: column;
         justify-content: center;
-        margin-bottom: -4rem;
-        z-index: 1;
       }
 
       .hero p {
@@ -51,12 +49,15 @@
       }
 
       .hero .button {
-        margin-top: 3rem;
+        margin: 1rem 0 6rem;
+      }
+      
+      @media (min-width: 768px) {
+        .hero .button { margin: 3rem 0 9rem; }
       }
 
       .img-hero {
         background: #2093F3;
-        min-height: 500px;
         width: 100%;
       }
 
@@ -67,7 +68,7 @@
     </style>
   </head>
   <body>
-    <div class="splash">
+    <div class="splash clear-padding">
       <header>
         <a href="/" class="logo">
           <img src="/assets/logo.svg" />
@@ -92,7 +93,7 @@
         </a>
       </div>
     </div>
-    <img src="/assets/hero.png" class="img-hero" />
+    <img src="/assets/hero.png" class="img-hero clear-padding" />
 
     <div class="container" id="about">
       <h2>Maintainer-First Automation</h2>
@@ -119,10 +120,10 @@
       <h3>Friendly Issue Auto-Close</h3>
 
       <p>
-        Instead of slamming an issue "closed", give potential contributors a chance to speak up before closing. 
+        Instead of slamming an issue “closed”, give potential contributors a chance to speak up before closing. 
       </p>
       <p>
-        Ranger let's you apply a label to mark an issue for closure with a configurable delay as well as a custom comment to explain why an issue is being closed.
+        Ranger let’s you apply a label to mark an issue for closure with a configurable delay as well as a custom comment to explain why an issue is being closed.
       </p>
 
       <img src="/assets/screen-autoclose.png" class="img-screen" data-action="zoom" />
@@ -132,8 +133,8 @@
       <h3>Standardize Your Replies</h3>
 
       <p>
-        Leave robotic comments to the bots.
-        Ranger let's you quickly send preconfigured responses while being explicit about the fact that they're standardized. 
+        Leave <a href="https://help.github.com/articles/about-saved-replies/">robotic comments</a> to the bots.
+        Ranger let’s you quickly send preconfigured responses while being explicit about the fact that they’re standardized. 
       </p>
 
       <img src="/assets/screen-replies.png" class="img-screen" data-action="zoom" />
@@ -144,10 +145,10 @@
 
       <p>
         Ranger can help in many other ways too! Almost any automation can be added through a custom label. 
-        Check out the docs to see a full list of Ranger's capabilities.
+        Check out <a href="https://www.notion.so/Documentation-8d7627bb1f3c42b7b1820e8d6f157a57">the docs</a> to see a full list of Ranger’s capabilities.
       </p>
       <p>
-        Have a feature idea or repetitive action that should be added to Ranger's defaults? Let us know!
+        Have a feature idea or repetitive action that should be added to Ranger’s defaults? <a href="/feedback.html">Let us know</a>!
       </p>
     </div>
 

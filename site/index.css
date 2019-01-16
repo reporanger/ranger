@@ -16,6 +16,7 @@ html {
   background-color: #002c1c;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, Helvetica, sans-serif;
   font-size: 75%;
+  min-width: 320px;
 }
 
 @media (min-width: 768px) {
@@ -44,18 +45,31 @@ button, footer, header, nav, form {
 header {
   width: 100%;
   max-width: 912px;
-  margin: 4rem 0 9rem;
-  justify-content: space-between;
+  margin: 4rem 0 6rem;
+  padding: 0 2rem;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  header {
+    margin-bottom: 9rem;
+    justify-content: space-between;
+  }
 }
 
 nav {
+  display: none;
   align-items: center;
   justify-content: space-between;
   text-transform: uppercase;
 }
 
+@media (min-width: 768px) {
+  nav { display: flex; }
+}
+
 nav a {
-  margin: 0 1rem;
+  margin-left: 2rem;
   text-decoration: none;
   font-weight: 600;
   letter-spacing: 0.03rem;
@@ -94,10 +108,15 @@ h1, h2, h3, h4 {
   margin: 0 0 1.875rem;
 }
 h1 {
-  font-size: 3.25rem;
+  font-size: 6vw;
   line-height: 1.2;
   letter-spacing: -0.1rem;
 }
+
+@media (min-width: 768px) {
+  h1 { font-size: 3.25rem; }
+}
+
 h2 {
   font-size: 2.25rem;
 }
@@ -196,4 +215,8 @@ button, .button {
 
 .footer-author a:hover {
   color: #fff;
+}
+
+.last-modified {
+  text-align: center;
 }
