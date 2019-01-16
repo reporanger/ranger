@@ -31,6 +31,9 @@ exports.createLabel = function createLabel(github, data) {
     repo,
     name,
     color,
-    description
+    description,
+    headers: {
+      Accept: 'application/vnd.github.symmetra-preview+json'
+    }
   })
 }

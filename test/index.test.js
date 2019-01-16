@@ -477,7 +477,10 @@ describe('Bot', () => {
           repo,
           name: 'merge when passing',
           color: 'FF851B',
-          description: 'Merge the PR once all status checks have passed'
+          description: 'Merge the PR automatically once all status checks have passed',
+          headers: {
+            Accept: 'application/vnd.github.symmetra-preview+json'
+          }
         })
       })
     })
