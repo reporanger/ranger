@@ -36,6 +36,7 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0;
+  padding: 0 1rem;
 }
 
 button, footer, header, nav, form {
@@ -181,12 +182,12 @@ button, .button {
   margin-top: 3rem;
 }
 
-.container {
+section {
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  margin: 10rem 0;
+  margin: 10rem 1rem;
   max-width: 50rem;
 }
 
