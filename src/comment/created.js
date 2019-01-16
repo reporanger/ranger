@@ -21,6 +21,10 @@ function parseRegex(string) {
   return /$^/
 }
 
+const headers = {
+  Accept: 'application/vnd.github.symmetra-preview+json'
+}
+
 module.exports = () => async context => {
   const config = await getConfig(context)
 
@@ -36,7 +40,7 @@ module.exports = () => async context => {
       if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return
 
-      return context.github.issues.addLabels(context.issue({ labels: many(labels) }))
+      return context.github.issues.addLabels(context.issue({ labels: many(labels), headers }))
     })
   )
 }

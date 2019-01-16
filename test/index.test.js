@@ -438,7 +438,10 @@ describe('Bot', () => {
             number,
             labels: ['duplicate'],
             owner: 'mfix22',
-            repo: 'test-issue-bot'
+            repo: 'test-issue-bot',
+            headers: {
+              Accept: 'application/vnd.github.symmetra-preview+json'
+            }
           })
         }
       )
