@@ -6,6 +6,10 @@ module.exports = async function verifyPaymentPlan(robot, context) {
     return true
   }
 
+  if (context.payload.organization && context.payload.organization.login === 'dawnlabs') {
+    return true
+  }
+
   try {
     const github = await robot.auth()
 
