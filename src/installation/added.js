@@ -12,7 +12,7 @@ module.exports = robot => async context => {
         repo,
         name: 'merge when passing',
         color: 'FF851B',
-        description: 'Merge the PR once all status checks have passed'
+        description: 'Merge the PR automatically once all status checks have passed'
       }
 
       return createLabel(github, data).catch(err => {
