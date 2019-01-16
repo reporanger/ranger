@@ -26,15 +26,12 @@ module.exports = () => async context => {
 
   const { author_association, body } = context.payload.comment
 
-  console.log(author_association, body, config.comments)
-
   if (!isMaintainer(author_association)) return
 
   if (!Array.isArray(config.comments)) return
 
   await Promise.all(
     config.comments.map(async ({ action, pattern, labels } = {}) => {
-      console.log(action, pattern, labels)
       if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
       if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return
