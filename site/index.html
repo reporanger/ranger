@@ -73,15 +73,26 @@
         margin: 1.5rem 0;
       }
 
+      #more {
+        max-width: 30rem;
+      }
+
       #pricing {
         margin-bottom: 0;
+      }
+
+      #pricing .button {
+        margin-top: 3rem;
       }
     </style>
   </head>
   <body>
     <div class="splash">
       <header>
-        <a href="/" class="logo"> <img src="/assets/logo.svg" /> </a>
+        <div class="logo">
+          <a href="/"><img src="/assets/logo.svg" /></a>
+          <span>beta</span>
+        </div>
         <nav>
           <a href="#about">About</a>
           <a href="/docs">Documentation</a>
@@ -153,7 +164,7 @@
       <img src="/assets/screen-replies.png" class="img-screen" data-action="zoom" />
     </section>
 
-    <section>
+    <section id="more">
       <h3>And So Much More</h3>
 
       <p>
@@ -162,8 +173,9 @@
       </p>
       <p>
         Have a feature idea or repetitive action that should be added to Ranger’s defaults?
-        <a href="/feedback">Let us know</a>!
       </p>
+      <br>
+      <a href="/feedback" class="button">Submit Feedback</a>
     </section>
 
     <section id="pricing">
@@ -189,7 +201,7 @@
       <div class="footer-author">a project by <a href="https://dawnlabs.io">Dawn Labs</a> ¬</div>
 
       <div class="hire-dawn">
-        Need some help on a tool or site like this one? <a href="https://dawnlabs.io/contact">Let’s chat!</a>
+        Need help building a tool or site like this one? <a href="https://dawnlabs.io/contact">Let’s chat!</a>
       </div>
     </footer>
   </body>

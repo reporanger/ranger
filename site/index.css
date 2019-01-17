@@ -178,10 +178,6 @@ button, .button {
   text-decoration: none;
 }
 
-#pricing .button {
-  margin-top: 3rem;
-}
-
 section {
   display: flex;
   align-items: center;
@@ -192,9 +188,31 @@ section {
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo a {
   padding-top: 0.4rem;
   margin-right: .5rem;
   width: 9rem;
+}
+
+.logo span {
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  margin-left: 0.25rem;
+  margin-top: 0.12rem;
+  font-size: 0.4em;
+  font-weight: 600;
+  letter-spacing: .01rem;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  border: 1px solid #fff;
+  border-radius: 2px;
+  padding: 0.125rem 0.25rem;
+  user-select: none;
 }
 
 .footer-nav {
