@@ -1,12 +1,14 @@
 // TODO add DEV flag
 const { OPEN_SOURCE } = require('./constants')
 
+const WHITE_LIST = ['dawnlabs', 'windsorio']
+
 module.exports = async function verifyPaymentPlan(robot, context) {
   if (!context.payload.repository.private) {
     return true
   }
 
-  if (context.payload.organization && context.payload.organization.login === 'dawnlabs') {
+  if (context.payload.organization && WHITE_LIST.includes(context.payload.organization.login)) {
     return true
   }
 
