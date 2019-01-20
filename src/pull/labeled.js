@@ -84,17 +84,37 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
     (pull.mergeable_state === status.CLEAN || pull.mergeable_state === status.HAS_HOOKS)
 
   if (isMergeable) {
-    await github.pullRequests.merge({
-      owner,
-      repo,
-      number,
-      sha: pull.head.sha
-      /*
-      merge_method: merge | rebase | squash
-      commit_title,
-      commit_message,
-      */
-    })
+    try {
+      await github.pullRequests.merge({
+        owner,
+        repo,
+        number,
+        sha: pull.head.sha,
+        merge_method: 'merge'
+        /*
+        commit_title,
+        commit_message,
+        */
+      })
+    } catch(e) {
+      try {
+        await github.pullRequests.merge({
+          owner,
+          repo,
+          number,
+          sha: pull.head.sha,
+          merge_method: 'rebase'
+        })
+      } catch(e) {
+        await github.pullRequests.merge({
+          owner,
+          repo,
+          number,
+          sha: pull.head.sha,
+          merge_method: 'squash'
+        })
+      }
+    }
   } else if (pull.mergeable_state === status.DIRTY) {
     // don't retry if there are merge conflicts
     return
