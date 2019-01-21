@@ -387,6 +387,33 @@ describe('Bot', () => {
       })
     })
 
+    test('Will first try merge, then rebase, then squash', async () => {
+      github.pullRequests.merge
+        .mockRejectedValueOnce(new Error('No Merge'))
+        .mockRejectedValueOnce(new Error('No Rebase'))
+        .mockResolvedValueOnce()
+
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['automerge'],
+          number: 7
+        })
+      )
+
+      await wait(2)
+      ;['merge', 'rebase', 'squash'].forEach(merge_method => {
+        expect(github.pullRequests.merge).toHaveBeenCalledWith({
+          number: 7,
+          owner: 'mfix22',
+          repo: 'test-issue-bot',
+          sha: 0,
+          merge_method
+        })
+      })
+    })
+
     test('Will remove the existing job if a new label event occurs', async () => {
       github.pullRequests.get.mockResolvedValue({
         data: {
