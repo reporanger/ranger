@@ -78,10 +78,8 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
     return
   }
 
-  const isMergeable =
-    pull.mergeable &&
-    !pull.merged &&
-    (pull.mergeable_state === status.CLEAN || pull.mergeable_state === status.HAS_HOOKS)
+  // || pull.mergeable_state === status.HAS_HOOKS
+  const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === status.CLEAN
 
   if (isMergeable) {
     try {
@@ -96,7 +94,7 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
         commit_message,
         */
       })
-    } catch(e) {
+    } catch (e) {
       try {
         await github.pullRequests.merge({
           owner,
@@ -105,7 +103,7 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
           sha: pull.head.sha,
           merge_method: 'rebase'
         })
-      } catch(e) {
+      } catch (e) {
         await github.pullRequests.merge({
           owner,
           repo,
