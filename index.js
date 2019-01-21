@@ -10,6 +10,7 @@ const pullMerged = require('./src/pull/merged')
 const threadClosed = require('./src/thread/closed')
 const commentDeleted = require('./src/comment/deleted')
 const commentCreated = require('./src/comment/created')
+const commitPushed = require('./src/commit/pushed')
 const installationAdded = require('./src/installation/added')
 
 const { CLOSE, MERGE } = require('./src/constants')
@@ -94,6 +95,8 @@ module.exports = async robot => {
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
 
   robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
+
+  robot.on('push', commitPushed())
 
   // For more information on building apps:
   // https://probot.github.io/docs/
