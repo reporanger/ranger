@@ -320,7 +320,8 @@ describe('Bot', () => {
         number: 7,
         owner: 'mfix22',
         repo: 'test-issue-bot',
-        sha: 0
+        sha: 0,
+        merge_method: 'merge'
       })
     })
 
@@ -381,7 +382,8 @@ describe('Bot', () => {
         number: 97,
         owner: 'mfix22',
         repo: 'test-issue-bot',
-        sha: 0
+        sha: 0,
+        merge_method: 'merge'
       })
     })
 
