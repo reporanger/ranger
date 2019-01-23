@@ -128,12 +128,13 @@ comments:
     labels: 
       - duplicate
 
+merges:
+  - action: delete_branch
+
 default:
   close:
     delay: 1ms
     comment: This issue has been marked to be closed in $DELAY.
-
-delete_branch_after_merge: true
 `
 
 describe('Bot', () => {
