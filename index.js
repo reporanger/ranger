@@ -6,6 +6,7 @@ const { installed, airtable } = require('./src/analytics')
 const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
+const pullMerged = require('./src/pull/merged')
 const threadClosed = require('./src/thread/closed')
 const commentDeleted = require('./src/comment/deleted')
 const commentCreated = require('./src/comment/created')
@@ -89,6 +90,8 @@ module.exports = async robot => {
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
 
   robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
+
+  robot.on('pull_request.closed', pullMerged())
 
   // For more information on building apps:
   // https://probot.github.io/docs/
