@@ -1,0 +1,4 @@
+- [ ] Address all new TODOs
+- [ ] Unit tests
+- [ ] Confirm user config API
+- [ ] Add to `/docs`
