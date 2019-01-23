@@ -47,8 +47,10 @@ module.exports = async robot => {
   })
 
   queue.on('failed', (job, err) => {
-    robot.log.error(`Job ${job.id} failed with error ${err.message}`)
-    Sentry.captureException(err, { job })
+    if (err.message !== 'Retry job') {
+      robot.log.error(`Job ${job.id} failed with error ${err.message}`)
+      Sentry.captureException(err, { job })
+    }
   })
 
   function wrapPaymentCheck(fn) {
