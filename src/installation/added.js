@@ -16,11 +16,16 @@ module.exports = robot => async context => {
       }
 
       return createLabel(github, data).catch(err => {
-        if (
-          !(
+        let condition
+        try {
+          // throw original error if parse fails
+          condition =
             err.message && JSON.parse(err.message).errors.find(err => err.code === 'already_exists')
-          )
-        ) {
+        } catch (e) {
+          throw err
+        }
+
+        if (!condition) {
           throw err
         }
       })
