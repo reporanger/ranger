@@ -19,7 +19,8 @@ const defaultConfig = {
     invalid: CLOSE,
     'merge when passing': MERGE
   },
-  comments: []
+  comments: [],
+  delete_branch_after_merge: false
 }
 
 exports.CONFIG_FILE = CONFIG_FILE
