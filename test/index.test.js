@@ -132,6 +132,8 @@ default:
   close:
     delay: 1ms
     comment: This issue has been marked to be closed in $DELAY.
+
+delete_branch_after_merge: true
 `
 
 describe('Bot', () => {
@@ -175,6 +177,9 @@ describe('Bot', () => {
             })
           }
         })
+      },
+      gitdata: {
+        deleteRef: jest.fn().mockResolvedValue()
       }
     }
     robot.auth = () => Promise.resolve(github)
@@ -435,6 +440,43 @@ describe('Bot', () => {
       )
 
       expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99:merge')
+    })
+
+    test('Can delete branches after merging', async () => {
+      const payload = {
+        action: 'closed',
+        number: 3,
+        pull_request: {
+          number: 3,
+          state: 'closed',
+          title: 'Update README.md',
+          user: { login: 'mfix22' },
+          body: '',
+          head: {
+            label: 'dawnlabs:mfix22-patch-1',
+            ref: 'mfix22-patch-1',
+            sha: 'b244454d959a49f53aa60768d117d3eeaa0c552d'
+          },
+          author_association: 'COLLABORATOR',
+          merged: true
+        },
+        repository: {
+          name: 'Hello-World',
+          full_name: 'Codertocat/Hello-World',
+          owner: {
+            login: 'Codertocat'
+          },
+          private: false
+        }
+      }
+
+      await robot.receive({ name: 'pull_request', payload })
+
+      expect(github.gitdata.deleteRef).toHaveBeenCalledWith({
+        owner: 'Codertocat',
+        ref: 'heads/mfix22-patch-1',
+        repo: 'Hello-World'
+      })
     })
   })
 
