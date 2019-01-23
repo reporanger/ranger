@@ -37,3 +37,17 @@ exports.createLabel = function createLabel(github, data) {
     }
   })
 }
+
+exports.addLabels = function addLabels(github, { labels, ...data }) {
+  return github.issues.addLabels({
+    ...data,
+    labels: many(labels),
+    headers: {
+      Accept: 'application/vnd.github.symmetra-preview+json'
+    }
+  })
+}
+
+function many(maybeArray) {
+  return Array.isArray(maybeArray) ? maybeArray : [maybeArray]
+}

@@ -1,12 +1,10 @@
 const { MAINTAINERS, LABEL } = require('../constants')
 const getConfig = require('../config')
 
+const { addLabels } = require('../api')
+
 function isMaintainer(association) {
   return MAINTAINERS.includes(association)
-}
-
-function many(maybeArray) {
-  return Array.isArray(maybeArray) ? maybeArray : [maybeArray]
 }
 
 function parseRegex(string) {
@@ -19,10 +17,6 @@ function parseRegex(string) {
 
   // matches nothing
   return /$^/
-}
-
-const headers = {
-  Accept: 'application/vnd.github.symmetra-preview+json'
 }
 
 module.exports = () => async context => {
@@ -40,7 +34,7 @@ module.exports = () => async context => {
       if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return
 
-      return context.github.issues.addLabels(context.issue({ labels: many(labels), headers }))
+      return addLabels(context.github, context.issue({ labels }))
     })
   )
 }
