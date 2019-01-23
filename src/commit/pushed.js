@@ -37,11 +37,13 @@ module.exports = () => async context => {
 
   if (!MAINTAINER_PERMISSIONS.includes(permission)) return
 
+  const rules = config.commits
+
   // TODO confirm this API
-  if (!Array.isArray(config.commits)) return
+  if (!Array.isArray(rules)) return
 
   await Promise.all(
-    config.commits.map(async ({ action, pattern, labels } = {}) => {
+    rules.map(async ({ action, pattern, labels } = {}) => {
       if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
       if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return

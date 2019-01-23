@@ -96,6 +96,7 @@ module.exports = async robot => {
 
   robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
 
+  // TODO we might actually want to use pull_request.synchronize for this...
   robot.on('push', commitPushed())
 
   // For more information on building apps:
