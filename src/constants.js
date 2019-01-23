@@ -4,6 +4,7 @@ exports.CLOSE = 'close'
 exports.MERGE = 'merge'
 exports.COMMENT = 'comment'
 exports.LABEL = 'label'
+exports.DELETE_BRANCH = 'delete_branch'
 
 // https://developer.github.com/v4/enum/commentauthorassociation/
 exports.MAINTAINERS = ['COLLABORATOR', 'MEMBER', 'OWNER']
