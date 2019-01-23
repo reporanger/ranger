@@ -1,11 +1,8 @@
 const { LABEL } = require('../constants')
 const getConfig = require('../config')
+const { addLabels } = require('../api')
 
 const MAINTAINER_PERMISSIONS = ['admin', 'write']
-
-function many(maybeArray) {
-  return Array.isArray(maybeArray) ? maybeArray : [maybeArray]
-}
 
 function parseRegex(string) {
   // https://stackoverflow.com/questions/874709/converting-user-input-string-to-regular-expression
@@ -17,10 +14,6 @@ function parseRegex(string) {
 
   // matches nothing
   return /$^/
-}
-
-const headers = {
-  Accept: 'application/vnd.github.symmetra-preview+json'
 }
 
 module.exports = () => async context => {
@@ -48,8 +41,8 @@ module.exports = () => async context => {
       if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return
 
-      // TODO move this into the api.js (including `many`)
-      return context.github.issues.addLabels(context.issue({ labels: many(labels), headers }))
+      // TODO this will not work unless we change the event type to a pull_request
+      return addLabels(context.github, context.issue({ labels }))
     })
   )
 }
