@@ -1,4 +1,4 @@
-module.exports = ({ sender = 'ranger' }) => ({
+module.exports = ({ author_association = 'COLLABORATOR' }) => ({
   name: 'pull_request',
   payload: {
     action: 'synchronize',
@@ -6,7 +6,8 @@ module.exports = ({ sender = 'ranger' }) => ({
       number: 4,
       head: {
         sha: 'e829d1a59ce17e24fee7b8ffa42774005acd0240'
-      }
+      },
+      author_association
     },
     repository: {
       id: 130609983,
@@ -16,9 +17,6 @@ module.exports = ({ sender = 'ranger' }) => ({
         login: 'ranger'
       },
       private: false
-    },
-    sender: {
-      login: sender
     }
   }
 })

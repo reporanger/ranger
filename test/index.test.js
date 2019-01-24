@@ -179,14 +179,7 @@ describe('Bot', () => {
         getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
         getCommit: jest
           .fn()
-          .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } }),
-        getCollaboratorPermissionLevel: jest.fn(({ username }) =>
-          Promise.resolve({
-            data: {
-              permission: username === 'ranger' ? 'admin' : 'read'
-            }
-          })
-        )
+          .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } })
       },
       apps: {
         listRepos: jest.fn().mockResolvedValue({
@@ -514,7 +507,7 @@ describe('Bot', () => {
     })
 
     test('Will not take action on a non-maintainer commit message', async () => {
-      await robot.receive(synchronizedPayload({ sender: 'not-ranger' }))
+      await robot.receive(synchronizedPayload({ author_association: 'CONTRIBUTOR' }))
 
       expect(github.issues.addLabels).not.toHaveBeenCalled()
     })

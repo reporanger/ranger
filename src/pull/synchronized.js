@@ -1,8 +1,10 @@
-const { LABEL } = require('../constants')
+const { LABEL, MAINTAINERS } = require('../constants')
 const getConfig = require('../config')
 const { addLabels } = require('../api')
 
-const MAINTAINER_PERMISSIONS = ['admin', 'write']
+function isMaintainer(association) {
+  return MAINTAINERS.includes(association)
+}
 
 function parseRegex(string) {
   // https://stackoverflow.com/questions/874709/converting-user-input-string-to-regular-expression
@@ -20,17 +22,11 @@ module.exports = () => async context => {
   const config = await getConfig(context)
 
   const {
-    pull_request: {
-      head: { sha }
-    },
-    sender: { login: username }
-  } = context.payload
+    head: { sha },
+    author_association
+  } = context.payload.pull_request
 
-  const {
-    data: { permission }
-  } = await context.github.repos.getCollaboratorPermissionLevel(context.repo({ username }))
-
-  if (!MAINTAINER_PERMISSIONS.includes(permission)) return
+  if (!isMaintainer(author_association)) return
 
   const {
     data: {
