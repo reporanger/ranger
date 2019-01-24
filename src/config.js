@@ -19,7 +19,13 @@ const defaultConfig = {
     invalid: CLOSE,
     'merge when passing': MERGE
   },
-  comments: [],
+  comments: [
+    {
+      action: LABEL,
+      pattern: '/merge when passing/i',
+      labels: ['merge when passing']
+    }
+  ],
   commits: [
     {
       action: LABEL,
