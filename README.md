@@ -1,4 +1,4 @@
-# Ranger 🤠
+# Ranger
 
 > Ease the burden of repository maintainers
 
