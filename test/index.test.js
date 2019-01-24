@@ -129,16 +129,14 @@ comments:
     labels: 
       - duplicate
 
-<<<<<<< HEAD
 merges:
   - action: delete_branch
-=======
+
 commits:
   - action: label
     pattern: merge when passing
     labels:
       - merge when passing
->>>>>>> use synchronize, add unit tests, add to default config
 
 default:
   close:
@@ -493,7 +491,7 @@ describe('Bot', () => {
     })
 
     test('Will take action on a maintainer commit message', async () => {
-      await robot.receive(synchronizedPayload({}))
+      await robot.receive(synchronizedPayload())
 
       expect(github.issues.addLabels).toHaveBeenCalledWith({
         number: 4,
