@@ -48,7 +48,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
 
     return count <= max
   } catch (error) {
-    robot.log.error(error)
+    robot.log.error(error, context.repo())
     return false
   }
 }
