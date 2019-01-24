@@ -23,7 +23,7 @@ const defaultConfig = {
   commits: [
     {
       action: LABEL,
-      pattern: 'merge when passing',
+      pattern: '/merge when passing/i',
       labels: ['merge when passing']
     }
   ]

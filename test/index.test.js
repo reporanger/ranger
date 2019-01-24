@@ -134,7 +134,7 @@ merges:
 
 commits:
   - action: label
-    pattern: merge when passing
+    pattern: /merge when passing/i
     labels:
       - merge when passing
 
