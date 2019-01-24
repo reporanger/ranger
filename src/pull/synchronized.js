@@ -20,15 +20,23 @@ module.exports = () => async context => {
   const config = await getConfig(context)
 
   const {
-    message: body,
-    author: { username }
-  } = context.payload.head_commit
+    pull_request: {
+      head: { sha }
+    },
+    sender: { login: username }
+  } = context.payload
 
   const {
     data: { permission }
   } = await context.github.repos.getCollaboratorPermissionLevel(context.repo({ username }))
 
   if (!MAINTAINER_PERMISSIONS.includes(permission)) return
+
+  const {
+    data: {
+      commit: { message: body }
+    }
+  } = await context.github.repos.getCommit(context.repo({ sha }))
 
   const rules = config.commits
 
@@ -41,7 +49,6 @@ module.exports = () => async context => {
       if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return
 
-      // TODO this will not work unless we change the event type to a pull_request
       return addLabels(context.github, context.issue({ labels }))
     })
   )
