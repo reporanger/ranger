@@ -8,7 +8,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
     return true
   }
 
-  if (context.payload.organization && WHITE_LIST.includes(context.payload.organization.login)) {
+  if (WHITE_LIST.includes(context.repo().owner)) {
     return true
   }
 
