@@ -82,18 +82,18 @@ module.exports = async robot => {
     wrapPaymentCheck(pullLabeled(queue))
   )
 
+  robot.on(['issue_comment.created', 'issue_comment.edited'], wrapPaymentCheck(commentCreated()))
+
+  robot.on('pull_request.closed', wrapPaymentCheck(pullMerged()))
+
   // Kill job when issue/pull is closed
   robot.on(['issues.closed', 'pull_request.closed'], threadClosed(queue))
 
   robot.on('issue_comment.deleted', commentDeleted(queue))
 
-  robot.on(['issue_comment.created', 'issue_comment.edited'], commentCreated())
-
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
 
   robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
-
-  robot.on('pull_request.closed', pullMerged())
 
   // For more information on building apps:
   // https://probot.github.io/docs/
