@@ -7,6 +7,7 @@ const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
 const pullMerged = require('./src/pull/merged')
+const pullSynchronized = require('./src/pull/synchronized')
 const threadClosed = require('./src/thread/closed')
 const commentDeleted = require('./src/comment/deleted')
 const commentCreated = require('./src/comment/created')
@@ -85,6 +86,8 @@ module.exports = async robot => {
   robot.on(['issue_comment.created', 'issue_comment.edited'], wrapPaymentCheck(commentCreated()))
 
   robot.on('pull_request.closed', wrapPaymentCheck(pullMerged()))
+
+  robot.on('pull_request.synchronize', pullSynchronized())
 
   // Kill job when issue/pull is closed
   robot.on(['issues.closed', 'pull_request.closed'], threadClosed(queue))

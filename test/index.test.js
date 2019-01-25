@@ -6,6 +6,7 @@ const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
 const addedPayload = require('./fixtures/added')
 const installedPayload = require('./fixtures/installed')
+const synchronizedPayload = require('./fixtures/synchronized')
 
 const { MAINTAINERS } = require('../src/constants')
 
@@ -131,6 +132,12 @@ comments:
 merges:
   - action: delete_branch
 
+commits:
+  - action: label
+    pattern: /merge when passing/i
+    labels:
+      - merge when passing
+
 default:
   close:
     delay: 1ms
@@ -167,7 +174,10 @@ describe('Bot', () => {
       },
       repos: {
         getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
-        getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } }))
+        getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
+        getCommit: jest
+          .fn()
+          .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } })
       },
       apps: {
         listRepos: jest.fn().mockResolvedValue({
@@ -478,6 +488,26 @@ describe('Bot', () => {
         ref: 'heads/mfix22-patch-1',
         repo: 'Hello-World'
       })
+    })
+
+    test('Will take action on a maintainer commit message', async () => {
+      await robot.receive(synchronizedPayload())
+
+      expect(github.issues.addLabels).toHaveBeenCalledWith({
+        number: 4,
+        labels: ['merge when passing'],
+        owner: 'ranger',
+        repo: 'ranger-test',
+        headers: {
+          Accept: 'application/vnd.github.symmetra-preview+json'
+        }
+      })
+    })
+
+    test('Will not take action on a non-maintainer commit message', async () => {
+      await robot.receive(synchronizedPayload({ author_association: 'CONTRIBUTOR' }))
+
+      expect(github.issues.addLabels).not.toHaveBeenCalled()
     })
   })
 

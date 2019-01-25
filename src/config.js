@@ -1,6 +1,6 @@
 const ms = require('ms')
 
-const { CLOSE, MERGE } = require('./constants')
+const { CLOSE, MERGE, LABEL } = require('./constants')
 
 const TIME = process.env.NODE_ENV === 'production' ? '7 days' : '10s'
 
@@ -19,7 +19,14 @@ const defaultConfig = {
     invalid: CLOSE,
     'merge when passing': MERGE
   },
-  comments: []
+  comments: [],
+  commits: [
+    {
+      action: LABEL,
+      pattern: '/merge when passing/i',
+      labels: ['merge when passing']
+    }
+  ]
 }
 
 exports.CONFIG_FILE = CONFIG_FILE
