@@ -122,6 +122,10 @@ labels:
     action: comment
     message: boop
   comment3: comment
+  'squash when passing':
+    action: merge
+  'rebase when passing':
+    action: merge
 
 comments:
   - action: label
@@ -403,7 +407,7 @@ describe('Bot', () => {
       })
     })
 
-    test('Will first try merge, then rebase, then squash', async () => {
+    test('Will first try merge, then rebase, and then squash', async () => {
       github.pullRequests.merge
         .mockRejectedValueOnce(new Error('No Merge'))
         .mockRejectedValueOnce(new Error('No Rebase'))
@@ -419,7 +423,61 @@ describe('Bot', () => {
       )
 
       await wait(2)
-      ;['merge', 'rebase', 'squash'].forEach(merge_method => {
+      ;[('merge', 'rebase', 'squash')].forEach(merge_method => {
+        expect(github.pullRequests.merge).toHaveBeenCalledWith({
+          number: 7,
+          owner: 'mfix22',
+          repo: 'test-issue-bot',
+          sha: 0,
+          merge_method
+        })
+      })
+    })
+
+    test('Will first try squash, then merge, and then rebase if label contains "squash"', async () => {
+      github.pullRequests.merge
+        .mockRejectedValueOnce(new Error('No Squash'))
+        .mockRejectedValueOnce(new Error('No Merge'))
+        .mockResolvedValueOnce()
+
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['squash when passing'],
+          number: 7
+        })
+      )
+
+      await wait(2)
+      ;['squash', 'merge', 'rebase'].forEach(merge_method => {
+        expect(github.pullRequests.merge).toHaveBeenCalledWith({
+          number: 7,
+          owner: 'mfix22',
+          repo: 'test-issue-bot',
+          sha: 0,
+          merge_method
+        })
+      })
+    })
+
+    test('Will first try rebase, then merge, and then squash if label contains "rebase"', async () => {
+      github.pullRequests.merge
+        .mockRejectedValueOnce(new Error('No Rebase'))
+        .mockRejectedValueOnce(new Error('No Merge'))
+        .mockResolvedValueOnce()
+
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['rebase when passing'],
+          number: 7
+        })
+      )
+
+      await wait(2)
+      ;['rebase', 'merge', 'squash'].forEach(merge_method => {
         expect(github.pullRequests.merge).toHaveBeenCalledWith({
           number: 7,
           owner: 'mfix22',
