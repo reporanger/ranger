@@ -17,6 +17,8 @@ const defaultConfig = {
     duplicate: CLOSE,
     wontfix: CLOSE,
     invalid: CLOSE,
+    'squash when passing': MERGE,
+    'rebase when passing': MERGE,
     'merge when passing': MERGE
   },
   comments: [
