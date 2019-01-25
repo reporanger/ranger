@@ -34,9 +34,9 @@ module.exports = () => async context => {
     }
   } = await context.github.repos.getCommit(context.repo({ sha }))
 
+  // TODO confirm this API before releasing in docs
   const rules = config.commits
 
-  // TODO confirm this API
   if (!Array.isArray(rules)) return
 
   await Promise.all(
