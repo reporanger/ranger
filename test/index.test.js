@@ -122,9 +122,9 @@ labels:
     action: comment
     message: boop
   comment3: comment
-  'squash when passing':
+  squash when passing:
     action: merge
-  'rebase when passing':
+  rebase when passing:
     action: merge
 
 comments:
@@ -327,7 +327,8 @@ describe('Bot', () => {
         owner: 'mfix22',
         repo: 'test-issue-bot',
         installation_id: 135737,
-        action: 'merge'
+        action: 'merge',
+        method: 'merge'
       }
 
       expect(queue.createJob).toHaveBeenCalledWith(data)

@@ -1,5 +1,4 @@
 const ms = require('ms')
-const retry = require('async-retry')
 
 const getId = require('../get-job-id')
 const getConfig = require('../config')
@@ -57,24 +56,31 @@ module.exports = queue => async context => {
   })
 
   if (withMergeableLabels.length) {
-    return (
-      queue
-        .createJob({
-          ...context.issue({ installation_id: context.payload.installation.id }),
-          action: MERGE
-        })
-        .setId(ID)
-        //.retries(RETRY_HORIZON / RETRY_PERIOD)
-        //.backoff('fixed', RETRY_PERIOD)
-        .save()
-    )
+    const method = thread.labels.find(({ name }) => name.match(/rebase/i))
+      ? methods.REBASE
+      : thread.labels.find(({ name }) => name.match(/squash/i))
+      ? methods.SQUASH
+      : methods.MERGE
+
+    return queue
+      .createJob({
+        ...context.issue({ installation_id: context.payload.installation.id }),
+        action: MERGE,
+        method
+      })
+      .setId(ID)
+      .retries(RETRY_HORIZON / RETRY_PERIOD)
+      .backoff('fixed', RETRY_PERIOD)
+      .save()
   }
 
   // If closable labels are removed, delete job for this pull
   return queue.removeJob(ID)
 }
 
-module.exports.process = robot => async ({ data: { installation_id, owner, repo, number } }) => {
+module.exports.process = robot => async ({
+  data: { installation_id, owner, repo, number, method }
+}) => {
   let github
   let pull
   try {
@@ -90,39 +96,34 @@ module.exports.process = robot => async ({ data: { installation_id, owner, repo,
   // || pull.mergeable_state === status.HAS_HOOKS
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === status.CLEAN
 
-  const method = pull.labels.find(({ name }) => name.match(/rebase/i))
-    ? methods.REBASE
-    : pull.labels.find(({ name }) => name.match(/squash/i))
-    ? methods.SQUASH
-    : methods.MERGE
-
   if (isMergeable) {
     const payload = {
       owner,
       repo,
       number,
-      sha: pull.head.sha,
-      merge_method: method
+      sha: pull.head.sha
     }
 
     try {
-      await github.pullRequests.merge(payload)
+      await github.pullRequests.merge({ ...payload, merge_method: method })
     } catch (e) {
       if (method === methods.MERGE) {
-        payload.merge_method = methods.REBASE
         try {
-          await github.pullRequests.merge(payload)
+          await github.pullRequests.merge({ ...payload, merge_method: methods.REBASE })
         } catch (e) {
-          payload.merge_method = methods.SQUASH
-          await github.pullRequests.merge(payload)
+          await github.pullRequests.merge({ ...payload, merge_method: methods.SQUASH })
         }
       } else if (method === methods.REBASE || method === methods.SQUASH) {
-        payload.merge_method = methods.MERGE
         try {
-          await github.pullRequests.merge(payload)
+          await github.pullRequests.merge({
+            ...payload,
+            merge_method: methods.MERGE
+          })
         } catch (e) {
-          payload.merge_method = method === methods.REBASE ? methods.SQUASH : methods.REBASE
-          await github.pullRequests.merge(payload)
+          await github.pullRequests.merge({
+            ...payload,
+            merge_method: method === methods.REBASE ? methods.SQUASH : methods.REBASE
+          })
         }
       }
     }
