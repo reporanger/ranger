@@ -79,7 +79,7 @@ module.exports = queue => async context => {
 }
 
 module.exports.process = robot => async ({
-  data: { installation_id, owner, repo, number, method }
+  data: { installation_id, owner, repo, number, method = 'merge' }
 }) => {
   let github
   let pull
