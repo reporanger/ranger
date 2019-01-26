@@ -20,11 +20,7 @@ const status = {
   UNSTABLE: 'unstable' // can merge, but build is failing 🚫
 }
 
-const methods = {
-  MERGE: 'merge',
-  SQUASH: 'squash',
-  REBASE: 'rebase'
-}
+const methods = ['merge', 'squash', 'rebase']
 
 module.exports = queue => async context => {
   const ID = getId(context, { action: MERGE })
@@ -57,10 +53,10 @@ module.exports = queue => async context => {
 
   if (withMergeableLabels.length) {
     const method = thread.labels.find(({ name }) => name.match(/rebase/i))
-      ? methods.REBASE
+      ? 'rebase'
       : thread.labels.find(({ name }) => name.match(/squash/i))
-      ? methods.SQUASH
-      : methods.MERGE
+      ? 'squash'
+      : 'merge'
 
     return queue
       .createJob({
@@ -97,34 +93,24 @@ module.exports.process = robot => async ({
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === status.CLEAN
 
   if (isMergeable) {
-    const payload = {
-      owner,
-      repo,
-      number,
-      sha: pull.head.sha
-    }
+    const initialIndex = methods.findIndex(m => m === method)
+
+    const mergeAttempt = i =>
+      github.pullRequests.merge({
+        owner,
+        repo,
+        number,
+        sha: pull.head.sha,
+        merge_method: methods[(initialIndex + i) % methods.length]
+      })
 
     try {
-      await github.pullRequests.merge({ ...payload, merge_method: method })
+      await mergeAttempt(0)
     } catch (e) {
-      if (method === methods.MERGE) {
-        try {
-          await github.pullRequests.merge({ ...payload, merge_method: methods.REBASE })
-        } catch (e) {
-          await github.pullRequests.merge({ ...payload, merge_method: methods.SQUASH })
-        }
-      } else if (method === methods.REBASE || method === methods.SQUASH) {
-        try {
-          await github.pullRequests.merge({
-            ...payload,
-            merge_method: methods.MERGE
-          })
-        } catch (e) {
-          await github.pullRequests.merge({
-            ...payload,
-            merge_method: method === methods.REBASE ? methods.SQUASH : methods.REBASE
-          })
-        }
+      try {
+        await mergeAttempt(1)
+      } catch (e) {
+        await mergeAttempt(2)
       }
     }
   } else if (pull.mergeable_state === status.DIRTY) {
