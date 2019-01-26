@@ -409,8 +409,8 @@ describe('Bot', () => {
     })
 
     test.each([
-      ['merge', ['merge', 'rebase', 'squash']],
-      ['squash', ['squash', 'merge', 'rebase']],
+      ['merge', ['merge', 'squash', 'rebase']],
+      ['squash', ['squash', 'rebase', 'merge']],
       ['rebase', ['rebase', 'merge', 'squash']]
     ])('Will first try each method, starting with "%s"', async (label, order) => {
       github.pullRequests.merge
