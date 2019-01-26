@@ -109,7 +109,7 @@ labels:
     action: close
     delay: 10ms
     comment: false
-  automerge:
+  merge:
     action: merge
   -1:
     action: close
@@ -122,9 +122,9 @@ labels:
     action: comment
     message: boop
   comment3: comment
-  squash when passing:
+  squash:
     action: merge
-  rebase when passing:
+  rebase:
     action: merge
 
 comments:
@@ -317,7 +317,7 @@ describe('Bot', () => {
         payload({
           name: 'pull_request',
           threadType: 'pull_request',
-          labels: ['automerge'],
+          labels: ['merge'],
           number: 7
         })
       )
@@ -359,7 +359,7 @@ describe('Bot', () => {
         payload({
           name: 'pull_request',
           threadType: 'pull_request',
-          labels: ['automerge'],
+          labels: ['merge'],
           number: 98
         })
       )
@@ -390,7 +390,7 @@ describe('Bot', () => {
         payload({
           name: 'pull_request',
           threadType: 'pull_request',
-          labels: ['automerge'],
+          labels: ['merge'],
           number: 97
         })
       )
@@ -408,85 +408,27 @@ describe('Bot', () => {
       })
     })
 
-    test('Will first try merge, then rebase, and then squash', async () => {
+    test.each([
+      ['merge', ['merge', 'rebase', 'squash']],
+      ['squash', ['squash', 'merge', 'rebase']],
+      ['rebase', ['rebase', 'merge', 'squash']]
+    ])('Will first try each method, starting with "%s"', async (label, order) => {
       github.pullRequests.merge
-        .mockRejectedValueOnce(new Error('No Merge'))
-        .mockRejectedValueOnce(new Error('No Rebase'))
+        .mockRejectedValueOnce(new Error('Error 1'))
+        .mockRejectedValueOnce(new Error('Error 2'))
         .mockResolvedValueOnce()
 
       await robot.receive(
         payload({
           name: 'pull_request',
           threadType: 'pull_request',
-          labels: ['automerge'],
+          labels: [label],
           number: 7
         })
       )
 
       await wait(2)
-      ;[('merge', 'rebase', 'squash')].forEach(merge_method => {
-        expect(github.pullRequests.merge).toHaveBeenCalledWith({
-          number: 7,
-          owner: 'mfix22',
-          repo: 'test-issue-bot',
-          sha: 0,
-          merge_method
-        })
-      })
-    })
-
-    test('Will first try squash, then merge, and then rebase if label contains "squash"', async () => {
-      github.pullRequests.merge
-        .mockRejectedValueOnce(new Error('No Squash'))
-        .mockRejectedValueOnce(new Error('No Merge'))
-        .mockResolvedValueOnce()
-
-      await robot.receive(
-        payload({
-          name: 'pull_request',
-          threadType: 'pull_request',
-          labels: ['squash when passing'],
-          number: 7
-        })
-      )
-
-      await wait(2)
-      ;['squash', 'merge', 'rebase'].forEach(merge_method => {
-        expect(github.pullRequests.merge).toHaveBeenCalledWith({
-          number: 7,
-          owner: 'mfix22',
-          repo: 'test-issue-bot',
-          sha: 0,
-          merge_method
-        })
-      })
-    })
-
-    test('Will first try rebase, then merge, and then squash if label contains "rebase"', async () => {
-      github.pullRequests.merge
-        .mockRejectedValueOnce(new Error('No Rebase'))
-        .mockRejectedValueOnce(new Error('No Merge'))
-        .mockResolvedValueOnce()
-
-      await robot.receive(
-        payload({
-          name: 'pull_request',
-          threadType: 'pull_request',
-          labels: ['rebase when passing'],
-          number: 7
-        })
-      )
-
-      await wait(2)
-      ;['rebase', 'merge', 'squash'].forEach(merge_method => {
-        expect(github.pullRequests.merge).toHaveBeenCalledWith({
-          number: 7,
-          owner: 'mfix22',
-          repo: 'test-issue-bot',
-          sha: 0,
-          merge_method
-        })
-      })
+      expect(github.pullRequests.merge.mock.calls.map(c => c[0].merge_method)).toEqual(order)
     })
 
     test('Will remove the existing job if a new label event occurs', async () => {
@@ -504,7 +446,7 @@ describe('Bot', () => {
         payload({
           name: 'pull_request',
           threadType: 'pull_request',
-          labels: ['automerge'],
+          labels: ['merge'],
           number: 99
         })
       )
