@@ -6,8 +6,8 @@ const { MERGE } = require('../constants')
 
 const { getPullRequest } = require('../api')
 
-const RETRY_PERIOD = ms('3m')
-const RETRY_HORIZON = ms('12h')
+const RETRY_PERIOD = ms('2m')
+const RETRY_HORIZON = ms('6h')
 
 // https://developer.github.com/v4/enum/mergestatestatus/
 const status = {
