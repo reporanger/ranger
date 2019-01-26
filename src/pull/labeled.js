@@ -39,7 +39,7 @@ module.exports = queue => async context => {
   }
 
   const config = await getConfig(context)
-  const withMergeableLabels = thread.labels.filter(l => {
+  const mergeableLabels = thread.labels.filter(l => {
     if (typeof config.labels !== 'object') return false
     if (!config.labels[l.name]) return false
 
@@ -51,10 +51,10 @@ module.exports = queue => async context => {
     return action && action.trim().toLowerCase() === MERGE
   })
 
-  if (withMergeableLabels.length) {
-    const method = thread.labels.find(({ name }) => name.match(/rebase/i))
+  if (mergeableLabels.length) {
+    const method = mergeableLabels.find(({ name }) => name.match(/rebase/i))
       ? 'rebase'
-      : thread.labels.find(({ name }) => name.match(/squash/i))
+      : mergeableLabels.find(({ name }) => name.match(/squash/i))
       ? 'squash'
       : 'merge'
 
