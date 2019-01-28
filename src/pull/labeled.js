@@ -39,7 +39,7 @@ module.exports = queue => async context => {
   }
 
   const config = await getConfig(context)
-  const mergeableLabels = thread.labels.filter(l => {
+  const mergeableLabels = (thread.labels || []).filter(l => {
     if (typeof config.labels !== 'object') return false
     if (!config.labels[l.name]) return false
 

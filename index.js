@@ -87,7 +87,7 @@ module.exports = async robot => {
 
   robot.on('pull_request.closed', wrapPaymentCheck(pullMerged()))
 
-  robot.on('pull_request.synchronize', pullSynchronized())
+  robot.on('pull_request.synchronize', wrapPaymentCheck(pullSynchronized()))
 
   // Kill job when issue/pull is closed
   robot.on(['issues.closed', 'pull_request.closed'], threadClosed(queue))

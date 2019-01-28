@@ -493,6 +493,7 @@ describe('Bot', () => {
 
     test('Will take action on a maintainer commit message', async () => {
       await robot.receive(synchronizedPayload())
+      await wait()
 
       expect(github.issues.addLabels).toHaveBeenCalledWith({
         number: 4,
