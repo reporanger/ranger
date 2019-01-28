@@ -475,28 +475,30 @@ describe('Bot', () => {
       })
     })
 
-    test('Can create tags after merging', async () => {
-      await robot.receive(mergedPayload())
-      await wait(2)
+    test.each([['no', '0.0.2'], ['patch', '0.0.2'], ['minor', '0.1.0'], ['major', '1.0.0']])(
+      'Can create tags after merging with %s label',
+      async (label, tag) => {
+        await robot.receive(mergedPayload({ labels: [label] }))
+        await wait(2)
 
-      const tag = '0.0.2'
-      const sha = 'a244454d959a49f53aa60768d117d3eeaa0c552e'
+        const sha = 'a244454d959a49f53aa60768d117d3eeaa0c552e'
 
-      expect(github.gitdata.createTag).toHaveBeenCalledWith({
-        owner: 'Codertocat',
-        repo: 'Hello-World',
-        message: 'Update README.md (#3)',
-        type: 'commit',
-        object: sha,
-        tag
-      })
-      expect(github.gitdata.createRef).toHaveBeenCalledWith({
-        owner: 'Codertocat',
-        repo: 'Hello-World',
-        ref: `refs/tags/${tag}`,
-        sha
-      })
-    })
+        expect(github.gitdata.createTag).toHaveBeenCalledWith({
+          owner: 'Codertocat',
+          repo: 'Hello-World',
+          message: 'Update README.md (#3)',
+          type: 'commit',
+          object: sha,
+          tag
+        })
+        expect(github.gitdata.createRef).toHaveBeenCalledWith({
+          owner: 'Codertocat',
+          repo: 'Hello-World',
+          ref: `refs/tags/${tag}`,
+          sha
+        })
+      }
+    )
 
     test.each(['opened', 'synchronize'])(
       'Will take action on a maintainer commit message when PR is %s',

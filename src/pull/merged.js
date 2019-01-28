@@ -52,7 +52,18 @@ module.exports.createTag = () => async context => {
     patch: Number(match[4])
   }
 
-  const tag = `${v.v}${v.major}.${v.minor}.${v.patch + 1}`
+  const isMajor = thread.labels.find(({ name }) => name.toLowerCase().includes('major'))
+  const isMinor = thread.labels.find(({ name }) => name.toLowerCase().includes('minor'))
+
+  let tag
+  if (isMajor) {
+    tag = `${v.v}${v.major + 1}.0.0`
+  } else if (isMinor) {
+    tag = `${v.v}${v.major}.${v.minor + 1}.0`
+  } else {
+    tag = `${v.v}${v.major}.${v.minor}.${v.patch + 1}`
+  }
+
   const sha = thread.merge_commit_sha
 
   await context.github.gitdata.createTag(
