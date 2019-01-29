@@ -85,7 +85,8 @@ module.exports = async robot => {
 
   robot.on(['issue_comment.created', 'issue_comment.edited'], wrapPaymentCheck(commentCreated()))
 
-  robot.on('pull_request.closed', wrapPaymentCheck(pullMerged()))
+  robot.on('pull_request.closed', wrapPaymentCheck(pullMerged.deleteBranch()))
+  robot.on('pull_request.closed', wrapPaymentCheck(pullMerged.createTag()))
 
   robot.on(
     ['pull_request.opened', 'pull_request.synchronize'],

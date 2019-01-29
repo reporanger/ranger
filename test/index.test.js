@@ -7,6 +7,7 @@ const commentPayload = require('./fixtures/comment')
 const addedPayload = require('./fixtures/added')
 const installedPayload = require('./fixtures/installed')
 const synchronizedPayload = require('./fixtures/synchronized')
+const mergedPayload = require('./fixtures/merged')
 
 const { MAINTAINERS } = require('../src/constants')
 
@@ -135,6 +136,7 @@ comments:
 
 merges:
   - action: delete_branch
+  - action: tag
 
 commits:
   - action: label
@@ -181,7 +183,14 @@ describe('Bot', () => {
         getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
         getCommit: jest
           .fn()
-          .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } })
+          .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } }),
+        listTags: jest.fn().mockResolvedValue({
+          data: [
+            {
+              name: '0.0.1'
+            }
+          ]
+        })
       },
       apps: {
         listRepos: jest.fn().mockResolvedValue({
@@ -194,7 +203,9 @@ describe('Bot', () => {
         })
       },
       gitdata: {
-        deleteRef: jest.fn().mockResolvedValue()
+        deleteRef: jest.fn().mockResolvedValue(),
+        createRef: jest.fn().mockResolvedValue(),
+        createTag: jest.fn().mockResolvedValue()
       }
     }
     robot.auth = () => Promise.resolve(github)
@@ -455,34 +466,7 @@ describe('Bot', () => {
     })
 
     test('Can delete branches after merging', async () => {
-      const payload = {
-        action: 'closed',
-        number: 3,
-        pull_request: {
-          number: 3,
-          state: 'closed',
-          title: 'Update README.md',
-          user: { login: 'mfix22' },
-          body: '',
-          head: {
-            label: 'dawnlabs:mfix22-patch-1',
-            ref: 'mfix22-patch-1',
-            sha: 'b244454d959a49f53aa60768d117d3eeaa0c552d'
-          },
-          author_association: 'COLLABORATOR',
-          merged: true
-        },
-        repository: {
-          name: 'Hello-World',
-          full_name: 'Codertocat/Hello-World',
-          owner: {
-            login: 'Codertocat'
-          },
-          private: false
-        }
-      }
-
-      await robot.receive({ name: 'pull_request', payload })
+      await robot.receive(mergedPayload())
 
       expect(github.gitdata.deleteRef).toHaveBeenCalledWith({
         owner: 'Codertocat',
@@ -490,6 +474,31 @@ describe('Bot', () => {
         repo: 'Hello-World'
       })
     })
+
+    test.each([['no', '0.0.2'], ['patch', '0.0.2'], ['minor', '0.1.0'], ['major', '1.0.0']])(
+      'Can create tags after merging with %s label',
+      async (label, tag) => {
+        await robot.receive(mergedPayload({ labels: [label] }))
+        await wait(2)
+
+        const sha = 'a244454d959a49f53aa60768d117d3eeaa0c552e'
+
+        expect(github.gitdata.createTag).toHaveBeenCalledWith({
+          owner: 'Codertocat',
+          repo: 'Hello-World',
+          message: 'Update README.md (#3)',
+          type: 'commit',
+          object: sha,
+          tag
+        })
+        expect(github.gitdata.createRef).toHaveBeenCalledWith({
+          owner: 'Codertocat',
+          repo: 'Hello-World',
+          ref: `refs/tags/${tag}`,
+          sha
+        })
+      }
+    )
 
     test.each(['opened', 'synchronize'])(
       'Will take action on a maintainer commit message when PR is %s',
@@ -581,16 +590,34 @@ describe('Bot', () => {
 
       await robot.receive(createPayload(repos))
 
-      repos.forEach(({ name: repo }) => {
-        expect(github.issues.createLabel).toHaveBeenCalledWith({
-          owner: 'ranger',
-          repo,
+      const newLabels = [
+        {
           name: 'merge when passing',
           color: 'FF851B',
-          description: 'Merge the PR automatically once all status checks have passed',
-          headers: {
-            Accept: 'application/vnd.github.symmetra-preview+json'
-          }
+          description: 'Merge the PR automatically once all status checks have passed'
+        },
+        {
+          name: 'Minor Version',
+          color: '6EBAF7',
+          description: 'Automatically create a new minor version tag after PR is merged'
+        },
+        {
+          name: 'Major Version',
+          color: '1E8DE7',
+          description: 'Automatically create a new major version tag after PR is merged'
+        }
+      ]
+
+      repos.forEach(({ name: repo }) => {
+        newLabels.forEach(l => {
+          expect(github.issues.createLabel).toHaveBeenCalledWith({
+            owner: 'ranger',
+            repo,
+            ...l,
+            headers: {
+              Accept: 'application/vnd.github.symmetra-preview+json'
+            }
+          })
         })
       })
     })
