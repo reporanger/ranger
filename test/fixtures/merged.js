@@ -1,4 +1,4 @@
-module.exports = ({ labels = [] } = {}) => ({
+module.exports = ({ labels = [], base = 'master' } = {}) => ({
   name: 'pull_request',
   payload: {
     action: 'closed',
@@ -13,6 +13,11 @@ module.exports = ({ labels = [] } = {}) => ({
         label: 'dawnlabs:mfix22-patch-1',
         ref: 'mfix22-patch-1',
         sha: 'b244454d959a49f53aa60768d117d3eeaa0c552d'
+      },
+      base: {
+        label: `dawnlabs:${base}`,
+        ref: base,
+        sha: '1111s54d959a49f53aa60768d117d3eeaa0c552d'
       },
       labels: labels.map((l, i) => ({
         id: i,
@@ -31,7 +36,8 @@ module.exports = ({ labels = [] } = {}) => ({
       owner: {
         login: 'Codertocat'
       },
-      private: false
+      private: false,
+      default_branch: 'master'
     }
   }
 })

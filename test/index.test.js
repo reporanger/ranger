@@ -500,6 +500,14 @@ describe('Bot', () => {
       }
     )
 
+    test('Will not create a tag when merged into not the default branch', async () => {
+      await robot.receive(mergedPayload({ labels: ['Major'], base: 'docs' }))
+      await wait(2)
+
+      expect(github.gitdata.createTag).not.toHaveBeenCalled()
+      expect(github.gitdata.createRef).not.toHaveBeenCalled()
+    })
+
     test.each(['opened', 'synchronize'])(
       'Will take action on a maintainer commit message when PR is %s',
       async action => {

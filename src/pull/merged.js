@@ -26,6 +26,9 @@ module.exports.createTag = () => async context => {
 
   if (thread.merged !== true) return
 
+  // Only create tags on "master"
+  if (thread.base.ref !== context.payload.repository.default_branch) return
+
   const config = await getConfig(context)
 
   if (!Array.isArray(config.merges)) return
