@@ -1,7 +1,7 @@
-module.exports = ({ author_association = 'COLLABORATOR' } = {}) => ({
+module.exports = ({ action = 'synchronize', author_association = 'COLLABORATOR' } = {}) => ({
   name: 'pull_request',
   payload: {
-    action: 'synchronize',
+    action,
     pull_request: {
       number: 4,
       head: {

@@ -491,20 +491,23 @@ describe('Bot', () => {
       })
     })
 
-    test('Will take action on a maintainer commit message', async () => {
-      await robot.receive(synchronizedPayload())
-      await wait()
+    test.each(['opened', 'synchronize'])(
+      'Will take action on a maintainer commit message when PR is %s',
+      async action => {
+        await robot.receive(synchronizedPayload({ action }))
+        await wait()
 
-      expect(github.issues.addLabels).toHaveBeenCalledWith({
-        number: 4,
-        labels: ['merge when passing'],
-        owner: 'ranger',
-        repo: 'ranger-test',
-        headers: {
-          Accept: 'application/vnd.github.symmetra-preview+json'
-        }
-      })
-    })
+        expect(github.issues.addLabels).toHaveBeenCalledWith({
+          number: 4,
+          labels: ['merge when passing'],
+          owner: 'ranger',
+          repo: 'ranger-test',
+          headers: {
+            Accept: 'application/vnd.github.symmetra-preview+json'
+          }
+        })
+      }
+    )
 
     test('Will not take action on a non-maintainer commit message', async () => {
       await robot.receive(synchronizedPayload({ author_association: 'CONTRIBUTOR' }))
