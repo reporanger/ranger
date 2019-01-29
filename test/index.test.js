@@ -590,16 +590,34 @@ describe('Bot', () => {
 
       await robot.receive(createPayload(repos))
 
-      repos.forEach(({ name: repo }) => {
-        expect(github.issues.createLabel).toHaveBeenCalledWith({
-          owner: 'ranger',
-          repo,
+      const newLabels = [
+        {
           name: 'merge when passing',
           color: 'FF851B',
-          description: 'Merge the PR automatically once all status checks have passed',
-          headers: {
-            Accept: 'application/vnd.github.symmetra-preview+json'
-          }
+          description: 'Merge the PR automatically once all status checks have passed'
+        },
+        {
+          name: 'Minor Version',
+          color: '6EBAF7',
+          description: 'Automatically create a new minor version tag after PR is merged'
+        },
+        {
+          name: 'Major Version',
+          color: '1E8DE7',
+          description: 'Automatically create a new major version tag after PR is merged'
+        }
+      ]
+
+      repos.forEach(({ name: repo }) => {
+        newLabels.forEach(l => {
+          expect(github.issues.createLabel).toHaveBeenCalledWith({
+            owner: 'ranger',
+            repo,
+            ...l,
+            headers: {
+              Accept: 'application/vnd.github.symmetra-preview+json'
+            }
+          })
         })
       })
     })

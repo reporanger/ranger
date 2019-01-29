@@ -1,5 +1,23 @@
 const { createLabel } = require('../api')
 
+const LABELS_TO_CREATE = [
+  {
+    name: 'merge when passing',
+    color: 'FF851B',
+    description: 'Merge the PR automatically once all status checks have passed'
+  },
+  {
+    name: 'Minor Version',
+    color: '6EBAF7',
+    description: 'Automatically create a new minor version tag after PR is merged'
+  },
+  {
+    name: 'Major Version',
+    color: '1E8DE7',
+    description: 'Automatically create a new major version tag after PR is merged'
+  }
+]
+
 module.exports = robot => async context => {
   try {
     const github = await robot.auth(context.payload.installation.id)
@@ -7,28 +25,31 @@ module.exports = robot => async context => {
     const repos = context.payload.repositories_added || context.payload.repositories
 
     const promises = repos.map(({ name: repo }) => {
-      const data = {
-        owner: context.payload.installation.account.login,
-        repo,
-        name: 'merge when passing',
-        color: 'FF851B',
-        description: 'Merge the PR automatically once all status checks have passed'
-      }
+      return Promise.all(
+        LABELS_TO_CREATE.map(l => {
+          const data = {
+            owner: context.payload.installation.account.login,
+            repo,
+            ...l
+          }
 
-      return createLabel(github, data).catch(err => {
-        let condition
-        try {
-          // throw original error if parse fails
-          condition =
-            err.message && JSON.parse(err.message).errors.find(err => err.code === 'already_exists')
-        } catch (e) {
-          throw err
-        }
+          return createLabel(github, data).catch(err => {
+            let condition
+            try {
+              // throw original error if parse fails
+              condition =
+                err.message &&
+                JSON.parse(err.message).errors.find(err => err.code === 'already_exists')
+            } catch (e) {
+              throw err
+            }
 
-        if (!condition) {
-          throw err
-        }
-      })
+            if (!condition) {
+              throw err
+            }
+          })
+        })
+      )
     })
 
     await Promise.all(promises)
