@@ -29,17 +29,6 @@ module.exports.createTag = () => async context => {
   // Only create tags on "master"
   if (thread.base.ref !== context.payload.repository.default_branch) return
 
-  const config = await getConfig(context)
-
-  if (!Array.isArray(config.merges)) return
-
-  const shouldCreateTag = config.merges.find(c => {
-    const value = c.action || c
-    return typeof value === 'string' && value.trim().toLowerCase() === TAG
-  })
-
-  if (!shouldCreateTag) return
-
   const { data } = await context.github.repos.listTags(context.repo({ per_page: 5 }))
 
   const lastTag = data[0].name
@@ -55,16 +44,27 @@ module.exports.createTag = () => async context => {
     patch: Number(match[4])
   }
 
+  const config = await getConfig(context)
+
   const isMajor = thread.labels.find(({ name }) => name.toLowerCase().includes('major'))
   const isMinor = thread.labels.find(({ name }) => name.toLowerCase().includes('minor'))
+  const isPatch = thread.labels.find(({ name }) => name.toLowerCase().includes('patch'))
+  const isAutoPatch =
+    Array.isArray(config.merges) &&
+    config.merges.find(c => {
+      const value = c.action || c
+      return typeof value === 'string' && value.trim().toLowerCase() === TAG
+    })
 
   let tag
   if (isMajor) {
     tag = `${v.v}${v.major + 1}.0.0`
   } else if (isMinor) {
     tag = `${v.v}${v.major}.${v.minor + 1}.0`
-  } else {
+  } else if (isPatch || isAutoPatch) {
     tag = `${v.v}${v.major}.${v.minor}.${v.patch + 1}`
+  } else {
+    return
   }
 
   const sha = thread.merge_commit_sha

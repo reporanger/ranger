@@ -7,6 +7,11 @@ const LABELS_TO_CREATE = [
     description: 'Merge the PR automatically once all status checks have passed'
   },
   {
+    name: 'Patch Version',
+    color: '99cef9',
+    description: 'Automatically create a new patch version tag after PR is merged'
+  },
+  {
     name: 'Minor Version',
     color: '6EBAF7',
     description: 'Automatically create a new minor version tag after PR is merged'
