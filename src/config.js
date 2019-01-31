@@ -1,4 +1,5 @@
 const ms = require('ms')
+const { Context } = require('probot')
 
 const { CLOSE, MERGE, LABEL } = require('./constants')
 
@@ -33,11 +34,26 @@ const defaultConfig = {
 
 exports.CONFIG_FILE = CONFIG_FILE
 
+function createEvent(context, owner, repo) {
+  context.payload.repository.owner.login = owner
+  context.payload.repository.owner.name = owner
+  context.payload.repository.name = repo
+  return context
+}
+
 module.exports = async context => {
-  const config = await context.config(CONFIG_FILE, defaultConfig)
+  let config = await context.config(CONFIG_FILE, defaultConfig)
+
+  if (typeof config.uses === 'string' && config.uses.indexOf('/') > -1) {
+    const [owner, repo] = config.uses.split('/')
+    const globalContext = new Context(createEvent(context, owner, repo), context.github)
+    config = await globalContext.config(CONFIG_FILE, defaultConfig)
+  }
 
   // merge defaults
-  Object.assign(config.default, defaultConfig.default, config.default)
+  config.default = Object.assign({}, defaultConfig.default, config.default)
 
   return config
 }
+
+// console.log(require('js-yaml').safeDump(defaultConfig))
