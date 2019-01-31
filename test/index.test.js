@@ -767,4 +767,29 @@ describe('Bot', () => {
       })
     })
   })
+
+  describe('global config', () => {
+    test('Will allow users to set a global configuration', async () => {
+      const newConfig = `
+        config: dawnlabs/global-ranger-config
+      `
+
+      github.repos.getContents.mockResolvedValue({
+        data: { content: Buffer.from(newConfig).toString('base64') }
+      })
+
+      await robot.receive(payload())
+
+      expect(github.repos.getContents).toHaveBeenCalledWith({
+        owner: 'mfix22',
+        path: '.github/ranger.yml',
+        repo: 'test-issue-bot'
+      })
+      expect(github.repos.getContents).toHaveBeenCalledWith({
+        owner: 'dawnlabs',
+        path: '.github/ranger.yml',
+        repo: 'global-ranger-config'
+      })
+    })
+  })
 })
