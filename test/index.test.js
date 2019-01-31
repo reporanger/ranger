@@ -771,7 +771,7 @@ describe('Bot', () => {
   describe('global config', () => {
     test('Will allow users to set a global configuration', async () => {
       const newConfig = `
-        config: dawnlabs/global-ranger-config
+        uses: dawnlabs/global-ranger-config
       `
 
       github.repos.getContents.mockResolvedValue({
