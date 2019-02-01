@@ -190,7 +190,10 @@ describe('Bot', () => {
               name: '0.0.1'
             }
           ]
-        })
+        }),
+        getCombinedStatusForRef: jest
+          .fn()
+          .mockResolvedValue({ data: { state: 'success', statuses: [] } })
       },
       apps: {
         listRepos: jest.fn().mockResolvedValue({

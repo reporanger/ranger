@@ -93,6 +93,15 @@ module.exports.process = robot => async ({
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === status.CLEAN
 
   if (isMergeable) {
+    const {
+      data: { state, statuses }
+    } = await github.repos.getCombinedStatusForRef({ owner, repo, ref: pull.head.ref })
+
+    // If no CI is set up, state is pending but statuses === []
+    if (!(state === 'success' || (state === 'pending' && statuses.length === 0))) {
+      throw new Error('Retry job')
+    }
+
     const initialIndex = methods.findIndex(m => m === method)
 
     const mergeAttempt = i =>

@@ -102,6 +102,9 @@ module.exports = async robot => {
 
   robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
 
+  // TODO use status updates to retrigger merge jobs
+  // robot.on('status', c => console.log(c.payload))
+
   // For more information on building apps:
   // https://probot.github.io/docs/
 
