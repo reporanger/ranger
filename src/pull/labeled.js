@@ -10,7 +10,7 @@ const RETRY_PERIOD = ms('2m')
 const RETRY_HORIZON = ms('6h')
 
 // https://developer.github.com/v4/enum/mergestatestatus/
-const status = {
+const STATUS = {
   BEHIND: 'behind', // sometimes good to merge, depending on repo config
   BLOCKED: 'blocked', // cannot merge
   CLEAN: 'clean', // good to go 👍
@@ -21,7 +21,7 @@ const status = {
 }
 
 // https://developer.github.com/v4/enum/statusstate/
-const statusState = {
+const STATE = {
   SUCCESS: 'success',
   PENDING: 'pending',
   FAILURE: 'failure',
@@ -99,7 +99,7 @@ module.exports.process = robot => async ({
   }
 
   // || pull.mergeable_state === status.HAS_HOOKS
-  const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === status.CLEAN
+  const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === STATUS.CLEAN
 
   if (isMergeable) {
     const {
@@ -107,9 +107,7 @@ module.exports.process = robot => async ({
     } = await github.repos.getCombinedStatusForRef({ owner, repo, ref: pull.head.ref })
 
     // If no CI is set up, state is pending but statuses === []
-    if (
-      !(state === statusState.SUCCESS || (state === statusState.PENDING && statuses.length === 0))
-    ) {
+    if (!(state === STATE.SUCCESS || (state === STATE.PENDING && statuses.length === 0))) {
       throw new Error('Retry job')
     }
 
@@ -133,7 +131,7 @@ module.exports.process = robot => async ({
         await mergeAttempt(2)
       }
     }
-  } else if (pull.mergeable_state === status.DIRTY) {
+  } else if (pull.mergeable_state === STATUS.DIRTY) {
     // don't retry if there are merge conflicts
     return
   } else {
