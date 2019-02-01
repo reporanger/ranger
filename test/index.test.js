@@ -26,13 +26,13 @@ class MockJob {
         try {
           await this.queue.processor(data)
         } catch (e) {
-          if (this.retriesLeft) {
+          if (e.message !== 'Retry job') {
+            // eslint-disable-next-line
+            console.error(e)
+          }
+          if (this.retriesLeft && --this.retriesLeft >= 0) {
             await fn(this)
             // setTimeout(fn, this.retryDelay, this)
-          }
-        } finally {
-          if (this.retriesLeft) {
-            this.retriesLeft--
           }
         }
       }
@@ -49,8 +49,9 @@ class MockJob {
       this.delay = delay
       return this
     })
-    this.retries = jest.fn(retriesLeft => {
-      this.retriesLeft = retriesLeft
+    this.retries = jest.fn((/* retriesLeft */) => {
+      // only retry once in tests
+      this.retriesLeft = 1
       return this
     })
     this.backoff = jest.fn((retryFormat, retryDelay) => {
@@ -382,6 +383,31 @@ describe('Bot', () => {
 
       expect(github.pullRequests.merge).not.toHaveBeenCalled()
     })
+
+    test.each(['pending', 'error', 'failure'])(
+      'Will not merge if current status is %s',
+      async state => {
+        github.repos.getCombinedStatusForRef.mockResolvedValue({
+          data: {
+            state,
+            statuses: ['Fake Status']
+          }
+        })
+
+        await robot.receive(
+          payload({
+            name: 'pull_request',
+            threadType: 'pull_request',
+            labels: ['merge'],
+            number: 7
+          })
+        )
+
+        expect(queue.createJob).toHaveBeenCalled()
+        await wait()
+        expect(github.pullRequests.merge).not.toHaveBeenCalled()
+      }
+    )
 
     test('Will retry job if merge is blocked until it is clean', async () => {
       github.pullRequests.get
