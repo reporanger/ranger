@@ -20,6 +20,15 @@ const status = {
   UNSTABLE: 'unstable' // can merge, but build is failing 🚫
 }
 
+// https://developer.github.com/v4/enum/statusstate/
+const statusState = {
+  SUCCESS: 'success',
+  PENDING: 'pending',
+  FAILURE: 'failure',
+  ERROR: 'error',
+  EXPECTED: 'expected'
+}
+
 const methods = ['merge', 'squash', 'rebase']
 
 module.exports = queue => async context => {
@@ -98,7 +107,9 @@ module.exports.process = robot => async ({
     } = await github.repos.getCombinedStatusForRef({ owner, repo, ref: pull.head.ref })
 
     // If no CI is set up, state is pending but statuses === []
-    if (!(state === 'success' || (state === 'pending' && statuses.length === 0))) {
+    if (
+      !(state === statusState.SUCCESS || (state === statusState.PENDING && statuses.length === 0))
+    ) {
       throw new Error('Retry job')
     }
 
