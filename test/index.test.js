@@ -504,6 +504,12 @@ describe('Bot', () => {
       })
     })
 
+    test('Will not try to delete branches on forks', async () => {
+      await robot.receive(mergedPayload({ fork: true }))
+
+      expect(github.gitdata.deleteRef).not.toHaveBeenCalled()
+    })
+
     test.each([['no', '0.0.2'], ['patch', '0.0.2'], ['minor', '0.1.0'], ['major', '1.0.0']])(
       'Can create tags after merging with %s label',
       async (label, tag) => {
