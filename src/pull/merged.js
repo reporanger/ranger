@@ -24,7 +24,11 @@ module.exports.deleteBranch = () => async context => {
   if (!shouldDelete) return
 
   const ref = `heads/${thread.head.ref}`
-  return context.github.gitdata.deleteRef(context.repo({ ref })).catch(() => {})
+  return context.github.gitdata.deleteRef(context.repo({ ref })).catch(e => {
+    if (e.message !== 'Cannot delete a protected branch') {
+      throw e
+    }
+  })
 }
 
 module.exports.createTag = () => async context => {
