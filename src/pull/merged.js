@@ -29,7 +29,9 @@ module.exports.createTag = () => async context => {
   // Only create tags on "master"
   if (thread.base.ref !== context.payload.repository.default_branch) return
 
-  const { data } = await context.github.repos.listTags(context.repo({ per_page: 5 }))
+  const { data } = await context.github.repos.listTags(context.repo({ per_page: 1 }))
+
+  if (!(data && data[0] && data[0].name)) return
 
   const lastTag = data[0].name
 
