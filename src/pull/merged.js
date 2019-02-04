@@ -4,7 +4,9 @@ const { DELETE_BRANCH, TAG } = require('../constants')
 module.exports.deleteBranch = () => async context => {
   const thread = context.payload.pull_request
 
-  if (thread.merged !== true || thread.head.repo.fork === true) return
+  if (thread.merged !== true) return
+  // Don't delete branches from forks
+  if (thread.head.repo.fork === true) return
 
   const config = await getConfig(context)
 
