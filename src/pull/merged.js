@@ -25,9 +25,18 @@ module.exports.deleteBranch = () => async context => {
 
   const ref = `heads/${thread.head.ref}`
   return context.github.gitdata.deleteRef(context.repo({ ref })).catch(e => {
-    if (e.message !== 'Cannot delete a protected branch') {
-      throw e
+    if (e.message) {
+      try {
+        const { message } = JSON.parse(e.message)
+        if (message === 'Cannot delete a protected branch') {
+          return
+        }
+      } catch (_) {
+        throw e
+      }
     }
+
+    throw e
   })
 }
 
