@@ -1,7 +1,7 @@
 // TODO add DEV flag
 const { OPEN_SOURCE } = require('./constants')
 
-const WHITE_LIST = ['dawnlabs', 'windsorio', 'runeai', 'explosion']
+const WHITE_LIST = ['dawnlabs', 'windsorio', 'runeai', 'explosion', 'gremlin']
 
 module.exports = async function verifyPaymentPlan(robot, context) {
   if (!context.payload.repository.private) {
