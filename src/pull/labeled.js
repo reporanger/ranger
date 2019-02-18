@@ -17,7 +17,8 @@ const STATUS = {
   DIRTY: 'dirty', // merge conflicts
   HAS_HOOKS: 'has_hooks', // good-to-go, even with extra checks
   UNKNOWN: 'unknown', // in between states
-  UNSTABLE: 'unstable' // can merge, but build is failing 🚫
+  UNSTABLE: 'unstable', // can merge, but build is failing 🚫
+  DRAFT: 'draft'
 }
 
 // https://developer.github.com/v4/enum/statusstate/
