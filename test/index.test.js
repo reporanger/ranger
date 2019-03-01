@@ -174,7 +174,7 @@ describe('Bot', () => {
           data: {
             mergeable: true,
             mergeable_state: 'clean',
-            head: { sha: 0 }
+            head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
           }
         }),
         merge: jest.fn()
@@ -366,7 +366,7 @@ describe('Bot', () => {
         data: {
           mergeable: true,
           mergeable_state: 'dirty',
-          head: { sha: 0 }
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
         }
       })
 
@@ -415,14 +415,14 @@ describe('Bot', () => {
           data: {
             mergeable: true,
             mergeable_state: 'blocked',
-            head: { sha: 0 }
+            head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
           }
         })
         .mockResolvedValueOnce({
           data: {
             mergeable: true,
             mergeable_state: 'clean',
-            head: { sha: 0 }
+            head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
           }
         })
 
@@ -476,7 +476,7 @@ describe('Bot', () => {
         data: {
           mergeable: false,
           mergeable_state: 'clean',
-          head: { sha: 0 }
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
         }
       })
 

@@ -103,9 +103,12 @@ module.exports.process = robot => async ({
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === STATUS.CLEAN
 
   if (isMergeable) {
+    const owner = pull.head.repo.owner.login
+    const repo = pull.head.repo.name
+    const ref = pull.head.ref
     const {
       data: { state, statuses }
-    } = await github.repos.getCombinedStatusForRef({ owner, repo, ref: pull.head.ref })
+    } = await github.repos.getCombinedStatusForRef({ owner, repo, ref })
 
     // If no CI is set up, state is pending but statuses === []
     if (!(state === STATE.SUCCESS || (state === STATE.PENDING && statuses.length === 0))) {
