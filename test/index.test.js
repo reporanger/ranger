@@ -210,6 +210,11 @@ describe('Bot', () => {
         deleteRef: jest.fn().mockResolvedValue(),
         createRef: jest.fn().mockResolvedValue(),
         createTag: jest.fn().mockResolvedValue()
+      },
+      checks: {
+        listSuitesForRef: jest
+          .fn()
+          .mockResolvedValue({ data: { total_count: 0, check_suites: [] } })
       }
     }
     robot.auth = () => Promise.resolve(github)

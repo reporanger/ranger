@@ -111,7 +111,26 @@ module.exports.process = robot => async ({
     } = await github.repos.getCombinedStatusForRef({ owner, repo, ref })
 
     // If no CI is set up, state is pending but statuses === []
-    if (!(state === STATE.SUCCESS || (state === STATE.PENDING && statuses.length === 0))) {
+    const okStatus = state === STATE.SUCCESS || (state === STATE.PENDING && statuses.length === 0)
+    if (!okStatus) {
+      throw new Error('Retry job')
+    }
+
+    const {
+      data: { total_count, check_suites }
+    } = await github.checks.listSuitesForRef({
+      owner,
+      repo,
+      ref,
+      headers: {
+        Accept: 'application/vnd.github.antiope-preview+json'
+      }
+    })
+
+    if (
+      total_count > 0 &&
+      check_suites.find(s => s.conclusion !== 'success' && s.conclusion !== 'neutral')
+    ) {
       throw new Error('Retry job')
     }
 

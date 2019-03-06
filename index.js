@@ -82,6 +82,7 @@ module.exports = async robot => {
     ],
     wrapPaymentCheck(pullLabeled(queue))
   )
+  // TODO rerun pull labeled job on `check_suite.completed`
 
   robot.on(['issue_comment.created', 'issue_comment.edited'], wrapPaymentCheck(commentCreated()))
 
