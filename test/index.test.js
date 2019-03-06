@@ -476,6 +476,36 @@ describe('Bot', () => {
       expect(github.pullRequests.merge.mock.calls.map(c => c[0].merge_method)).toEqual(order)
     })
 
+    test.each([
+      [null, false],
+      ['success', true],
+      ['neutral', true],
+      ['timed_out', false],
+      ['failure', false],
+      ['action_required', false]
+    ])('Will check suites for status: %s', async (conclusion, shouldMerge) => {
+      github.pullRequests.merge.mockResolvedValueOnce()
+      github.checks.listSuitesForRef.mockResolvedValue({
+        data: { total_count: 1, check_suites: [{ conclusion }] }
+      })
+
+      await robot.receive(
+        payload({
+          name: 'pull_request',
+          threadType: 'pull_request',
+          labels: ['merge'],
+          number: 7
+        })
+      )
+
+      await wait(2)
+      if (shouldMerge) {
+        expect(github.pullRequests.merge).toHaveBeenCalled()
+      } else {
+        expect(github.pullRequests.merge).not.toHaveBeenCalled()
+      }
+    })
+
     test('Will remove the existing job if a new label event occurs', async () => {
       github.pullRequests.get.mockResolvedValue({
         data: {
