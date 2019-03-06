@@ -30,6 +30,16 @@ const STATE = {
   EXPECTED: 'expected'
 }
 
+// https://developer.github.com/v4/enum/checkconclusionstate/
+const CONCLUSION = {
+  ACTION_REQUIRED: 'action_required', // The check suite or run requires action.
+  CANCELLED: 'cancelled', // The check suite or run has been cancelled.
+  FAILURE: 'failure', // The check suite or run has failed.
+  NEUTRAL: 'neutral', // The check suite or run was neutral.
+  SUCCESS: 'success', // The check suite or run has succeeded.
+  TIMED_OUT: 'timed_out' // The check suite or run has timed out.
+}
+
 const methods = ['merge', 'squash', 'rebase']
 
 module.exports = queue => async context => {
@@ -129,7 +139,9 @@ module.exports.process = robot => async ({
 
     if (
       total_count > 0 &&
-      check_suites.find(s => s.conclusion !== 'success' && s.conclusion !== 'neutral')
+      check_suites.find(
+        s => s.conclusion !== CONCLUSION.SUCCESS && s.conclusion !== CONCLUSION.NEUTRAL
+      )
     ) {
       throw new Error('Retry job')
     }
