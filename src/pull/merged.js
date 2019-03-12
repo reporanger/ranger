@@ -47,7 +47,7 @@ module.exports.createTag = () => async context => {
     if (!isAutoPatch) return
   }
 
-  const { data } = await context.github.repos.listTags(context.repo({ per_page: 10 }))
+  const { data } = await context.github.repos.listTags(context.repo())
 
   if (!data || !data[0]) return
 
