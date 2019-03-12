@@ -47,14 +47,17 @@ module.exports.createTag = () => async context => {
     if (!isAutoPatch) return
   }
 
-  const { data } = await context.github.repos.listTags(context.repo({ per_page: 1 }))
+  const { data } = await context.github.repos.listTags(context.repo({ per_page: 10 }))
 
-  const previousTag = data && data[0] && data[0].name
-  if (!previousTag) return
+  if (!data || !data[0]) return
 
-  const match = /(v{0,1})(\d+)\.(\d+)\.(\d+)/.exec(previousTag)
+  const REX = /(v{0,1})(\d+)\.(\d+)\.(\d+)/
 
-  if (!match) return
+  const matchedTag = data.find(d => REX.exec(d.name))
+
+  if (!matchedTag) return
+
+  const match = REX.exec(matchedTag.name)
 
   const v = {
     v: match[1] || '',
