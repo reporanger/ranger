@@ -1,5 +1,9 @@
+const r = require('rexrex')
 const getConfig = require('../config')
 const { DELETE_BRANCH, TAG } = require('../constants')
+
+const digit = r.capture(r.extra(r.matchers.NUMBER))
+const pattern = r.and(r.capture(r.repeat('v', 0, 1)), digit, '\\.', digit, '\\.', digit)
 
 module.exports.deleteBranch = () => async context => {
   const thread = context.payload.pull_request
@@ -51,7 +55,7 @@ module.exports.createTag = () => async context => {
 
   if (!data || !data[0]) return
 
-  const REX = /(v{0,1})(\d+)\.(\d+)\.(\d+)/
+  const REX = r.regex(pattern, 'g')
 
   const matchedTag = data.find(d => REX.exec(d.name))
 
