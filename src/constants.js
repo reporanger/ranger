@@ -6,6 +6,7 @@ exports.COMMENT = 'comment'
 exports.LABEL = 'label'
 exports.DELETE_BRANCH = 'delete_branch'
 exports.TAG = 'tag'
+exports.DELETE_COMMENT = 'delete_comment'
 
 // https://developer.github.com/v4/enum/commentauthorassociation/
 exports.MAINTAINERS = ['COLLABORATOR', 'MEMBER', 'OWNER']

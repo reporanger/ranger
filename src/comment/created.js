@@ -1,4 +1,4 @@
-const { MAINTAINERS, LABEL } = require('../constants')
+const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
 const getConfig = require('../config')
 
 const { addLabels } = require('../api')
@@ -22,19 +22,30 @@ function parseRegex(string) {
 module.exports = () => async context => {
   const config = await getConfig(context)
 
-  const { author_association, body } = context.payload.comment
-
-  if (!isMaintainer(author_association)) return
+  const { author_association, body, id: comment_id } = context.payload.comment
 
   if (!Array.isArray(config.comments)) return
 
   await Promise.all(
     config.comments.map(async ({ action, pattern, labels } = {}) => {
-      if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
-      if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
-      if (!labels) return
+      if (typeof action !== 'string') return
 
-      return addLabels(context.github, context.issue({ labels }))
+      switch (action.trim().toLowerCase()) {
+        case LABEL: {
+          if (!isMaintainer(author_association)) return
+
+          if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+          if (!labels) return
+
+          return addLabels(context.github, context.issue({ labels }))
+        }
+
+        case DELETE_COMMENT: {
+          if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+
+          return context.github.issues.deleteComment(context.repo({ comment_id }))
+        }
+      }
     })
   )
 }
