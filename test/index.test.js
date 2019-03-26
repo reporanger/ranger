@@ -134,6 +134,8 @@ comments:
     pattern: /duplicate of/i
     labels: 
       - duplicate
+  - action: delete_comment
+    pattern: +1
 
 merges:
   - action: delete_branch
@@ -167,7 +169,8 @@ describe('Bot', () => {
         createComment: jest.fn(),
         createLabel: jest.fn().mockResolvedValue(),
         addLabels: jest.fn().mockResolvedValue(),
-        update: jest.fn((_, data) => Promise.resolve({ data }))
+        update: jest.fn((_, data) => Promise.resolve({ data })),
+        deleteComment: jest.fn()
       },
       pullRequests: {
         get: jest.fn().mockResolvedValue({
@@ -614,6 +617,20 @@ describe('Bot', () => {
       expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:merge`)
     })
     describe('created', () => {
+      test('deleting comments', async () => {
+        await robot.receive(
+          commentPayload({
+            action: 'created',
+            body: '+1'
+          })
+        )
+
+        expect(github.issues.deleteComment).toHaveBeenCalledWith({
+          comment_id: 448738894,
+          owner: 'mfix22',
+          repo: 'test-issue-bot'
+        })
+      })
       test.each(MAINTAINERS)(
         `by %s's will trigger actions if the payload is correct`,
         async author_association => {
