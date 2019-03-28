@@ -113,9 +113,8 @@ module.exports.process = robot => async ({
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === STATUS.CLEAN
 
   if (isMergeable) {
-    const owner = pull.head.repo.owner.login
-    const repo = pull.head.repo.name
-    const ref = pull.head.ref
+    const sha = pull.head.sha
+    const ref = sha
     const {
       data: { state, statuses }
     } = await github.repos.getCombinedStatusForRef({ owner, repo, ref })
@@ -153,7 +152,7 @@ module.exports.process = robot => async ({
         owner,
         repo,
         number,
-        sha: pull.head.sha,
+        sha,
         merge_method: methods[(initialIndex + i) % methods.length]
       })
 
