@@ -1,3 +1,4 @@
+const r = require('rexrex')
 const { LABEL, MAINTAINERS } = require('../constants')
 const getConfig = require('../config')
 const { addLabels } = require('../api')
@@ -6,16 +7,17 @@ function isMaintainer(association) {
   return MAINTAINERS.includes(association)
 }
 
+const MATCHES_NOTHING = r.and(r.matchers.END, r.matchers.START)
+
 function parseRegex(string) {
   // https://stackoverflow.com/questions/874709/converting-user-input-string-to-regular-expression
   const match = string.match(new RegExp('^/(.*?)/([gimy]*)$'))
 
   if (match && match[1] && match[2]) {
-    return new RegExp(match[1], match[2])
+    return r.regex(match[1], match[2])
   }
 
-  // matches nothing
-  return /$^/
+  return r.regex(MATCHES_NOTHING)
 }
 
 module.exports = () => async context => {

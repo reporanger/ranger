@@ -1,4 +1,5 @@
 // TODO add DEV flag
+const r = require('rexrex')
 const { OPEN_SOURCE } = require('./constants')
 
 const WHITE_LIST = ['dawnlabs', 'windsorio', 'runeai', 'explosion', 'gremlin']
@@ -59,12 +60,20 @@ function getAssociatedAccount(github, account_id) {
   return github.apps.checkAccountIsAssociatedWithAny({ account_id })
 }
 
+const privateReposAllowedPattern = r.and(
+  r.capture(r.extra(r.matchers.NUMBER)),
+  r.extra('.', true),
+  'private repo'
+)
+
 function getMaxRepositories(plan) {
   // e.g. ['Unlimited public repositories', '5 private repositories']
-  const privateRepoBullet = plan.bullets.find(b => b.match(/(\d+).+?private repo/i))
+  const privateRepoBullet = plan.bullets.find(b =>
+    b.match(r.regex(privateReposAllowedPattern, 'i'))
+  )
 
   if (privateRepoBullet) {
-    return Number(privateRepoBullet.match(/(\d+).+?private repo/i)[1])
+    return Number(privateRepoBullet.match(r.regex(privateReposAllowedPattern, 'i'))[1])
   }
 
   return 0
