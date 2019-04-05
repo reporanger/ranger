@@ -49,8 +49,11 @@ module.exports = async robot => {
 
   queue.on('failed', (job, err) => {
     if (err.message !== 'Retry job') {
-      robot.log.error(`Job ${job.id} failed with error ${err.message}`)
-      Sentry.captureException(err, { job })
+      robot.log.error(
+        `Job ${job.id} with data ${JSON.stringify(job.data, null, 2)} failed with error ${
+          err.message
+        }`
+      )
     }
   })
 
