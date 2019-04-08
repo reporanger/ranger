@@ -477,7 +477,7 @@ describe('pull_request', () => {
   })
 
   test.each([
-    [null, false],
+    [null, true], // TODO https://github.com/dawnlabs/ranger/issues/60
     ['success', true],
     ['neutral', true],
     ['timed_out', false],
