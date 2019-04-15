@@ -1,4 +1,6 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -6,9 +8,9 @@
 }
 
 @font-face {
-    font-family: "Shenandoah";
-    src: url("assets/Shenandoah.woff") format('woff');
-    font-weight: 400;
+  font-family: 'Shenandoah';
+  src: url('assets/Shenandoah.woff') format('woff');
+  font-weight: 400;
 }
 
 html {
@@ -20,15 +22,21 @@ html {
 }
 
 @media (min-width: 768px) {
-  html { font-size: 80%; }
+  html {
+    font-size: 80%;
+  }
 }
 
 @media (min-width: 1024px) {
-  html { font-size: 90%; }
+  html {
+    font-size: 90%;
+  }
 }
 
 @media (min-width: 1200px) {
-  html { font-size: 100%; }
+  html {
+    font-size: 100%;
+  }
 }
 
 body {
@@ -39,7 +47,11 @@ body {
   padding: 0 1rem;
 }
 
-button, footer, header, nav, form {
+button,
+footer,
+header,
+nav,
+form {
   display: flex;
 }
 
@@ -66,7 +78,9 @@ nav {
 }
 
 @media (min-width: 768px) {
-  nav { display: flex; }
+  nav {
+    display: flex;
+  }
 }
 
 nav a {
@@ -77,7 +91,7 @@ nav a {
 }
 
 nav a:hover {
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 footer {
@@ -92,7 +106,9 @@ p {
   margin: 0 0 1.875rem;
 }
 
-p, ul, ol {
+p,
+ul,
+ol {
   max-width: 40rem;
 }
 
@@ -100,9 +116,12 @@ li {
   margin-bottom: 1rem;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: 'Shenandoah', sans-serif;
-  color: #FDE106;
+  color: #fde106;
   text-align: center;
   text-transform: uppercase;
   font-weight: normal;
@@ -115,7 +134,9 @@ h1 {
 }
 
 @media (min-width: 768px) {
-  h1 { font-size: 3.25rem; }
+  h1 {
+    font-size: 3.25rem;
+  }
 }
 
 h2 {
@@ -138,11 +159,9 @@ p a {
 }
 
 a:active {
-
 }
 
 a:hover {
-
 }
 
 img {
@@ -151,7 +170,8 @@ img {
   -webkit-user-drag: none;
 }
 
-button, .button {
+button,
+.button {
   display: flex;
   align-items: center;
   background: white;
@@ -183,7 +203,7 @@ section {
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  margin: 10rem 1rem;
+  margin: 8rem 1rem;
   max-width: 50rem;
 }
 
@@ -194,7 +214,7 @@ section {
 
 .logo a {
   padding-top: 0.4rem;
-  margin-right: .5rem;
+  margin-right: 0.5rem;
   width: 9rem;
 }
 
@@ -205,7 +225,7 @@ section {
   margin-top: 0.12rem;
   font-size: 0.4em;
   font-weight: 600;
-  letter-spacing: .01rem;
+  letter-spacing: 0.01rem;
   color: #fff;
   text-align: center;
   text-transform: uppercase;
@@ -224,12 +244,12 @@ section {
 }
 
 .footer-author {
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .footer-author a {
   text-decoration: none;
-  color: #FDE106;
+  color: #fde106;
 }
 
 .footer-author a:hover {
