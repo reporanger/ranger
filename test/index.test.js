@@ -840,14 +840,13 @@ describe('analytics', () => {
 
     await robot.receive(createPayload(repos))
 
-    repos.forEach(repo => {
-      expect(airtable('installed').create).toHaveBeenCalledWith({
-        login: 'ranger',
-        type: 'User',
-        repo: repo.name,
-        private: repo.private,
-        installationId: 42
-      })
+    expect(airtable('installed').create).toHaveBeenCalledWith({
+      login: 'ranger',
+      type: 'User',
+      repos: 'ranger/test-0,ranger/test-1',
+      repoCount: 2,
+      privateRepoCount: 1,
+      installationId: 42
     })
   })
 })
