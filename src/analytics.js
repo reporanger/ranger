@@ -19,17 +19,14 @@ exports.installed = robot => async ({
   const repos = repositories_added || repositories
 
   try {
-    await Promise.all(
-      repos.map(repo =>
-        exports.airtable('installed').create({
-          login,
-          type,
-          repo: repo.name,
-          private: repo.private,
-          installationId
-        })
-      )
-    )
+    await exports.airtable('installed').create({
+      login,
+      type,
+      repos: repos.map(({ name }) => name).join(),
+      repoCount: repos.length,
+      privateRepoCount: repos.filter(r => r.private).length,
+      installationId
+    })
   } catch (e) {
     robot.log.error(e)
   }
