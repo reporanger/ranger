@@ -117,6 +117,10 @@ labels:
     action: close
     delay: -1
     comment: Test comment
+  none:
+    action: close
+    delay: null
+    comment: Test comment
   comment:
     action: comment
     message: beep
@@ -324,7 +328,8 @@ describe('issue', () => {
   })
 
   test('Using negative numbers for delay should not create a job', async () => {
-    await robot.receive(payload({ labels: ['-1'], number: 11 }))
+    // reason for duplicate 'none' is just to test `getEffectiveLabel()` further
+    await robot.receive(payload({ labels: ['none', '-1', 'none'], number: 11 }))
 
     expect(github.issues.createComment).toHaveBeenCalled()
     expect(queue.createJob).not.toHaveBeenCalled()

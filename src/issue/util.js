@@ -13,6 +13,9 @@ function getLabelConfig(config, labelName) {
 }
 
 function timeToNumber(time) {
+  if (time == null) {
+    return Infinity
+  }
   return isNaN(time) ? ms(time.trim()) : Number(time)
 }
 
