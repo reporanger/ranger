@@ -2,7 +2,17 @@
 const r = require('rexrex')
 const { OPEN_SOURCE } = require('./constants')
 
-const WHITE_LIST = ['dawnlabs', 'windsorio', 'runeai', 'explosion', 'gremlin', 'nlog', 'vectos']
+const WHITE_LIST = [
+  'dawnlabs',
+  'windsorio',
+  'runeai',
+  'explosion',
+  'gremlin',
+  'nlog',
+  'vectos',
+  'nerdwallet',
+  'nerdwalletoss'
+]
 
 module.exports = async function verifyPaymentPlan(robot, context) {
   if (!context.payload.repository.private) {
