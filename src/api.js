@@ -6,7 +6,10 @@ exports.closeIssue = function closeIssue(github, data) {
       owner,
       repo,
       number,
-      state
+      state,
+      headers: {
+        Accept: 'application/vnd.github.symmetra-preview+json'
+      }
     })
     .then(_ => _.data)
 }
