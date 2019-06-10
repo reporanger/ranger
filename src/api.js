@@ -1,3 +1,5 @@
+// TODO use previews array: https://github.com/octokit/rest.js/tree/v16.18.0#api-previews
+
 exports.closeIssue = function closeIssue(github, data) {
   const { owner, repo, number, state = 'closed' } = data
 
@@ -21,7 +23,10 @@ exports.getPullRequest = function getPullRequest(github, data) {
     .get({
       owner,
       repo,
-      number
+      number,
+      headers: {
+        Accept: 'application/vnd.github.symmetra-preview+json'
+      }
     })
     .then(_ => _.data)
 }
