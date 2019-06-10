@@ -16,7 +16,7 @@
     "site": "cd site && live-server"
   },
   "dependencies": {
-    "@sentry/node": "^4.6.4",
+    "@sentry/node": "^5.4.0",
     "airtable": "^0.6.0",
     "bee-queue": "^1.2.2",
     "moment": "^2.24.0",
