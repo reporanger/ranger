@@ -44,7 +44,7 @@ module.exports = robot => async context => {
               // throw original error if parse fails
               condition =
                 err.message &&
-                JSON.parse(err.message).errors.find(err => err.code === 'already_exists')
+                JSON.parse(err.message).errors.find(err => err.status === 'already_exists')
             } catch (e) {
               throw err
             }
