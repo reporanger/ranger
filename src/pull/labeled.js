@@ -158,7 +158,7 @@ module.exports.process = robot => async ({
       github.pullRequests.merge({
         owner,
         repo,
-        number,
+        pull_number: number,
         sha,
         merge_method: methods[(initialIndex + i) % methods.length]
       })

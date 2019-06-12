@@ -7,7 +7,7 @@ exports.closeIssue = function closeIssue(github, data) {
     .update({
       owner,
       repo,
-      number,
+      issue_number: number,
       state,
       headers: {
         Accept: 'application/vnd.github.symmetra-preview+json'
@@ -23,7 +23,7 @@ exports.getPullRequest = function getPullRequest(github, data) {
     .get({
       owner,
       repo,
-      number,
+      pull_number: number,
       headers: {
         Accept: 'application/vnd.github.symmetra-preview+json'
       }

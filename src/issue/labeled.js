@@ -47,7 +47,7 @@ module.exports = queue => async context => {
         const body = comment
           .replace('$DELAY', ms(time, { long: true }))
           .replace('$LABEL', label.name)
-        context.github.issues.createComment(context.issue({ body }))
+        context.github.issues.createComment(context.repo({ body, issue_number: thread.number }))
       }
     }
 

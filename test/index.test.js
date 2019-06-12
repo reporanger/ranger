@@ -274,7 +274,7 @@ describe('issue', () => {
     await wait(20)
 
     expect(github.issues.createComment).toHaveBeenCalledWith({
-      number: 7,
+      issue_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       body: 'duplicate issue created! Closing in 5 ms . . .'
@@ -363,7 +363,7 @@ describe('pull_request', () => {
     await wait(2)
 
     expect(github.pullRequests.merge).toHaveBeenCalledWith({
-      number: 7,
+      pull_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       sha: 0,
@@ -450,7 +450,7 @@ describe('pull_request', () => {
 
     await wait(20)
     expect(github.pullRequests.merge).toHaveBeenCalledWith({
-      number: 97,
+      pull_number: 97,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       sha: 0,
@@ -727,7 +727,7 @@ describe('installation', () => {
   test('Will only throw on createLabel if error is not of type "already_exists"', async () => {
     robot.log.error = jest.fn()
     github.issues.createLabel.mockRejectedValueOnce({
-      message: JSON.stringify({ errors: [{ code: 'already_exists' }] })
+      message: JSON.stringify({ errors: [{ status: 'already_exists' }] })
     })
 
     const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
@@ -737,7 +737,7 @@ describe('installation', () => {
     expect(robot.log.error).not.toHaveBeenCalled()
 
     github.issues.createLabel.mockRejectedValueOnce({
-      message: JSON.stringify({ errors: [{ code: 'unknown error' }] })
+      message: JSON.stringify({ errors: [{ status: 'unknown error' }] })
     })
 
     await robot.receive(installedPayload({ repositories: repos }))
