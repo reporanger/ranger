@@ -65,6 +65,8 @@ module.exports = async robot => {
     }
   }
 
+  robot.on('*', context => robot.log.info(context.repo()))
+
   // Listeners
   robot.on(
     // All pull requests are issues in GitHub REST V3
