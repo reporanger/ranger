@@ -167,6 +167,8 @@ beforeEach(async () => {
   queue = setup.queue
   airtable = setup.airtable
 
+  robot.log.info = jest.fn()
+
   github = {
     issues: {
       createComment: jest.fn(),

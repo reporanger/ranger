@@ -65,7 +65,13 @@ module.exports = async robot => {
     }
   }
 
-  robot.on('*', context => robot.log.info(context.repo()))
+  robot.on('*', context => {
+    try {
+      robot.log.info(context.repo())
+    } catch (error) {
+      // pass
+    }
+  })
 
   // Listeners
   robot.on(
