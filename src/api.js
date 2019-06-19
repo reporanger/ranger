@@ -46,9 +46,10 @@ exports.createLabel = function createLabel(github, data) {
   })
 }
 
-exports.addLabels = function addLabels(github, { labels, ...data }) {
+exports.addLabels = function addLabels(github, { labels, number, ...data }) {
   return github.issues.addLabels({
     ...data,
+    issue_number: number,
     labels: many(labels),
     headers: {
       Accept: 'application/vnd.github.symmetra-preview+json'

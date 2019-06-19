@@ -592,7 +592,7 @@ describe('pull_request', () => {
       await wait()
 
       expect(github.issues.addLabels).toHaveBeenCalledWith({
-        number: 4,
+        issue_number: 4,
         labels: ['merge when passing'],
         owner: 'ranger',
         repo: 'ranger-test',
@@ -650,7 +650,7 @@ describe('comment', () => {
         )
 
         expect(github.issues.addLabels).toHaveBeenCalledWith({
-          number,
+          issue_number: number,
           labels: ['duplicate'],
           owner: 'mfix22',
           repo: 'test-issue-bot',
