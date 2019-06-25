@@ -729,7 +729,7 @@ describe('installation', () => {
   test('Will only throw on createLabel if error is not of type "already_exists"', async () => {
     robot.log.error = jest.fn()
     github.issues.createLabel.mockRejectedValueOnce({
-      message: JSON.stringify({ errors: [{ status: 'already_exists' }] })
+      errors: [{ code: 'already_exists' }]
     })
 
     const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
