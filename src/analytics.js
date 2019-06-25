@@ -11,7 +11,7 @@ exports.installed = robot => async ({
 
   const {
     id: installationId,
-    account: { login, type }
+    account: { login, type, avatar_url }
   } = installation
 
   const repos = repositories_added || repositories
@@ -20,8 +20,9 @@ exports.installed = robot => async ({
     exports.analytics.identify({
       userId: installationId,
       traits: {
-        username: login,
+        avatar: avatar_url,
         name: login,
+        username: login,
         type
       }
     })
