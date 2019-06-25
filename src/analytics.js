@@ -1,23 +1,13 @@
-const Mixpanel = require('mixpanel')
+const Analytics = require('analytics-node')
 
 if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
-  exports.mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN)
+  exports.analytics = new Analytics(process.env.SEGMENT_WRITE_KEY)
 }
-
-const set = (...args) =>
-  new Promise((res, rej) =>
-    exports.mixpanel.people.set(...args, (err, data) => (err ? rej(err) : res(data)))
-  )
-
-const append = (...args) =>
-  new Promise((res, rej) =>
-    exports.mixpanel.people.append(...args, (err, data) => (err ? rej(err) : res(data)))
-  )
 
 exports.installed = robot => async ({
   payload: { installation, repositories, repositories_added }
 }) => {
-  if (!exports.mixpanel) return
+  if (!exports.analytics) return
 
   const {
     id: installationId,
@@ -27,13 +17,24 @@ exports.installed = robot => async ({
   const repos = repositories_added || repositories
 
   try {
-    await set(installationId, {
-      $first_name: login,
-      type
+    exports.analytics.identify({
+      userId: installationId,
+      traits: {
+        username: login,
+        name: login,
+        type
+      }
     })
-    await append(installationId, {
-      repos: repos.map(r => r.name),
-      private_repos: repos.filter(r => r.private).map(r => r.name)
+
+    const private_repos = repos.filter(r => r.private)
+
+    exports.analytics.track({
+      userId: installationId,
+      event: 'Repo added',
+      properties: {
+        count: repos.length,
+        private_count: private_repos.length
+      }
     })
   } catch (e) {
     robot.log.error(e)

@@ -18,8 +18,8 @@
   "dependencies": {
     "@sentry/node": "^5.4.0",
     "airtable": "^0.6.0",
+    "analytics-node": "^3.4.0-beta.1",
     "bee-queue": "^1.2.2",
-    "mixpanel": "^0.10.2",
     "moment": "^2.24.0",
     "ms": "^2.1.1",
     "probot": "^9.2.15",

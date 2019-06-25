@@ -89,14 +89,16 @@ jest.mock(
     }
 )
 
-jest.mock('mixpanel', () => ({
-  init: () => ({
-    people: {
-      append: jest.fn((id, updates, cb) => cb()),
-      set: jest.fn((id, updates, cb) => cb())
+jest.mock(
+  'analytics-node',
+  () =>
+    class {
+      constructor() {
+        this.track = jest.fn()
+        this.identify = jest.fn()
+      }
     }
-  })
-}))
+)
 
 const config = `
 labels:
@@ -158,12 +160,12 @@ default:
 let robot
 let github
 let queue
-let mixpanel
+let analytics
 beforeEach(async () => {
   robot = new Application()
   const setup = await app(robot)
   queue = setup.queue
-  mixpanel = setup.mixpanel
+  analytics = setup.analytics
 
   robot.log.info = jest.fn()
 
@@ -845,22 +847,22 @@ describe('analytics', () => {
 
     await robot.receive(createPayload(repos))
 
-    expect(mixpanel.people.set).toHaveBeenCalledWith(
-      42,
-      {
-        $first_name: 'ranger',
+    expect(analytics.identify).toHaveBeenCalledWith({
+      userId: 42,
+      traits: {
+        name: 'ranger',
+        username: 'ranger',
         type: 'User'
-      },
-      expect.any(Function)
-    )
-    expect(mixpanel.people.append).toHaveBeenCalledWith(
-      42,
-      {
-        repos: 'ranger/test-0,ranger/test-1'.split(','),
-        private_repos: 'ranger/test-0'.split(',')
-      },
-      expect.any(Function)
-    )
+      }
+    })
+    expect(analytics.track).toHaveBeenCalledWith({
+      userId: 42,
+      event: 'Repo added',
+      properties: {
+        count: 2,
+        private_count: 1
+      }
+    })
   })
 })
 

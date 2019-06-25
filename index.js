@@ -1,7 +1,7 @@
 const Queue = require('bee-queue')
 const Sentry = require('@sentry/node')
 
-const { installed, mixpanel } = require('./src/analytics')
+const { installed, analytics } = require('./src/analytics')
 
 const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
@@ -125,6 +125,6 @@ module.exports = async robot => {
 
   return {
     queue,
-    mixpanel
+    analytics
   }
 }
