@@ -89,16 +89,14 @@ jest.mock(
     }
 )
 
-jest.mock(
-  'airtable',
-  () =>
-    class MockAirtable {
-      constructor() {
-        this.create = jest.fn().mockResolvedValue()
-        this.base = () => () => ({ create: this.create })
-      }
+jest.mock('mixpanel', () => ({
+  init: () => ({
+    people: {
+      append: jest.fn((id, updates, cb) => cb()),
+      set: jest.fn((id, updates, cb) => cb())
     }
-)
+  })
+}))
 
 const config = `
 labels:
@@ -160,12 +158,12 @@ default:
 let robot
 let github
 let queue
-let airtable
+let mixpanel
 beforeEach(async () => {
   robot = new Application()
   const setup = await app(robot)
   queue = setup.queue
-  airtable = setup.airtable
+  mixpanel = setup.mixpanel
 
   robot.log.info = jest.fn()
 
@@ -847,14 +845,22 @@ describe('analytics', () => {
 
     await robot.receive(createPayload(repos))
 
-    expect(airtable('installed').create).toHaveBeenCalledWith({
-      login: 'ranger',
-      type: 'User',
-      repos: 'ranger/test-0,ranger/test-1',
-      repoCount: 2,
-      privateRepoCount: 1,
-      installationId: 42
-    })
+    expect(mixpanel.people.set).toHaveBeenCalledWith(
+      42,
+      {
+        $first_name: 'ranger',
+        type: 'User'
+      },
+      expect.any(Function)
+    )
+    expect(mixpanel.people.append).toHaveBeenCalledWith(
+      42,
+      {
+        repos: 'ranger/test-0,ranger/test-1'.split(','),
+        private_repos: 'ranger/test-0'.split(',')
+      },
+      expect.any(Function)
+    )
   })
 })
 

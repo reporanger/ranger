@@ -1,15 +1,23 @@
-const Airtable = require('airtable')
-
-const BASE = 'appobbLH4DyF1gHd2'
+const Mixpanel = require('mixpanel')
 
 if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
-  exports.airtable = new Airtable().base(BASE)
+  exports.mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN)
 }
+
+const set = (...args) =>
+  new Promise((res, rej) =>
+    exports.mixpanel.people.set(...args, (err, data) => (err ? rej(err) : res(data)))
+  )
+
+const append = (...args) =>
+  new Promise((res, rej) =>
+    exports.mixpanel.people.append(...args, (err, data) => (err ? rej(err) : res(data)))
+  )
 
 exports.installed = robot => async ({
   payload: { installation, repositories, repositories_added }
 }) => {
-  if (!exports.airtable) return
+  if (!exports.mixpanel) return
 
   const {
     id: installationId,
@@ -19,13 +27,13 @@ exports.installed = robot => async ({
   const repos = repositories_added || repositories
 
   try {
-    await exports.airtable('installed').create({
-      login,
-      type,
-      repos: repos.map(({ name }) => name).join(),
-      repoCount: repos.length,
-      privateRepoCount: repos.filter(r => r.private).length,
-      installationId
+    await set(installationId, {
+      $first_name: login,
+      type
+    })
+    await append(installationId, {
+      repos: repos.map(r => r.name),
+      private_repos: repos.filter(r => r.private).map(r => r.name)
     })
   } catch (e) {
     robot.log.error(e)
