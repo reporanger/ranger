@@ -4,8 +4,6 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1ad824ff-2486-4fe5-a738-68c66f86fd04/deploy-status)](https://app.netlify.com/sites/ranger/deploys)
 
-- [Docs](https://www.notion.so/dawnlabs/Docs-8d7627bb1f3c42b7b1820e8d6f157a57)
-
 ## Usage
 
 1. **[Configure the GitHub App](https://github.com/marketplace/ranger)**

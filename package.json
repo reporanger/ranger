@@ -2,9 +2,9 @@
   "name": "ranger",
   "version": "0.0.27",
   "description": "",
-  "author": "Mike Fix <mike@dawnlabs.io> (dawnlabs.io)",
+  "author": "Mike Fix",
   "license": "UNLICENSED",
-  "repository": "https://github.com/dawnlabs/ranger.git",
+  "repository": "https://github.com/mfix22/ranger.git",
   "scripts": {
     "dev": "nodemon --exec \"npm start\"",
     "start": "probot run ./index.js",
