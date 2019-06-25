@@ -2,7 +2,7 @@
 
 > A sidekick for repository maintainers
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/1ad824ff-2486-4fe5-a738-68c66f86fd04/deploy-status)](https://app.netlify.com/sites/ranger/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/2b0286e2-07fe-474c-9a7b-2d9b3c9c3e01/deploy-status)](https://app.netlify.com/sites/ranger/deploys)
 
 ## Usage
 
