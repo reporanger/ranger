@@ -67,7 +67,7 @@ module.exports = async robot => {
 
   robot.on('*', context => {
     try {
-      robot.log.info(context.repo())
+      robot.log.info(context.repo({ id: context.payload.installation.id }))
     } catch (error) {
       // pass
     }
