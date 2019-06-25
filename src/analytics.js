@@ -5,7 +5,8 @@ if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
 }
 
 exports.installed = robot => async ({
-  payload: { installation, repositories, repositories_added }
+  payload: { installation, repositories, repositories_added },
+  github
 }) => {
   if (!exports.analytics) return
 
@@ -13,6 +14,16 @@ exports.installed = robot => async ({
     id: installationId,
     account: { login, type, avatar_url }
   } = installation
+
+  let email
+  try {
+    const { data } = await github.users.getByUsername({
+      username: installation.account.login
+    })
+    email = data.email
+  } catch (e) {
+    robot.log.error(e)
+  }
 
   const repos = repositories_added || repositories
 
@@ -23,7 +34,8 @@ exports.installed = robot => async ({
         avatar: avatar_url,
         name: login,
         username: login,
-        type
+        type,
+        email
       }
     })
 

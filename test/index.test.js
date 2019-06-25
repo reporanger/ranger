@@ -221,6 +221,9 @@ beforeEach(async () => {
     },
     checks: {
       listSuitesForRef: jest.fn().mockResolvedValue({ data: { total_count: 0, check_suites: [] } })
+    },
+    users: {
+      getByUsername: jest.fn().mockResolvedValue({ data: { email: 'test@test.com' } })
     }
   }
   robot.auth = () => Promise.resolve(github)
@@ -852,7 +855,8 @@ describe('analytics', () => {
       traits: {
         name: 'ranger',
         username: 'ranger',
-        type: 'User'
+        type: 'User',
+        email: 'test@test.com'
       }
     })
     expect(analytics.track).toHaveBeenCalledWith({
