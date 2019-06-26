@@ -861,7 +861,7 @@ describe('analytics', () => {
     })
     expect(analytics.track).toHaveBeenCalledWith({
       userId: 42,
-      event: 'Repo added',
+      event: 'Repos added: ranger/test-0, ranger/test-1',
       properties: {
         count: 2,
         private_count: 1

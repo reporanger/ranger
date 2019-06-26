@@ -41,14 +41,16 @@ exports.installed = robot => async ({
 
     const private_repos = repos.filter(r => r.private)
 
-    exports.analytics.track({
-      userId: installationId,
-      event: 'Repo added',
-      properties: {
-        count: repos.length,
-        private_count: private_repos.length
-      }
-    })
+    if (repos.length) {
+      exports.analytics.track({
+        userId: installationId,
+        event: `Repos added: ${repos.map(r => r.name).join(', ')}`,
+        properties: {
+          count: repos.length,
+          private_count: private_repos.length
+        }
+      })
+    }
   } catch (e) {
     robot.log.error(e)
   }
