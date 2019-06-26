@@ -4,10 +4,7 @@ if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
   exports.analytics = new Analytics(process.env.SEGMENT_WRITE_KEY)
 }
 
-exports.installed = robot => async ({
-  payload: { installation, repositories, repositories_added },
-  github
-}) => {
+exports.installed = robot => async ({ payload: { installation }, github }) => {
   if (!exports.analytics) return
 
   const {
@@ -25,8 +22,6 @@ exports.installed = robot => async ({
     robot.log.error(e)
   }
 
-  const repos = repositories_added || repositories
-
   try {
     exports.analytics.identify({
       userId: installationId,
@@ -38,10 +33,24 @@ exports.installed = robot => async ({
         email
       }
     })
+  } catch (e) {
+    robot.log.error(e)
+  }
+}
 
-    const private_repos = repos.filter(r => r.private)
+// TODO move this to installation/added
+exports.added = robot => async ({
+  payload: { installation, repositories, repositories_added }
+}) => {
+  if (!exports.analytics) return
 
+  const { id: installationId } = installation
+
+  const repos = repositories_added || repositories
+
+  try {
     if (repos.length) {
+      const private_repos = repos.filter(r => r.private)
       exports.analytics.track({
         userId: installationId,
         event: `Repos added: ${repos.map(r => r.name).join(', ')}`,

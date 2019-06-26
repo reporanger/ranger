@@ -1,7 +1,7 @@
 const Queue = require('bee-queue')
 const Sentry = require('@sentry/node')
 
-const { installed, analytics } = require('./src/analytics')
+const { installed, added, analytics } = require('./src/analytics')
 
 const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
@@ -110,9 +110,10 @@ module.exports = async robot => {
 
   robot.on('issue_comment.deleted', commentDeleted(queue))
 
+  robot.on(['installation_repositories.added', 'installation.created'], added(robot))
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
 
-  robot.on(['installation.created', 'installation_repositories.added'], installed(robot))
+  robot.on(['installation.created'], installed(robot))
 
   // TODO use status updates to retrigger merge jobs
   // robot.on('status', c => console.log(c.payload))
