@@ -75,7 +75,6 @@ module.exports = async robot => {
         }
       } catch (error) {
         // pass
-        robot.log.error(error)
       }
     }
   })
