@@ -6,7 +6,7 @@ const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
 
-const { timeToNumber } = require('../issue/util')
+const { timeToNumber } = require('./util')
 
 // TODO use `getLabelConfig` from util
 function getLabelConfig(config, labelName) {
