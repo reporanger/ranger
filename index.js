@@ -13,7 +13,7 @@ const commentDeleted = require('./src/comment/deleted')
 const commentCreated = require('./src/comment/created')
 const installationAdded = require('./src/installation/added')
 
-const { CLOSE, MERGE } = require('./src/constants')
+const { CLOSE, MERGE, COMMENT } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
@@ -35,6 +35,8 @@ module.exports = async robot => {
 
   queue.process(job => {
     switch (job.data.action) {
+      case COMMENT:
+        return threadLabeled.process(robot)(job)
       case MERGE:
         return pullLabeled.process(robot)(job)
       case CLOSE:
@@ -66,11 +68,15 @@ module.exports = async robot => {
   }
 
   robot.on('*', context => {
-    try {
-      robot.log.info(context.repo({ id: context.payload.installation.id }))
-    } catch (error) {
-      // pass
-      robot.log.error(error)
+    if (process.env.NODE_ENV !== 'test') {
+      try {
+        if (context.payload.installation && context.payload.installation.id) {
+          robot.log.info(context.repo({ id: context.payload.installation.id }))
+        }
+      } catch (error) {
+        // pass
+        robot.log.error(error)
+      }
     }
   })
 
