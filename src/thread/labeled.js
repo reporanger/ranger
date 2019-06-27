@@ -6,17 +6,7 @@ const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
 
-function getLabelConfig(config, labelName) {
-  if (typeof config.labels[labelName] === 'object') {
-    return config.labels[labelName]
-  }
-
-  if (config.default && config.default.comment) {
-    return config.default.comment
-  }
-
-  return {}
-}
+const { timeToNumber, getLabelConfig } = require('./util')
 
 module.exports = queue => async context => {
   const ID = getId(context, { action: COMMENT })
@@ -43,20 +33,37 @@ module.exports = queue => async context => {
 
     // Don't create a comment if one already exists
     if (!jobExists) {
-      const { message } = getLabelConfig(config, label.name)
+      const { message, delay } = getLabelConfig(config, label.name, COMMENT)
+
+      const time = delay ? timeToNumber(delay, 0) : 0
 
       if (message && message.trim() !== 'false') {
+        const body = message
+          .replace('$LABEL', label.name)
+          .replace('$DELAY', ms(time, { long: true }))
+
         await queue
-          .createJob({ installation_id: context.payload.installation.id, action: COMMENT })
+          .createJob(
+            context.repo({
+              installation_id: context.payload.installation.id,
+              action: COMMENT,
+              body,
+              [context.payload.pull_request ? 'pull_number' : 'issue_number']: thread.number
+            })
+          )
           .setId(jobId)
-          // allow comment to be commented again after 30 days
-          .delayUntil(Date.now() + ms('30d'))
+          .delayUntil(Date.now() + time)
           .save()
-
-        const body = message.replace('$LABEL', label.name)
-
-        return context.github.issues.createComment(context.issue({ body }))
       }
     }
   })
+}
+
+module.exports.process = robot => async ({ data /* id */ }) => {
+  try {
+    const github = await robot.auth(data.installation_id)
+    return await github.issues.createComment(data)
+  } catch (e) {
+    robot.log.error(e)
+  }
 }

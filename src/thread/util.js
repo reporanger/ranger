@@ -4,17 +4,21 @@ exports.getLabelConfig = getLabelConfig
 exports.timeToNumber = timeToNumber
 exports.getEffectiveLabel = getEffectiveLabel
 
-function getLabelConfig(config, labelName) {
+function getLabelConfig(config, labelName, defaultKey = 'close') {
   if (typeof config.labels[labelName] === 'object') {
     return config.labels[labelName]
   }
 
-  return config.default.close
+  if (config.default && config.default[defaultKey]) {
+    return config.default[defaultKey]
+  }
+
+  return {}
 }
 
-function timeToNumber(time) {
+function timeToNumber(time, whenNull = Infinity) {
   if (time == null) {
-    return Infinity
+    return whenNull
   }
   return isNaN(time) ? ms(time.trim()) : Number(time)
 }
@@ -22,7 +26,7 @@ function timeToNumber(time) {
 function getEffectiveLabel(config, labels) {
   return labels.reduce(
     (accum, label) => {
-      const time = timeToNumber(getLabelConfig(config, label.name).delay)
+      const time = timeToNumber(getLabelConfig(config, label.name).delay, Infinity)
 
       if (time < accum.time) {
         return { label, time }

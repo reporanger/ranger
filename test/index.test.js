@@ -167,8 +167,6 @@ beforeEach(async () => {
   queue = setup.queue
   analytics = setup.analytics
 
-  robot.log.info = jest.fn()
-
   github = {
     issues: {
       createComment: jest.fn(),
@@ -257,13 +255,18 @@ describe.each(['issue', 'pull_request'])('%s', threadType => {
 
   test('Will comment for each actionable label', async () => {
     await robot.receive(payload({ name, threadType, labels: ['comment', 'comment2'] }))
+    await wait(10)
     ;['beep', 'boop'].forEach(body => {
-      expect(github.issues.createComment).toHaveBeenCalledWith({
-        body,
-        number: 7,
-        owner: 'mfix22',
-        repo: 'test-issue-bot'
-      })
+      const threadNumberKey = `${threadType.split('_').shift()}_number`
+
+      expect(github.issues.createComment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body,
+          owner: 'mfix22',
+          repo: 'test-issue-bot',
+          [threadNumberKey]: 7
+        })
+      )
     })
   })
 
