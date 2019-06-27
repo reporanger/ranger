@@ -6,20 +6,7 @@ const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
 
-const { timeToNumber } = require('./util')
-
-// TODO use `getLabelConfig` from util
-function getLabelConfig(config, labelName) {
-  if (typeof config.labels[labelName] === 'object') {
-    return config.labels[labelName]
-  }
-
-  if (config.default && config.default.comment) {
-    return config.default.comment
-  }
-
-  return {}
-}
+const { timeToNumber, getLabelConfig } = require('./util')
 
 module.exports = queue => async context => {
   const ID = getId(context, { action: COMMENT })
@@ -46,7 +33,7 @@ module.exports = queue => async context => {
 
     // Don't create a comment if one already exists
     if (!jobExists) {
-      const { message, delay } = getLabelConfig(config, label.name)
+      const { message, delay } = getLabelConfig(config, label.name, COMMENT)
 
       const time = delay ? timeToNumber(delay, 0) : 0
 

@@ -4,12 +4,16 @@ exports.getLabelConfig = getLabelConfig
 exports.timeToNumber = timeToNumber
 exports.getEffectiveLabel = getEffectiveLabel
 
-function getLabelConfig(config, labelName) {
+function getLabelConfig(config, labelName, defaultKey = 'close') {
   if (typeof config.labels[labelName] === 'object') {
     return config.labels[labelName]
   }
 
-  return config.default.close
+  if (config.default && config.default[defaultKey]) {
+    return config.default[defaultKey]
+  }
+
+  return {}
 }
 
 function timeToNumber(time, whenNull = Infinity) {

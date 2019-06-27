@@ -41,7 +41,7 @@ module.exports = queue => async context => {
 
     const jobExists = await queue.getJob(ID)
     if (!jobExists) {
-      const { comment } = getLabelConfig(config, label.name)
+      const { comment } = getLabelConfig(config, label.name, CLOSE)
 
       if (comment && comment.trim() !== 'false') {
         const body = comment
