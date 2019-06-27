@@ -16,7 +16,7 @@
     "site": "cd site && live-server"
   },
   "dependencies": {
-    "@sentry/node": "^5.4.0",
+    "@sentry/node": "^5.4.3",
     "analytics-node": "^3.4.0-beta.1",
     "bee-queue": "^1.2.2",
     "moment": "^2.24.0",
@@ -26,11 +26,11 @@
     "smee-client": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^5.15.1",
-    "eslint-plugin-import": "^2.16.0",
-    "husky": "^2.4.0",
+    "eslint": "^6.0.1",
+    "eslint-plugin-import": "^2.18.0",
+    "husky": "^2.7.0",
     "jest": "^24.4.0",
-    "lint-staged": "^8.1.5",
+    "lint-staged": "^8.2.1",
     "live-server": "^1.2.1",
     "nodemon": "^1.18.10",
     "prettier": "^1.16.4"
