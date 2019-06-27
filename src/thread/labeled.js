@@ -6,6 +6,9 @@ const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
 
+const { timeToNumber } = require('../issue/util')
+
+// TODO use `getLabelConfig` from util
 function getLabelConfig(config, labelName) {
   if (typeof config.labels[labelName] === 'object') {
     return config.labels[labelName]
@@ -16,13 +19,6 @@ function getLabelConfig(config, labelName) {
   }
 
   return {}
-}
-
-function timeToNumber(time) {
-  if (time == null) {
-    return 0
-  }
-  return isNaN(time) ? ms(time.trim()) : Number(time)
 }
 
 module.exports = queue => async context => {
@@ -52,7 +48,7 @@ module.exports = queue => async context => {
     if (!jobExists) {
       const { message, delay } = getLabelConfig(config, label.name)
 
-      const time = delay ? timeToNumber(delay) : 0
+      const time = delay ? timeToNumber(delay, 0) : 0
 
       if (message && message.trim() !== 'false') {
         const body = message
