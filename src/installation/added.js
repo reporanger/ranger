@@ -57,6 +57,11 @@ module.exports = robot => async context => {
 
     await Promise.all(promises)
   } catch (e) {
+    const Sentry = require('@sentry/node')
+    Sentry.configureScope(scope => {
+      scope.setUser({ id: context.payload.installation.id })
+      Sentry.captureException(e)
+    })
     robot.log.error(e)
   }
 }

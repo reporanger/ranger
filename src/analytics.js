@@ -22,24 +22,20 @@ exports.installed = robot => async ({ payload: { installation }, github }) => {
     robot.log.error(e)
   }
 
-  try {
-    exports.analytics.identify({
-      userId: installationId,
-      traits: {
-        avatar: avatar_url,
-        name: login,
-        username: login,
-        type,
-        email
-      }
-    })
-  } catch (e) {
-    robot.log.error(e)
-  }
+  exports.analytics.identify({
+    userId: installationId,
+    traits: {
+      avatar: avatar_url,
+      name: login,
+      username: login,
+      type,
+      email
+    }
+  })
 }
 
 // TODO move this to installation/added
-exports.added = robot => async ({
+exports.added = (/* robot */) => async ({
   payload: { installation, repositories, repositories_added }
 }) => {
   if (!exports.analytics) return
@@ -48,19 +44,15 @@ exports.added = robot => async ({
 
   const repos = repositories_added || repositories
 
-  try {
-    if (repos.length) {
-      const private_repos = repos.filter(r => r.private)
-      exports.analytics.track({
-        userId: installationId,
-        event: `Repos added: ${repos.map(r => r.name).join(', ')}`,
-        properties: {
-          count: repos.length,
-          private_count: private_repos.length
-        }
-      })
-    }
-  } catch (e) {
-    robot.log.error(e)
+  if (repos.length) {
+    const private_repos = repos.filter(r => r.private)
+    exports.analytics.track({
+      userId: installationId,
+      event: `Repos added: ${repos.map(r => r.name).join(', ')}`,
+      properties: {
+        count: repos.length,
+        private_count: private_repos.length
+      }
+    })
   }
 }

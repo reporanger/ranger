@@ -61,6 +61,11 @@ module.exports = async function verifyPaymentPlan(robot, context) {
   } catch (error) {
     if (error.status !== 404) {
       robot.log.error(error, context.repo())
+      const Sentry = require('@sentry/node')
+      Sentry.configureScope(scope => {
+        scope.setUser({ id: context.payload.installation.id })
+        Sentry.captureException(error)
+      })
     }
     return false
   }
