@@ -7,6 +7,7 @@ const getConfig = require('../config')
 const { COMMENT } = require('../constants')
 
 const { timeToNumber, getLabelConfig } = require('./util')
+const analytics = require('../analytics')
 
 module.exports = queue => async context => {
   const ID = getId(context, { action: COMMENT })
@@ -42,6 +43,13 @@ module.exports = queue => async context => {
           .replace('$LABEL', label.name)
           .replace('$DELAY', ms(time, { long: true }))
 
+        analytics.track({
+          userId: context.payload.installation.id,
+          event: `Comment job created`,
+          properties: context.repo({
+            body
+          })
+        })
         await queue
           .createJob(
             context.repo({

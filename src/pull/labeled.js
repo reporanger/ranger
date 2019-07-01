@@ -3,6 +3,7 @@ const ms = require('ms')
 const getId = require('../get-job-id')
 const getConfig = require('../config')
 const { MERGE } = require('../constants')
+const analytics = require('../analytics')
 
 const { getPullRequest } = require('../api')
 
@@ -78,6 +79,11 @@ module.exports = queue => async context => {
       ? 'squash'
       : 'merge'
 
+    analytics.track({
+      userId: context.payload.installation.id,
+      event: `Merge job created`,
+      properties: context.issue()
+    })
     return queue
       .createJob({
         ...context.issue({ installation_id: context.payload.installation.id }),

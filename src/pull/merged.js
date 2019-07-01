@@ -2,6 +2,7 @@ const r = require('rexrex')
 
 const getConfig = require('../config')
 const { DELETE_BRANCH, TAG } = require('../constants')
+const analytics = require('../analytics')
 
 const digit = r.capture(r.extra(r.matchers.NUMBER))
 const pattern = r.and(r.capture(r.repeat('v', 0, 1)), digit, '\\.', digit, '\\.', digit)
@@ -97,4 +98,13 @@ module.exports.createTag = () => async context => {
       sha
     })
   )
+
+  analytics.track({
+    userId: context.payload.installation.id,
+    event: `Tag created`,
+    properties: context.repo({
+      tag,
+      sha
+    })
+  })
 }

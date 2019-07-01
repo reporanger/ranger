@@ -8,6 +8,7 @@ const getId = require('../get-job-id')
 const { closeIssue } = require('../api')
 const getConfig = require('../config')
 const { CLOSE } = require('../constants')
+const analytics = require('../analytics')
 
 function getLabelByAction(config, actionName) {
   return label => {
@@ -52,6 +53,11 @@ module.exports = queue => async context => {
     }
 
     if (time >= 0) {
+      analytics.track({
+        userId: context.payload.installation.id,
+        event: `Close job created`,
+        properties: context.issue()
+      })
       return queue
         .createJob({
           ...context.issue({ installation_id: context.payload.installation.id }),
