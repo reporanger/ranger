@@ -189,6 +189,9 @@ module.exports = ({
       open_issues: 4,
       watchers: 0,
       default_branch: 'master'
+    },
+    installation: {
+      id: 135737
     }
   }
 })

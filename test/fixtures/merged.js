@@ -41,6 +41,9 @@ module.exports = ({ labels = [], base = 'master', fork } = {}) => ({
       },
       private: false,
       default_branch: 'master'
+    },
+    installation: {
+      id: 135737
     }
   }
 })
