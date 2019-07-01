@@ -68,14 +68,6 @@ module.exports = queue => async context => {
 }
 
 module.exports.process = robot => async ({ data /* id */ }) => {
-  try {
-    const github = await robot.auth(data.installation_id)
-    return await github.issues.createComment(data)
-  } catch (e) {
-    const Sentry = require('@sentry/node')
-    Sentry.configureScope(scope => {
-      scope.setUser({ id: data.installation_id })
-      Sentry.captureException(e)
-    })
-  }
+  const github = await robot.auth(data.installation_id)
+  return await github.issues.createComment(data)
 }

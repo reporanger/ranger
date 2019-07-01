@@ -57,6 +57,10 @@ module.exports = async robot => {
           err.message
         }`
       )
+      Sentry.configureScope(scope => {
+        scope.setUser({ id: job.data.installation_id })
+        Sentry.captureException(err)
+      })
     }
   })
 
