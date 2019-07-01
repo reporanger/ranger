@@ -50,6 +50,12 @@ module.exports = async context => {
     config = await globalContext.config(CONFIG_FILE, defaultConfig)
   }
 
+  if (typeof config.extends === 'string' && config.extends.indexOf('/') > -1) {
+    const [owner, repo] = config.extends.split('/')
+    const globalContext = new Context(createEvent(context, owner, repo), context.github)
+    config = await globalContext.config(CONFIG_FILE, defaultConfig)
+  }
+
   // merge defaults
   config.default = Object.assign({}, defaultConfig.default, config.default)
 
