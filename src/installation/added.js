@@ -1,4 +1,5 @@
 const { createLabel } = require('../api')
+const analytics = require('../analytics')
 
 const LABELS_TO_CREATE = [
   {
@@ -29,6 +30,10 @@ module.exports = robot => async context => {
 
     const repos = context.payload.repositories_added || context.payload.repositories
 
+    if (!repos.length) {
+      return
+    }
+
     const promises = repos.map(({ name: repo }) => {
       return Promise.all(
         LABELS_TO_CREATE.map(l => {
@@ -56,6 +61,17 @@ module.exports = robot => async context => {
     })
 
     await Promise.all(promises)
+
+    const installationId = context.payload.installation.id
+    const private_repos = repos.filter(r => r.private)
+    analytics.track({
+      userId: installationId,
+      event: `Repos added: ${repos.map(r => r.name).join(', ')}`,
+      properties: {
+        count: repos.length,
+        private_count: private_repos.length
+      }
+    })
   } catch (e) {
     const Sentry = require('@sentry/node')
     Sentry.configureScope(scope => {

@@ -1,7 +1,7 @@
 const Queue = require('bee-queue')
 const Sentry = require('@sentry/node')
 
-const { installed, added, analytics } = require('./src/analytics')
+const analytics = require('./src/analytics')
 
 const threadLabeled = require('./src/thread/labeled')
 const issueLabeled = require('./src/issue/labeled')
@@ -11,6 +11,7 @@ const pullSynchronized = require('./src/pull/synchronized')
 const threadClosed = require('./src/thread/closed')
 const commentDeleted = require('./src/comment/deleted')
 const commentCreated = require('./src/comment/created')
+const installationCreated = require('./src/installation/created')
 const installationAdded = require('./src/installation/added')
 
 const { CLOSE, MERGE, COMMENT } = require('./src/constants')
@@ -116,10 +117,8 @@ module.exports = async robot => {
 
   robot.on('issue_comment.deleted', commentDeleted(queue))
 
-  robot.on(['installation_repositories.added', 'installation.created'], added(robot))
+  robot.on(['installation.created'], installationCreated(robot))
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
-
-  robot.on(['installation.created'], installed(robot))
 
   // TODO use status updates to retrigger merge jobs
   // robot.on('status', c => console.log(c.payload))
