@@ -6,6 +6,6 @@ if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
   module.exports = {
     track: () => {},
     identify: () => {},
-    def: true
+    dev: true
   }
 }

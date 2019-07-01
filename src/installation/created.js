@@ -11,7 +11,7 @@ module.exports = robot => async ({ payload: { installation }, github }) => {
   let email
   try {
     const { data } = await github.users.getByUsername({
-      username: installation.account.login
+      username: login
     })
     email = data.email
   } catch (e) {
