@@ -34,15 +34,20 @@ module.exports = async robot => {
     }
   })
 
-  queue.process(job => {
-    switch (job.data.action) {
-      case COMMENT:
-        return threadLabeled.process(robot)(job)
-      case MERGE:
-        return pullLabeled.process(robot)(job)
-      case CLOSE:
-      default:
-        return issueLabeled.process(robot)(job)
+  queue.process(async job => {
+    try {
+      switch (job.data.action) {
+        case COMMENT:
+          return await threadLabeled.process(robot)(job)
+        case MERGE:
+          return await pullLabeled.process(robot)(job)
+        case CLOSE:
+        default:
+          return await issueLabeled.process(robot)(job)
+      }
+    } catch (error) {
+      robot.log(error, job)
+      throw error
     }
   })
 

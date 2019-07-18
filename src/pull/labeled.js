@@ -111,6 +111,7 @@ module.exports.process = robot => async ({
     pull = await getPullRequest(github, { owner, repo, number })
   } catch (error) {
     const Sentry = require('@sentry/node')
+    robot.log('Get pull request failed', error, { installation_id, owner, repo, number, method })
     Sentry.configureScope(scope => {
       scope.setUser({ id: installation_id })
       Sentry.captureException(error)
