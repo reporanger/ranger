@@ -46,7 +46,9 @@ module.exports = async robot => {
           return await issueLabeled.process(robot)(job)
       }
     } catch (error) {
-      robot.log(error, job)
+      if (process.env.NODE_ENV !== 'test') {
+        robot.log(error, job)
+      }
       throw error
     }
   })
