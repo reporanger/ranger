@@ -43,20 +43,23 @@ function createEvent(context, owner, repo) {
   return newContext
 }
 
+function createGlobalConfig(context, owner, repo) {
+  const globalContext = new Context(createEvent(context, owner, repo), context.github)
+  return globalContext.config(CONFIG_FILE, defaultConfig)
+}
+
 module.exports = async context => {
   let config = await context.config(CONFIG_FILE, defaultConfig)
 
   if (typeof config.uses === 'string' && config.uses.indexOf('/') > -1) {
     const [owner, repo] = config.uses.trim().split('/')
-    const globalContext = new Context(createEvent(context, owner, repo), context.github)
-    config = await globalContext.config(CONFIG_FILE, defaultConfig)
+    config = await createGlobalConfig(context, owner, repo)
   }
 
   if (typeof config.extends === 'string' && config.extends.indexOf('/') > -1) {
     const [owner, repo] = config.extends.trim().split('/')
-    const globalContext = new Context(createEvent(context, owner, repo), context.github)
-    const otherConfig = await globalContext.config(CONFIG_FILE, defaultConfig)
-    config = merge(otherConfig, config)
+    const globalConfig = await createGlobalConfig(context, owner, repo)
+    config = merge(globalConfig, config)
   }
 
   // merge defaults
