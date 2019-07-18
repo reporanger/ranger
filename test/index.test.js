@@ -876,7 +876,7 @@ describe('analytics', () => {
 describe('global config', () => {
   test('Will allow users to set a global configuration', async () => {
     const newConfig = `
-        uses: dawnlabs/global-ranger-config
+        extends: dawnlabs/global-ranger-config
       `
 
     github.repos.getContents.mockResolvedValue({
