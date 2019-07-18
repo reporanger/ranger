@@ -128,6 +128,7 @@ module.exports = async robot => {
 
   robot.on(['installation.created'], installationCreated(robot))
   robot.on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
+  // TODO 'marketplace_purchase.purchased'
 
   // TODO use status updates to retrigger merge jobs
   // robot.on('status', c => console.log(c.payload))
