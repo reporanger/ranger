@@ -46,16 +46,17 @@ module.exports = async context => {
   let config = await context.config(CONFIG_FILE, defaultConfig)
 
   if (typeof config.uses === 'string' && config.uses.indexOf('/') > -1) {
-    const [owner, repo] = config.uses.split('/')
+    const [owner, repo] = config.uses.trim().split('/')
     const globalContext = new Context(createEvent(context, owner, repo), context.github)
     config = await globalContext.config(CONFIG_FILE, defaultConfig)
   }
 
   if (typeof config.extends === 'string' && config.extends.indexOf('/') > -1) {
-    const [owner, repo] = config.extends.split('/')
+    const [owner, repo] = config.extends.trim().split('/')
     const globalContext = new Context(createEvent(context, owner, repo), context.github)
     const otherConfig = await globalContext.config(CONFIG_FILE, defaultConfig)
     config = merge(otherConfig, config)
+    console.log('***', owner, repo, config)
   }
 
   // merge defaults
