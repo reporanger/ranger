@@ -36,10 +36,11 @@ const defaultConfig = {
 exports.CONFIG_FILE = CONFIG_FILE
 
 function createEvent(context, owner, repo) {
-  context.payload.repository.owner.login = owner
-  context.payload.repository.owner.name = owner
-  context.payload.repository.name = repo
-  return context
+  const newContext = merge({}, context)
+  newContext.payload.repository.owner.login = owner
+  newContext.payload.repository.owner.name = owner
+  newContext.payload.repository.name = repo
+  return newContext
 }
 
 module.exports = async context => {
@@ -55,12 +56,12 @@ module.exports = async context => {
     const [owner, repo] = config.extends.trim().split('/')
     const globalContext = new Context(createEvent(context, owner, repo), context.github)
     const otherConfig = await globalContext.config(CONFIG_FILE, defaultConfig)
-    config = merge({}, otherConfig, config)
+    config = merge(otherConfig, config)
     console.log('***', owner, repo, config)
   }
 
   // merge defaults
-  config.default = Object.assign({}, defaultConfig.default, config.default)
+  config.default = merge({}, defaultConfig.default, config.default)
 
   return config
 }
