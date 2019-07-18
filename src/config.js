@@ -1,6 +1,6 @@
 const ms = require('ms')
 const { Context } = require('probot')
-const analytics = require('./analytics')
+const merge = require('lodash.merge')
 
 const { CLOSE, MERGE, LABEL } = require('./constants')
 
@@ -45,25 +45,17 @@ function createEvent(context, owner, repo) {
 module.exports = async context => {
   let config = await context.config(CONFIG_FILE, defaultConfig)
 
-  // TODO deprecated, remove
   if (typeof config.uses === 'string' && config.uses.indexOf('/') > -1) {
     const [owner, repo] = config.uses.split('/')
     const globalContext = new Context(createEvent(context, owner, repo), context.github)
     config = await globalContext.config(CONFIG_FILE, defaultConfig)
-    try {
-      analytics.track({
-        userId: context.payload.installation.id,
-        event: `Config using 'uses'`
-      })
-    } catch (e) {
-      // pass
-    }
   }
 
   if (typeof config.extends === 'string' && config.extends.indexOf('/') > -1) {
     const [owner, repo] = config.extends.split('/')
     const globalContext = new Context(createEvent(context, owner, repo), context.github)
-    config = await globalContext.config(CONFIG_FILE, defaultConfig)
+    const otherConfig = await globalContext.config(CONFIG_FILE, defaultConfig)
+    config = merge(otherConfig, config)
   }
 
   // merge defaults
