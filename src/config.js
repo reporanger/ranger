@@ -57,7 +57,6 @@ module.exports = async context => {
     const globalContext = new Context(createEvent(context, owner, repo), context.github)
     const otherConfig = await globalContext.config(CONFIG_FILE, defaultConfig)
     config = merge(otherConfig, config)
-    console.log('***', owner, repo, config)
   }
 
   // merge defaults
