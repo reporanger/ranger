@@ -1,4 +1,4 @@
-module.exports = ({ labels = [], base = 'master', fork } = {}) => ({
+module.exports = ({ labels = [], base = 'master', repo = { fork: false } } = {}) => ({
   name: 'pull_request',
   payload: {
     action: 'closed',
@@ -13,9 +13,7 @@ module.exports = ({ labels = [], base = 'master', fork } = {}) => ({
         label: 'dawnlabs:mfix22-patch-1',
         ref: 'mfix22-patch-1',
         sha: 'b244454d959a49f53aa60768d117d3eeaa0c552d',
-        repo: {
-          fork
-        }
+        repo
       },
       base: {
         label: `dawnlabs:${base}`,

@@ -552,8 +552,9 @@ describe('pull_request', () => {
     })
   })
 
-  test('Will not try to delete branches on forks', async () => {
-    await robot.receive(mergedPayload({ fork: true }))
+  test('Will not try to delete branches on "unknown repository" or forks', async () => {
+    await robot.receive(mergedPayload({ repo: null }))
+    await robot.receive(mergedPayload({ repo: { fork: true } }))
 
     expect(github.gitdata.deleteRef).not.toHaveBeenCalled()
   })

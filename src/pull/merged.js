@@ -11,6 +11,8 @@ module.exports.deleteBranch = () => async context => {
   const thread = context.payload.pull_request
 
   if (thread.merged !== true) return
+  // Don't delete branches from 'unknown repository's
+  if (!thread.head.repo) return
   // Don't delete branches from forks
   if (thread.head.repo.fork === true) return
 
