@@ -74,6 +74,40 @@ module.exports = async context => {
       scope.setUser({ id })
       Sentry.captureException(err)
     })
+
+    if (err.name === 'YAMLException') {
+      const repo = context.repo()
+
+      const { data: branch } = await context.github.repos.getBranch({
+        ...repo,
+        branch: context.payload.repository.default_branch
+      })
+
+      const commit_sha = branch.commit.sha
+      const body = `@${repo.owner} invalid YAML in \`ranger.yml\`:
+\`\`\`
+${err.message}
+\`\`\`
+`
+
+      const { data: comments } = await context.github.repos.listCommentsForCommit({
+        ...repo,
+        commit_sha
+      })
+
+      if (!comments.find(c => c.body === body)) {
+        await context.github.repos.createCommitComment(
+          context.repo({
+            commit_sha,
+            body
+            // path: '.github/ranger.yml',
+            // position: e.mark.position,
+            // line: e.mark.line
+          })
+        )
+      }
+    }
+
     throw err
   }
 }
