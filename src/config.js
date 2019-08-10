@@ -69,9 +69,9 @@ module.exports = async context => {
 
     return config
   } catch (err) {
-    if (err.name === 'YAMLException') {
-      const repo = context.repo()
+    const repo = context.repo()
 
+    if (err.name === 'YAMLException') {
       const { data: branch } = await context.github.repos.getBranch({
         ...repo,
         branch: context.payload.repository.default_branch
@@ -103,7 +103,7 @@ ${err.message}
     }
 
     Sentry.configureScope(scope => {
-      scope.setUser({ username: context.repo().owner })
+      scope.setUser({ username: repo.owner })
       Sentry.captureException(err)
     })
     throw err

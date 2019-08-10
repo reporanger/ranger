@@ -65,7 +65,9 @@ module.exports = async robot => {
         }`
       )
       Sentry.configureScope(scope => {
-        scope.setUser({ id: job.data.installation_id })
+        if (job.data.owner) {
+          scope.setUser({ username: job.data.owner })
+        }
         Sentry.captureException(err)
       })
     }

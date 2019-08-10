@@ -19,7 +19,8 @@ module.exports = async function verifyPaymentPlan(robot, context) {
     return true
   }
 
-  if (WHITE_LIST.includes(context.repo().owner.toLowerCase())) {
+  const owner = context.repo().owner
+  if (WHITE_LIST.includes(owner.toLowerCase())) {
     return true
   }
 
@@ -63,7 +64,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
       robot.log.error(error, context.repo())
       const Sentry = require('@sentry/node')
       Sentry.configureScope(scope => {
-        scope.setUser({ id: context.payload.installation.id })
+        scope.setUser({ username: owner })
         Sentry.captureException(error)
       })
     }
