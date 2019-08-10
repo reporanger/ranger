@@ -1,3 +1,4 @@
+const Filter = require('bad-words')
 const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
 const getConfig = require('../config')
 
@@ -30,19 +31,23 @@ module.exports = () => async context => {
     config.comments.map(async ({ action, pattern, labels } = {}) => {
       if (typeof action !== 'string') return
 
+      if (pattern === '$PROFANITY') {
+        if (!new Filter().isProfane(body)) {
+          return
+        }
+      } else {
+        if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+      }
+
       switch (action.trim().toLowerCase()) {
         case LABEL: {
           if (!isMaintainer(author_association)) return
-
-          if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
           if (!labels) return
 
           return addLabels(context.github, context.issue({ labels }))
         }
 
         case DELETE_COMMENT: {
-          if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
-
           return context.github.issues.deleteComment(context.repo({ comment_id }))
         }
       }
