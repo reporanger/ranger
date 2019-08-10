@@ -1,6 +1,7 @@
 const ms = require('ms')
 const { Context } = require('probot')
 const merge = require('lodash.merge')
+const Sentry = require('@sentry/node')
 
 const { CLOSE, MERGE, LABEL } = require('./constants')
 
@@ -49,23 +50,32 @@ function createGlobalConfig(context, owner, repo) {
 }
 
 module.exports = async context => {
-  let config = await context.config(CONFIG_FILE, defaultConfig)
+  try {
+    let config = await context.config(CONFIG_FILE, defaultConfig)
 
-  if (typeof config.uses === 'string' && config.uses.indexOf('/') > -1) {
-    const [owner, repo] = config.uses.trim().split('/')
-    config = await createGlobalConfig(context, owner, repo)
+    if (typeof config.uses === 'string' && config.uses.indexOf('/') > -1) {
+      const [owner, repo] = config.uses.trim().split('/')
+      config = await createGlobalConfig(context, owner, repo)
+    }
+
+    if (typeof config.extends === 'string' && config.extends.indexOf('/') > -1) {
+      const [owner, repo] = config.extends.trim().split('/')
+      const globalConfig = await createGlobalConfig(context, owner, repo)
+      config = merge(globalConfig, config)
+    }
+
+    // merge defaults
+    config.default = merge({}, defaultConfig.default, config.default)
+
+    return config
+  } catch (err) {
+    Sentry.configureScope(scope => {
+      const id = context.payload && context.payload.installation && context.payload.installation.id
+      scope.setUser({ id })
+      Sentry.captureException(err)
+    })
+    throw err
   }
-
-  if (typeof config.extends === 'string' && config.extends.indexOf('/') > -1) {
-    const [owner, repo] = config.extends.trim().split('/')
-    const globalConfig = await createGlobalConfig(context, owner, repo)
-    config = merge(globalConfig, config)
-  }
-
-  // merge defaults
-  config.default = merge({}, defaultConfig.default, config.default)
-
-  return config
 }
 
 // console.log(require('js-yaml').safeDump(defaultConfig))
