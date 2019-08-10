@@ -69,12 +69,6 @@ module.exports = async context => {
 
     return config
   } catch (err) {
-    Sentry.configureScope(scope => {
-      const id = context.payload && context.payload.installation && context.payload.installation.id
-      scope.setUser({ id })
-      Sentry.captureException(err)
-    })
-
     if (err.name === 'YAMLException') {
       const repo = context.repo()
 
@@ -108,6 +102,10 @@ ${err.message}
       }
     }
 
+    Sentry.configureScope(scope => {
+      scope.setUser({ username: context.repo().owner })
+      Sentry.captureException(err)
+    })
     throw err
   }
 }
