@@ -140,6 +140,8 @@ comments:
       - duplicate
   - action: delete_comment
     pattern: +1
+  - action: delete_comment
+    pattern: $PROFANITY
 
 merges:
   - action: delete_branch
@@ -633,6 +635,20 @@ describe('comment', () => {
         commentPayload({
           action: 'created',
           body: '+1'
+        })
+      )
+
+      expect(github.issues.deleteComment).toHaveBeenCalledWith({
+        comment_id: 448738894,
+        owner: 'mfix22',
+        repo: 'test-issue-bot'
+      })
+    })
+    test('deleting profanity', async () => {
+      await robot.receive(
+        commentPayload({
+          action: 'created',
+          body: 'damn'
         })
       )
 

@@ -1,3 +1,4 @@
+const Filter = require('bad-words')
 const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
 const getConfig = require('../config')
 
@@ -41,7 +42,13 @@ module.exports = () => async context => {
         }
 
         case DELETE_COMMENT: {
-          if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+          if (pattern === '$PROFANITY') {
+            if (!new Filter().isProfane(body)) {
+              return
+            }
+          } else {
+            if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+          }
 
           return context.github.issues.deleteComment(context.repo({ comment_id }))
         }
