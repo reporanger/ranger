@@ -99,10 +99,10 @@ ${err.message}
         await context.github.repos.createCommitComment(
           context.repo({
             commit_sha,
-            body
-            // path: '.github/ranger.yml',
-            // position: e.mark.position,
-            // line: e.mark.line
+            body,
+            path: '.github/ranger.yml'
+            // position: err.mark.position,
+            // line: err.mark.line
           })
         )
       }
