@@ -11,7 +11,8 @@ const WHITE_LIST = [
   'nlog',
   'vectos',
   'nerdwallet',
-  'nerdwalletoss'
+  'nerdwalletoss',
+  'rockspin'
 ]
 
 module.exports = async function verifyPaymentPlan(robot, context) {
