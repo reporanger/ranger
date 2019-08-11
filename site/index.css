@@ -11,6 +11,7 @@
   font-family: 'Shenandoah';
   src: url('assets/Shenandoah.woff') format('woff');
   font-weight: 400;
+  font-display: swap;
 }
 
 html {
