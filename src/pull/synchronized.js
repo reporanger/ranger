@@ -11,7 +11,7 @@ const MATCHES_NOTHING = r.and(r.matchers.END, r.matchers.START)
 
 function parseRegex(string) {
   // https://stackoverflow.com/questions/874709/converting-user-input-string-to-regular-expression
-  const match = string.match(new RegExp('^/(.*?)/([gimy]*)$'))
+  const match = String(string).match(new RegExp('^/(.*?)/([gimy]*)$'))
 
   if (match && match[1] && match[2]) {
     return r.regex(match[1], match[2])
