@@ -42,6 +42,7 @@ module.exports = queue => async context => {
         const body = message
           .replace('$LABEL', label.name)
           .replace('$DELAY', ms(time, { long: true }))
+          .replace('$AUTHOR', thread.user.login)
 
         analytics.track({
           userId: context.payload.installation.id,
