@@ -99,17 +99,20 @@ module.exports = async robot => {
     }
   }
 
+  function on(events, fn) {
+    return robot.on(events, log(fn))
+  }
+
   // Listeners
-  robot.on(
+  on(
     // All pull requests are issues in GitHub REST V3
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    log(wrapPaymentCheck(threadLabeled(queue)))
+    wrapPaymentCheck(threadLabeled(queue))
   )
 
-  robot.on(['issues.labeled', 'issues.unlabeled'], log(wrapPaymentCheck(issueLabeled(queue))))
+  on(['issues.labeled', 'issues.unlabeled'], wrapPaymentCheck(issueLabeled(queue)))
 
-  robot.on(
-    // All pull requests are issues in GitHub REST V3
+  on(
     [
       'pull_request.labeled',
       'pull_request.unlabeled',
@@ -117,33 +120,24 @@ module.exports = async robot => {
       'pull_request_review.submitted'
       // `pull_request.edited`
     ],
-    log(wrapPaymentCheck(pullLabeled(queue)))
+    wrapPaymentCheck(pullLabeled(queue))
   )
   // TODO rerun pull labeled job on `check_suite.completed`
 
-  robot.on(
-    ['issue_comment.created', 'issue_comment.edited'],
-    log(wrapPaymentCheck(commentCreated()))
-  )
+  on(['issue_comment.created', 'issue_comment.edited'], wrapPaymentCheck(commentCreated()))
 
-  robot.on('pull_request.closed', log(wrapPaymentCheck(pullMerged.deleteBranch())))
-  robot.on('pull_request.closed', log(wrapPaymentCheck(pullMerged.createTag())))
+  on('pull_request.closed', wrapPaymentCheck(pullMerged.deleteBranch()))
+  on('pull_request.closed', wrapPaymentCheck(pullMerged.createTag()))
 
-  robot.on(
-    ['pull_request.opened', 'pull_request.synchronize'],
-    log(wrapPaymentCheck(pullSynchronized()))
-  )
+  on(['pull_request.opened', 'pull_request.synchronize'], wrapPaymentCheck(pullSynchronized()))
 
   // Kill job when issue/pull is closed
-  robot.on(['issues.closed', 'pull_request.closed'], log(threadClosed(queue)))
+  on(['issues.closed', 'pull_request.closed'], threadClosed(queue))
 
-  robot.on('issue_comment.deleted', log(commentDeleted(queue)))
+  on('issue_comment.deleted', commentDeleted(queue))
 
-  robot.on(['installation.created'], log(installationCreated(robot)))
-  robot.on(
-    ['installation_repositories.added', 'installation.created'],
-    log(installationAdded(robot))
-  )
+  on(['installation.created'], installationCreated(robot))
+  on(['installation_repositories.added', 'installation.created'], installationAdded(robot))
   // TODO 'marketplace_purchase.purchased'
 
   // TODO use status updates to retrigger merge jobs
