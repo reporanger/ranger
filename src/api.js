@@ -14,6 +14,10 @@ exports.closeIssue = function closeIssue(github, data) {
       }
     })
     .then(_ => _.data)
+    .catch(e => {
+      console.log(e, data)
+      throw e
+    })
 }
 
 exports.getPullRequest = function getPullRequest(github, data) {
@@ -29,32 +33,46 @@ exports.getPullRequest = function getPullRequest(github, data) {
       }
     })
     .then(_ => _.data)
+    .catch(e => {
+      console.log(e, data)
+      throw e
+    })
 }
 
 exports.createLabel = function createLabel(github, data) {
   const { owner, repo, name, color, description } = data
 
-  return github.issues.createLabel({
-    owner,
-    repo,
-    name,
-    color,
-    description,
-    headers: {
-      Accept: 'application/vnd.github.symmetra-preview+json'
-    }
-  })
+  return github.issues
+    .createLabel({
+      owner,
+      repo,
+      name,
+      color,
+      description,
+      headers: {
+        Accept: 'application/vnd.github.symmetra-preview+json'
+      }
+    })
+    .catch(e => {
+      console.log(e, data)
+      throw e
+    })
 }
 
 exports.addLabels = function addLabels(github, { labels, number, ...data }) {
-  return github.issues.addLabels({
-    ...data,
-    issue_number: number,
-    labels: many(labels),
-    headers: {
-      Accept: 'application/vnd.github.symmetra-preview+json'
-    }
-  })
+  return github.issues
+    .addLabels({
+      ...data,
+      issue_number: number,
+      labels: many(labels),
+      headers: {
+        Accept: 'application/vnd.github.symmetra-preview+json'
+      }
+    })
+    .catch(e => {
+      console.log(e, data)
+      throw e
+    })
 }
 
 function many(maybeArray) {
