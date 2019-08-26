@@ -25,7 +25,7 @@ module.exports = async robot => {
   robot.route('/').get('/health', (req, res) => res.send('OK'))
 
   process.on('uncaughtException', e => {
-    robot.log(e, e.message)
+    robot.log.error(e, e.message)
   })
   process.on('unhandledRejection', e => {
     robot.log.error(e, e.message)
