@@ -28,7 +28,13 @@ module.exports.deleteBranch = () => async context => {
   if (!shouldDelete) return
 
   const ref = `heads/${thread.head.ref}`
-  return context.github.gitdata.deleteRef(context.repo({ ref }))
+
+  return context.github.gitdata.deleteRef(context.repo({ ref })).catch(e => {
+    // TODO this is because GitHub has already deleted the reference
+    if (e.message !== 'Reference does not exist') {
+      throw e
+    }
+  })
 }
 
 module.exports.createTag = () => async context => {
