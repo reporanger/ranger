@@ -86,11 +86,7 @@ module.exports = async robot => {
       if (process.env.NODE_ENV !== 'test') {
         try {
           robot.log(context.name, context.payload.action)
-          if (context.payload.installation && context.payload.installation.account) {
-            robot.log(context.payload.installation.account)
-          } else {
-            robot.log(context.repo())
-          }
+          robot.log(context.payload.repository.full_name)
         } catch (error) {
           robot.log.error(error)
         }

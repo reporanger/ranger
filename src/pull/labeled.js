@@ -7,8 +7,8 @@ const analytics = require('../analytics')
 
 const { getPullRequest } = require('../api')
 
-const RETRY_PERIOD = ms('2m')
-const RETRY_HORIZON = ms('6h')
+const RETRY_PERIOD = ms('1m')
+const RETRY_HORIZON = ms('3h')
 
 // https://developer.github.com/v4/enum/mergestatestatus/
 const STATUS = {
