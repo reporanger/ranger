@@ -881,10 +881,11 @@ describe('analytics', () => {
     })
     expect(analytics.track).toHaveBeenCalledWith({
       userId: 42,
-      event: 'Repos added: ranger/test-0, ranger/test-1',
+      event: 'Repos added',
       properties: {
         count: 2,
-        private_count: 1
+        private_count: 1,
+        repos: ['ranger/test-0', 'ranger/test-1']
       }
     })
   })

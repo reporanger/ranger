@@ -65,10 +65,11 @@ module.exports = robot => async context => {
     const private_repos = repos.filter(r => r.private)
     analytics.track({
       userId: context.payload.installation.id,
-      event: `Repos added: ${repos.map(r => r.name).join(', ')}`,
+      event: `Repos added`,
       properties: {
         count: repos.length,
-        private_count: private_repos.length
+        private_count: private_repos.length,
+        repos: repos.map(r => r.name)
       }
     })
   } catch (e) {
