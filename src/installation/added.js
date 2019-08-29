@@ -44,6 +44,10 @@ module.exports = robot => async context => {
           }
 
           return createLabel(github, data).catch(err => {
+            if (err.message.indexOf('archived') > -1) {
+              return
+            }
+
             let condition
             try {
               // throw original error if parse fails

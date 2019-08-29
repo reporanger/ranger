@@ -752,6 +752,7 @@ describe('installation', () => {
   test('Will only throw on createLabel if error is not of type "already_exists"', async () => {
     robot.log.error = jest.fn()
     github.issues.createLabel.mockRejectedValueOnce({
+      message: 'Repo alread exists', // <--- this is not a real error message
       errors: [{ code: 'already_exists' }]
     })
 

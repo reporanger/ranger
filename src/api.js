@@ -42,21 +42,16 @@ exports.getPullRequest = function getPullRequest(github, data) {
 exports.createLabel = function createLabel(github, data) {
   const { owner, repo, name, color, description } = data
 
-  return github.issues
-    .createLabel({
-      owner,
-      repo,
-      name,
-      color,
-      description,
-      headers: {
-        Accept: 'application/vnd.github.symmetra-preview+json'
-      }
-    })
-    .catch(e => {
-      console.log(e, data)
-      throw e
-    })
+  return github.issues.createLabel({
+    owner,
+    repo,
+    name,
+    color,
+    description,
+    headers: {
+      Accept: 'application/vnd.github.symmetra-preview+json'
+    }
+  })
 }
 
 exports.addLabels = function addLabels(github, { labels, number, ...data }) {
