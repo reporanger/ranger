@@ -60,16 +60,6 @@ module.exports = async robot => {
     }
   })
 
-  pullLabeled.process(robot)({
-    data: {
-      installation_id: 1079632,
-      owner: 'badges',
-      repo: 'shields',
-      number: 3880,
-      method: 'squash'
-    }
-  })
-
   queue.on('succeeded', (job, result) => {
     robot.log.debug(`Job ${job.id} succeeded with result: ${JSON.stringify(result, null, 2)}`)
   })
