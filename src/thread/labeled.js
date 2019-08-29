@@ -57,7 +57,7 @@ module.exports = queue => async context => {
               installation_id: context.payload.installation.id,
               action: COMMENT,
               body,
-              [context.payload.pull_request ? 'pull_number' : 'issue_number']: thread.number
+              issue_number: thread.number
             })
           )
           .setId(jobId)
