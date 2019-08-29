@@ -123,6 +123,23 @@ module.exports.process = robot => async ({
   // || pull.mergeable_state === status.HAS_HOOKS
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === STATUS.CLEAN
 
+  try {
+    analytics.track({
+      userId: installation_id,
+      event: `Merge job processing`,
+      properties: {
+        owner,
+        repo,
+        number,
+        method,
+        mergeable: pull.mergeable,
+        mergeable_state: pull.mergeable_state
+      }
+    })
+  } catch (e) {
+    // pass
+  }
+
   if (isMergeable) {
     const sha = pull.head.sha
     const ref = sha
