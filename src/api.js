@@ -29,7 +29,8 @@ exports.getPullRequest = function getPullRequest(github, data) {
       repo,
       pull_number: number,
       headers: {
-        Accept: 'application/vnd.github.symmetra-preview+json'
+        Accept:
+          'application/vnd.github.symmetra-preview+json,application/vnd.github.shadow-cat-preview+json'
       }
     })
     .then(_ => _.data)
