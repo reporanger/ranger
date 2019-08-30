@@ -42,17 +42,11 @@ module.exports = async robot => {
   })
 
   queue.process(async job => {
-    try {
-      analytics.track({
-        userId: job.data.installation_id,
-        event: `Processing job`,
-        properties: job.data
-      })
-    } catch (e) {
-      if (process.env.NODE_ENV !== 'test') {
-        robot.log(e, job)
-      }
-    }
+    analytics.track(() => ({
+      userId: job.data.installation_id,
+      event: `Processing job`,
+      properties: job.data
+    }))
     try {
       switch (job.data.action) {
         case COMMENT:

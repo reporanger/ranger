@@ -53,11 +53,11 @@ module.exports = queue => async context => {
     }
 
     if (time >= 0) {
-      analytics.track({
+      analytics.track(() => ({
         userId: context.payload.installation.id,
         event: `Close job created`,
         properties: context.issue()
-      })
+      }))
       return queue
         .createJob({
           ...context.issue({ installation_id: context.payload.installation.id }),

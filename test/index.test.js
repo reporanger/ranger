@@ -920,6 +920,8 @@ describe('analytics', () => {
       { name: 'ranger/test-1', private: false }
     ]
 
+    jest.spyOn(analytics, 'track')
+
     await robot.receive(createPayload(repos))
 
     expect(analytics.identify).toHaveBeenCalledWith({
