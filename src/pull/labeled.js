@@ -220,7 +220,7 @@ module.exports.process = robot => async ({
       branch.protection.required_status_checks.contexts.length &&
       (owner === 'carbon-app' || owner === 'mfix22' || owner === 'dawnlabs')
     ) {
-      await github.pulls.updateBranch({
+      return await github.pulls.updateBranch({
         owner,
         repo,
         pull_number: number,
@@ -229,7 +229,6 @@ module.exports.process = robot => async ({
           accept: 'application/vnd.github.lydian-preview+json'
         }
       })
-      return
     }
   } else if (pull.mergeable_state === STATUS.DIRTY) {
     // don't retry if there are merge conflicts
