@@ -85,11 +85,6 @@ module.exports = queue => async context => {
       ? 'squash'
       : 'merge'
 
-    analytics.track({
-      userId: context.payload.installation.id,
-      event: `Merge job created`,
-      properties: context.issue()
-    })
     return queue
       .createJob({
         ...context.issue({ installation_id: context.payload.installation.id }),
@@ -100,6 +95,14 @@ module.exports = queue => async context => {
       .retries(RETRY_HORIZON / RETRY_PERIOD)
       .backoff('fixed', RETRY_PERIOD)
       .save()
+      .then(job => {
+        analytics.track(() => ({
+          userId: context.payload.installation.id,
+          event: `Merge job created`,
+          properties: job
+        }))
+        return job
+      })
   }
 
   // If closable labels are removed, delete job for this pull
@@ -128,22 +131,18 @@ module.exports.process = robot => async ({
   // || pull.mergeable_state === status.HAS_HOOKS
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === STATUS.CLEAN
 
-  try {
-    analytics.track({
-      userId: installation_id,
-      event: `Merge job processing`,
-      properties: {
-        owner,
-        repo,
-        number,
-        method,
-        mergeable: pull.mergeable,
-        mergeable_state: pull.mergeable_state
-      }
-    })
-  } catch (e) {
-    // pass
-  }
+  analytics.track(() => ({
+    userId: installation_id,
+    event: `Merge job processing`,
+    properties: {
+      owner,
+      repo,
+      number,
+      method,
+      mergeable: pull.mergeable,
+      mergeable_state: pull.mergeable_state
+    }
+  }))
 
   if (isMergeable) {
     const sha = pull.head.sha

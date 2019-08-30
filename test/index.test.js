@@ -37,7 +37,7 @@ class MockJob {
         }
       }
       this.to = setTimeout(fn, Math.min(this.delay - Date.now(), 2147483647), this)
-      return this
+      return Promise.resolve(this)
     })
     this.setId = jest.fn(id => {
       delete this.queue.jobs[this.id]
@@ -919,6 +919,8 @@ describe('analytics', () => {
       { name: 'ranger/test-0', private: true },
       { name: 'ranger/test-1', private: false }
     ]
+
+    jest.spyOn(analytics, 'track')
 
     await robot.receive(createPayload(repos))
 

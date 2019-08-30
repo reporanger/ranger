@@ -44,13 +44,6 @@ module.exports = queue => async context => {
           .replace('$DELAY', ms(time, { long: true }))
           .replace('$AUTHOR', thread.user.login)
 
-        analytics.track({
-          userId: context.payload.installation.id,
-          event: `Comment job created`,
-          properties: context.repo({
-            body
-          })
-        })
         await queue
           .createJob(
             context.repo({
@@ -63,6 +56,14 @@ module.exports = queue => async context => {
           .setId(jobId)
           .delayUntil(Date.now() + time)
           .save()
+          .then(job => {
+            analytics.track(() => ({
+              userId: context.payload.installation.id,
+              event: `Comment job created`,
+              properties: job
+            }))
+            return job
+          })
       }
     }
   })
