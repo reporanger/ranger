@@ -202,7 +202,18 @@ beforeEach(async () => {
       }),
       getCombinedStatusForRef: jest
         .fn()
-        .mockResolvedValue({ data: { state: 'success', statuses: [] } })
+        .mockResolvedValue({ data: { state: 'success', statuses: [] } }),
+      getBranch: jest.fn().mockResolvedValue({
+        data: {
+          protected: true,
+          protection: {
+            enabled: true,
+            required_status_checks: {
+              contexts: ['Build']
+            }
+          }
+        }
+      })
     },
     apps: {
       listRepos: jest.fn().mockResolvedValue({
@@ -224,6 +235,9 @@ beforeEach(async () => {
     },
     users: {
       getByUsername: jest.fn().mockResolvedValue({ data: { email: 'test@test.com' } })
+    },
+    pulls: {
+      updateBranch: jest.fn().mockResolvedValue({ data: {} })
     }
   }
   robot.auth = () => Promise.resolve(github)
@@ -376,6 +390,45 @@ describe('pull_request', () => {
       repo: 'test-issue-bot',
       sha: 0,
       merge_method: 'merge'
+    })
+  })
+
+  test('Will not update branch if a pull request is "behind" and branch requires it', async () => {
+    github.pullRequests.get.mockResolvedValue({
+      data: {
+        mergeable: true,
+        mergeable_state: 'behind',
+        base: {
+          sha: 'fake sha ahhh',
+          user: { login: 'mfix22' },
+          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } }
+        },
+        head: {
+          sha: 0,
+          user: { login: 'mfix22' },
+          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } }
+        }
+      }
+    })
+
+    await robot.receive(
+      payload({
+        name: 'pull_request',
+        threadType: 'pull_request',
+        labels: ['merge'],
+        number: 98
+      })
+    )
+
+    await wait(10)
+
+    expect(github.pullRequests.merge).not.toHaveBeenCalled()
+    expect(github.pulls.updateBranch).toHaveBeenCalledWith({
+      expected_head_sha: 'fake sha ahhh',
+      owner: 'mfix22',
+      pull_number: 98,
+      repo: 'test-issue-bot',
+      headers: { accept: 'application/vnd.github.lydian-preview+json' }
     })
   })
 

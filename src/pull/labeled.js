@@ -111,7 +111,6 @@ module.exports.process = robot => async ({
     pull = await getPullRequest(github, { owner, repo, number })
   } catch (error) {
     const Sentry = require('@sentry/node')
-    robot.log('Get pull request failed', error, { installation_id, owner, repo, number, method })
     Sentry.configureScope(scope => {
       scope.setUser({ username: owner, id: installation_id })
       Sentry.captureException(error)
@@ -199,6 +198,34 @@ module.exports.process = robot => async ({
       } catch (e) {
         await mergeAttempt(2)
       }
+    }
+  } else if (pull.mergeable_state === STATUS.BEHIND) {
+    // TODO use getBranchProtection?
+    const { data: branch } = await github.repos.getBranch({
+      owner: pull.base.user.login,
+      repo: pull.base.repo.name,
+      branch: pull.base.ref
+    })
+    if (
+      branch.protected &&
+      branch.protection &&
+      branch.protection.enabled &&
+      branch.protection.required_status_checks &&
+      branch.protection.required_status_checks.enforcement_level !== 'off' &&
+      branch.protection.required_status_checks.contexts.length &&
+      // TODO
+      (owner === 'carbon-app' || owner === 'mfix22')
+    ) {
+      await github.pulls.updateBranch({
+        owner,
+        repo,
+        pull_number: number,
+        expected_head_sha: pull.base.sha,
+        headers: {
+          accept: 'application/vnd.github.lydian-preview+json'
+        }
+      })
+      return
     }
   } else if (pull.mergeable_state === STATUS.DIRTY) {
     // don't retry if there are merge conflicts
