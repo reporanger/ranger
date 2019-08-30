@@ -399,12 +399,12 @@ describe('pull_request', () => {
         mergeable: true,
         mergeable_state: 'behind',
         base: {
-          sha: 'fake sha ahhh',
+          sha: 'base sha',
           user: { login: 'mfix22' },
           repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } }
         },
         head: {
-          sha: 0,
+          sha: 'head sha',
           user: { login: 'mfix22' },
           repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } }
         }
@@ -424,7 +424,7 @@ describe('pull_request', () => {
 
     expect(github.pullRequests.merge).not.toHaveBeenCalled()
     expect(github.pulls.updateBranch).toHaveBeenCalledWith({
-      expected_head_sha: 'fake sha ahhh',
+      expected_head_sha: 'head sha',
       owner: 'mfix22',
       pull_number: 98,
       repo: 'test-issue-bot',
