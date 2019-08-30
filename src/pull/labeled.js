@@ -43,6 +43,12 @@ const CONCLUSION = {
 
 const methods = ['merge', 'squash', 'rebase']
 
+class Retry extends Error {
+  constructor() {
+    super('Retry job')
+  }
+}
+
 module.exports = queue => async context => {
   const ID = getId(context, { action: MERGE })
 
@@ -149,7 +155,7 @@ module.exports.process = robot => async ({
     // If no CI is set up, state is pending but statuses === []
     const okStatus = state === STATE.SUCCESS || (state === STATE.PENDING && statuses.length === 0)
     if (!okStatus) {
-      throw new Error('Retry job')
+      throw new Retry()
     }
 
     const {
@@ -176,7 +182,7 @@ module.exports.process = robot => async ({
           s.conclusion !== null
       )
     ) {
-      throw new Error('Retry job')
+      throw new Retry()
     }
 
     const initialIndex = methods.findIndex(m => m === method)
@@ -231,6 +237,6 @@ module.exports.process = robot => async ({
     // don't retry if there are merge conflicts
     return
   } else {
-    throw new Error('Retry job')
+    throw new Retry()
   }
 }
