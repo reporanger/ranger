@@ -212,7 +212,9 @@ module.exports.process = robot => async ({
       branch.protection.enabled &&
       branch.protection.required_status_checks &&
       branch.protection.required_status_checks.enforcement_level !== 'off' &&
-      branch.protection.required_status_checks.contexts.length
+      branch.protection.required_status_checks.contexts.length &&
+      // TODO
+      (owner === 'carbon-app' || owner === 'mfix22')
     ) {
       await github.pulls.updateBranch({
         owner,
