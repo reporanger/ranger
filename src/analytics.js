@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
     identify: analytics.identify,
     track: x => {
       try {
-        return analytics.track(typeof x === 'function' ? x() : x)
+        return analytics.track.call(analytics, typeof x === 'function' ? x() : x)
       } catch (error) {
         console.error(error)
       }
