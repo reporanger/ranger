@@ -169,6 +169,9 @@ beforeEach(async () => {
   queue = setup.queue
   analytics = setup.analytics
 
+  jest.spyOn(analytics, 'identify')
+  jest.spyOn(analytics, 'track')
+
   github = {
     issues: {
       createComment: jest.fn(),
@@ -919,8 +922,6 @@ describe('analytics', () => {
       { name: 'ranger/test-0', private: true },
       { name: 'ranger/test-1', private: false }
     ]
-
-    jest.spyOn(analytics, 'track')
 
     await robot.receive(createPayload(repos))
 
