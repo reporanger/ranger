@@ -1,6 +1,9 @@
 const Windsor = require('windsor-node')
 
-if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'production') {
+if (
+  process.env.NODE_ENV === 'test' ||
+  (process.env.NODE_ENV === 'production' && process.env.WINDSOR_KEY)
+) {
   let analytics = new Windsor(process.env.WINDSOR_KEY)
   module.exports = {
     identify: analytics.user.bind(analytics),
