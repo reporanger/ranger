@@ -90,12 +90,14 @@ jest.mock(
 )
 
 jest.mock(
-  'analytics-node',
+  'windsor-node',
   () =>
     class {
       constructor() {
-        this.track = jest.fn()
-        this.identify = jest.fn()
+        // this.track = jest.fn()
+        // this.identify = jest.fn()
+        this.user = jest.fn()
+        this.event = jest.fn()
       }
     }
 )
