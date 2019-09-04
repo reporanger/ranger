@@ -60,7 +60,10 @@ module.exports = queue => async context => {
             analytics.track(() => ({
               userId: context.payload.installation.id,
               event: `Comment job created`,
-              properties: job
+              properties: {
+                ...job.data,
+                id: job.id
+              }
             }))
             return job
           })
