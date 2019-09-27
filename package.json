@@ -29,13 +29,13 @@
     "windsor-node": "^0.0.3"
   },
   "devDependencies": {
-    "eslint": "^6.3.0",
+    "eslint": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
-    "husky": "^3.0.4",
+    "husky": "^3.0.5",
     "jest": "^24.9.0",
-    "lint-staged": "^9.2.5",
+    "lint-staged": "^9.4.0",
     "live-server": "^1.2.1",
-    "nodemon": "^1.18.10",
+    "nodemon": "^1.19.2",
     "prettier": "^1.16.4"
   },
   "engines": {
