@@ -61,6 +61,10 @@
         margin-bottom: 2rem;
         resize: none;
       }
+
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
 
@@ -84,7 +88,16 @@
         but are sometimes unable to respond to every submission.
       </p>
 
-      <form name="feedback" method="POST" action="/feedback-success" data-netlify="true">
+      <form
+        name="feedback"
+        method="POST"
+        action="/feedback-success"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+      >
+        <p class="hidden">
+          <label>Don’t fill this out if you're human: <input name="bot-field"/></label>
+        </p>
         <div>
           <input name="name" type="text" placeholder="Your name" />
           <input name="email" type="email" placeholder="Your email" />
