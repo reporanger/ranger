@@ -345,13 +345,13 @@
     universal-user-agent "^2.1.0"
     url-template "^2.0.8"
 
-"@octokit/graphql@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@octokit/graphql/-/graphql-3.0.1.tgz#7559c3bb606a2aab7ba91e82633c044642b354c0"
-  integrity sha512-TiegCo0jueDPlkpcYlx8KSYa3ybs13ePBteoJutEHou0hu8sJHHhvIaQWvDH5jj4mHfJwZwD4r6/Xbl33UHLUw==
+"@octokit/graphql@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@octokit/graphql/-/graphql-4.2.0.tgz#99e739f3cba12ab83136a8a82fffdbfa0715ed28"
+  integrity sha512-6JKVE2cJPZVIM1LLsy7M4rKcaE3r6dbP7o895FLEpClHeMDv1a+k3yANue0ycMhM1Es9/WEy8hjBaBpOBETw6A==
   dependencies:
     "@octokit/request" "^5.0.0"
-    universal-user-agent "^3.0.0"
+    universal-user-agent "^4.0.0"
 
 "@octokit/plugin-enterprise-compatibility@^1.0.0":
   version "1.1.1"
@@ -393,7 +393,20 @@
     once "^1.4.0"
     universal-user-agent "^3.0.0"
 
-"@octokit/rest@^16.25.0":
+"@octokit/request@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@octokit/request/-/request-5.1.0.tgz#5609dcc7b5323e529f29d535214383d9eaf0c05c"
+  integrity sha512-I15T9PwjFs4tbWyhtFU2Kq7WDPidYMvRB7spmxoQRZfxSmiqullG+Nz+KbSmpkfnlvHwTr1e31R5WReFRKMXjg==
+  dependencies:
+    "@octokit/endpoint" "^5.1.0"
+    "@octokit/request-error" "^1.0.1"
+    deprecation "^2.0.0"
+    is-plain-object "^3.0.0"
+    node-fetch "^2.3.0"
+    once "^1.4.0"
+    universal-user-agent "^4.0.0"
+
+"@octokit/rest@^16.29.0":
   version "16.30.1"
   resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-16.30.1.tgz#03e6dfb93e9a9cd2b3bacb95c49a8c7923f42ad0"
   integrity sha512-1n2QzTbbaBXNLpx7WHlcsSMdJvxSdKmerXQm+bMYlKDbQM19uq446ZpGs7Ynq5SsdLj1usIfgJ9gJf4LtcWkDw==
@@ -1374,10 +1387,10 @@ commander@^2.12.2, commander@^2.20.0, commander@~2.20.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.0.tgz#d58bb2b5c1ee8f87b0d340027e9e94e222c5a422"
   integrity sha512-7j2y+40w61zy6YC2iRNpUe/NwhNyoXrYpHMrSunaMG64nRnaf96zO/KMQR4OyN/UnE5KLyEBnKHd4aG3rskjpQ==
 
-commander@^2.19.0:
-  version "2.20.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.1.tgz#3863ce3ca92d0831dcf2a102f5fb4b5926afd0f9"
-  integrity sha512-cCuLsMhJeWQ/ZpsFTbE765kvVfoeSddc4nU3up4fV+fDBcfUXnbITJ+JzhkdjzOqhURjZgujxaioam4RM9yGUg==
+commander@^3.0.0:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-3.0.2.tgz#6837c3fb677ad9933d1cfba42dd14d5117d6b39e"
+  integrity sha512-Gar0ASD4BDyKC4hl4DwHqDrmvjoxWKZigVnAbn5H1owvm4CxCPdb0HQDehwNYMJpla5+M2tPmPARzhtYuwpHow==
 
 component-emitter@^1.2.0, component-emitter@^1.2.1:
   version "1.3.0"
@@ -1616,6 +1629,11 @@ deepmerge@3.2.0:
   resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-3.2.0.tgz#58ef463a57c08d376547f8869fdc5bcee957f44e"
   integrity sha512-6+LuZGU7QCNUnAJyX8cIrlzoEgggTM6B7mm+znKOX4t5ltluT9KLjN6g61ECMS0LTsLW7yDpNoxhix5FZcrIow==
 
+deepmerge@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-3.3.0.tgz#d3c47fd6f3a93d517b14426b0628a17b0125f5f7"
+  integrity sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA==
+
 define-properties@^1.1.2, define-properties@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/define-properties/-/define-properties-1.1.3.tgz#cf88da6cbee26fe6db7094f61d870cbd84cee9f1"
@@ -1737,10 +1755,10 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
-dotenv@~8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.0.0.tgz#ed310c165b4e8a97bb745b0a9d99c31bda566440"
-  integrity sha512-30xVGqjLjiUOArT4+M5q9sYdvuR4riM6yK9wMcas9Vbp6zZa+ocC9dp6QoftuhTPhFAiLK/0C5Ni2nou/Bk8lg==
+dotenv@~8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.1.0.tgz#d811e178652bfb8a1e593c6dd704ec7e90d85ea2"
+  integrity sha512-GUE3gqcDCaMltj2++g6bRQ5rBJWtkWTmqmD0fo1RnnMuUqHNCt2oTPeDnS9n6fKYvlhn7AeBkb38lymBtWBQdA==
 
 double-ended-queue@^2.1.0-0:
   version "2.1.0-0"
@@ -1925,10 +1943,10 @@ eslint-visitor-keys@^1.1.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.1.0.tgz#e2a82cea84ff246ad6fb57f9bde5b46621459ec2"
   integrity sha512-8y9YjtM1JBJU/A9Kc+SbaOV4y29sSWckBwMHa+FGtVj5gN/sbnKDf6xJUl+8g7FAij9LVaP8C24DUiH/f/2Z9A==
 
-eslint@^6.4.0:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-6.4.0.tgz#5aa9227c3fbe921982b2eda94ba0d7fae858611a"
-  integrity sha512-WTVEzK3lSFoXUovDHEbkJqCVPEPwbhCq4trDktNI6ygs7aO41d4cDT0JFAT5MivzZeVLWlg7vHL+bgrQv/t3vA==
+eslint@^6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-6.5.0.tgz#304623eec903969dd5c9f2d61c6ce3d6ecec8750"
+  integrity sha512-IIbSW+vKOqMatPmS9ayyku4tvWxHY2iricSRtOz6+ZA5IPRlgXzEL0u/j6dr4eha0ugmhMwDTqxtmNu3kj9O4w==
   dependencies:
     "@babel/code-frame" "^7.0.0"
     ajv "^6.10.0"
@@ -2700,7 +2718,7 @@ has@^1.0.1, has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hbs@^4.0.3:
+hbs@^4.0.4:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/hbs/-/hbs-4.0.5.tgz#284e77f9ad579c1051388094b5ea7060dee478b9"
   integrity sha512-lzyXY0HalmVqHyhty05cLoPqxY51gNnCI6cMlXiPbrIKvB3BTJh3waQ9de86x25jX9QhU/tkAojsOO4KB6vPfg==
@@ -2773,10 +2791,10 @@ https-proxy-agent@2.2.1:
     agent-base "^4.1.0"
     debug "^3.1.0"
 
-husky@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-3.0.5.tgz#d7db27c346645a8dc52df02aa534a377ad7925e0"
-  integrity sha512-cKd09Jy9cDyNIvAdN2QQAP/oA21sle4FWXjIMDttailpLAYZuBE7WaPmhrkj+afS8Sj9isghAtFvWSQ0JiwOHg==
+husky@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-3.0.7.tgz#05e869006c7d9a31b27893aeda520e730bd125b9"
+  integrity sha512-fIrkaREoQk6DO8KnSX16Aq7Kg9SxqYYQZH/9b+4AxXyXNNgpJLsc8lWlQCShLus1nbujIyZ/WQZBHGwClohK/w==
   dependencies:
     chalk "^2.4.2"
     cosmiconfig "^5.2.1"
@@ -2941,10 +2959,10 @@ is-arrayish@^0.2.1:
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
   integrity sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0=
 
-is-base64@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/is-base64/-/is-base64-0.1.0.tgz#a6f20610c6ef4863a51cba32bc0222544b932622"
-  integrity sha512-WRRyllsGXJM7ZN7gPTCCQ/6wNPTRDwiWdPK66l5sJzcU/oOzcIcRRf0Rux8bkpox/1yjt0F6VJRsQOIG2qz5sg==
+is-base64@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-base64/-/is-base64-1.0.0.tgz#0bdda1a758fcfac6d78df8bb95960512bb42db61"
+  integrity sha512-7McBWBgGDHS8OHvCnPVVxl3HdzitV6XyjM1x7vVxbzXIKJUzxphU5MDL986aZ/oKf/Q+j4Vh4m54Fjwi88n75g==
 
 is-binary-path@^1.0.0:
   version "1.0.1"
@@ -4497,10 +4515,10 @@ node-pre-gyp@^0.12.0:
     semver "^5.3.0"
     tar "^4"
 
-nodemon@^1.19.2:
-  version "1.19.2"
-  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-1.19.2.tgz#b0975147dc99b3761ceb595b3f9277084931dcc0"
-  integrity sha512-hRLYaw5Ihyw9zK7NF+9EUzVyS6Cvgc14yh8CAYr38tPxJa6UrOxwAQ351GwrgoanHCF0FalQFn6w5eoX/LGdJw==
+nodemon@^1.19.3:
+  version "1.19.3"
+  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-1.19.3.tgz#db71b3e62aef2a8e1283a9fa00164237356102c0"
+  integrity sha512-TBNKRmJykEbxpTniZBusqRrUTHIEqa2fpecbTQDQj1Gxjth7kKAPP296ztR0o5gPUWsiYbuEbt73/+XMYab1+w==
   dependencies:
     chokidar "^2.1.5"
     debug "^3.1.0"
@@ -5054,17 +5072,18 @@ pretty-format@^24.9.0:
     ansi-styles "^3.2.0"
     react-is "^16.8.4"
 
-probot@9.2.19:
-  version "9.2.19"
-  resolved "https://registry.yarnpkg.com/probot/-/probot-9.2.19.tgz#310dfe3283fc09e46408926651b67990d08381a8"
-  integrity sha512-ccUgs/r0c8w3jh+UTZcM9HlbPOufgXOjtBglwrvV14JNPXyLIKVVwLnE63swpXRPbImSR7oaM2sR0dO9xeIfrQ==
+probot@9.5.0:
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/probot/-/probot-9.5.0.tgz#ba7b84769f4588b4d6da13704dd80ef33863f88f"
+  integrity sha512-f/2+yAWWO1Mz9WdpLu65bfqge3ojpOXLUQC9pvzB7OMf+1wb2uCWscD39S7+WhXRSAG5KnPol2auP/sWSqgdHg==
   dependencies:
     "@octokit/app" "^4.0.0"
-    "@octokit/graphql" "3.0.1"
+    "@octokit/graphql" "^4.2.0"
     "@octokit/plugin-enterprise-compatibility" "^1.0.0"
     "@octokit/plugin-retry" "^2.1.1"
     "@octokit/plugin-throttling" "^2.3.0"
-    "@octokit/rest" "^16.25.0"
+    "@octokit/request" "^5.1.0"
+    "@octokit/rest" "^16.29.0"
     "@octokit/webhooks" "^6.0.0"
     "@types/supports-color" "^5.3.0"
     bottleneck "^2.15.3"
@@ -5072,14 +5091,15 @@ probot@9.2.19:
     bunyan-format "^0.2.1"
     bunyan-sentry-stream "^1.1.0"
     cache-manager "^2.4.0"
-    commander "^2.19.0"
-    dotenv "~8.0.0"
+    commander "^3.0.0"
+    deepmerge "^3.2.0"
+    dotenv "~8.1.0"
     eventsource "^1.0.7"
     express "^4.16.2"
     express-async-errors "^3.0.0"
-    hbs "^4.0.3"
+    hbs "^4.0.4"
     ioredis "^4.5.1"
-    is-base64 "0.1.0"
+    is-base64 "1.0.0"
     js-yaml "^3.13.1"
     jsonwebtoken "^8.1.0"
     octokit-pagination-methods "1.1.0"

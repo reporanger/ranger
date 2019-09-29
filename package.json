@@ -23,19 +23,19 @@
     "lodash.merge": "^4.6.2",
     "moment": "^2.24.0",
     "ms": "^2.1.1",
-    "probot": "9.2.19",
+    "probot": "9.5.0",
     "rexrex": "^1.3.0",
     "smee-client": "^1.0.1",
     "windsor-node": "^0.0.3"
   },
   "devDependencies": {
-    "eslint": "^6.4.0",
+    "eslint": "^6.5.0",
     "eslint-plugin-import": "^2.18.2",
-    "husky": "^3.0.5",
+    "husky": "^3.0.7",
     "jest": "^24.9.0",
     "lint-staged": "^9.4.0",
     "live-server": "^1.2.1",
-    "nodemon": "^1.19.2",
+    "nodemon": "^1.19.3",
     "prettier": "^1.16.4"
   },
   "engines": {
