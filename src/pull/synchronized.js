@@ -34,7 +34,7 @@ module.exports = () => async context => {
     data: {
       commit: { message: body }
     }
-  } = await context.github.repos.getCommit(context.repo({ commit_sha: sha }))
+  } = await context.github.repos.getCommit(context.repo({ ref: sha }))
 
   // TODO confirm this API before releasing in docs
   const rules = config.commits
