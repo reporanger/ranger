@@ -35,6 +35,14 @@ module.exports = robot => async context => {
     }
 
     const promises = repos.map(({ name: repo }) => {
+      analytics.track(() => ({
+        userId: context.payload.installation.id,
+        event: `Creating default labels`,
+        properties: {
+          repo,
+          user: context.payload.installation.account.login
+        }
+      }))
       return Promise.all(
         LABELS_TO_CREATE.map(l => {
           const data = {
@@ -48,16 +56,16 @@ module.exports = robot => async context => {
               return
             }
 
-            let condition
             try {
-              // throw original error if parse fails
-              condition = err.errors && err.errors.find(err => err.code === 'already_exists')
-            } catch (e) {
-              throw err
-            }
+              if (err.errors) {
+                if (err.errors.find(err => err.code === 'already_exists')) {
+                  return
+                }
+              }
 
-            if (!condition) {
               throw err
+            } catch (e) {
+              robot.log.error(err)
             }
           })
         })
