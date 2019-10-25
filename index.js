@@ -25,10 +25,10 @@ module.exports = async robot => {
   robot.route('/').get('/health', (req, res) => res.send('OK'))
 
   process.on('uncaughtException', e => {
-    robot.log.error(e, e.message)
+    robot.log.error(e)
   })
   process.on('unhandledRejection', e => {
-    robot.log.error(e, e.message)
+    robot.log.error(e)
   })
 
   const queue = new Queue('issues', {
@@ -70,19 +70,20 @@ module.exports = async robot => {
   })
 
   queue.on('failed', (job, err) => {
-    if (err.message !== 'Retry job') {
-      robot.log.error(
-        `Job ${job.id} with data ${JSON.stringify(job.data, null, 2)} failed with error ${
-          err.message
-        }`
-      )
-      Sentry.configureScope(scope => {
-        if (job.data.owner) {
-          scope.setUser({ username: job.data.owner })
-        }
-        Sentry.captureException(err)
-      })
+    if (err.message === 'Retry job') {
+      return
     }
+    robot.log.error(
+      `Job ${job.id} with data ${JSON.stringify(job.data, null, 2)} failed with error ${
+        err.message
+      }`
+    )
+    Sentry.configureScope(scope => {
+      if (job.data.owner) {
+        scope.setUser({ username: job.data.owner })
+      }
+      Sentry.captureException(err)
+    })
   })
 
   function wrapPaymentCheck(fn) {
