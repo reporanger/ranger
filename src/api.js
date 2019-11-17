@@ -9,8 +9,8 @@ exports.closeIssue = function closeIssue(github, data) {
       repo,
       issue_number: number,
       state,
-      headers: {
-        Accept: 'application/vnd.github.symmetra-preview+json'
+      mediaType: {
+        previews: ['symmetra']
       }
     })
     .then(_ => _.data)
@@ -28,9 +28,8 @@ exports.getPullRequest = function getPullRequest(github, data) {
       owner,
       repo,
       pull_number: number,
-      headers: {
-        Accept:
-          'application/vnd.github.symmetra-preview+json,application/vnd.github.shadow-cat-preview+json'
+      mediaType: {
+        previews: ['symmetra', 'shadow-cat']
       }
     })
     .then(_ => _.data)
@@ -49,8 +48,8 @@ exports.createLabel = function createLabel(github, data) {
     name,
     color,
     description,
-    headers: {
-      Accept: 'application/vnd.github.symmetra-preview+json'
+    mediaType: {
+      previews: ['symmetra']
     }
   })
 }
@@ -61,8 +60,8 @@ exports.addLabels = function addLabels(github, { labels, number, ...data }) {
       ...data,
       issue_number: number,
       labels: many(labels),
-      headers: {
-        Accept: 'application/vnd.github.symmetra-preview+json'
+      mediaType: {
+        previews: ['symmetra']
       }
     })
     .catch(e => {

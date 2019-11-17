@@ -664,8 +664,8 @@ describe('pull_request', () => {
         labels: ['merge when passing'],
         owner: 'ranger',
         repo: 'ranger-test',
-        headers: {
-          Accept: 'application/vnd.github.symmetra-preview+json'
+        mediaType: {
+          previews: ['symmetra']
         }
       })
     }
@@ -736,8 +736,8 @@ describe('comment', () => {
           labels: ['duplicate'],
           owner: 'mfix22',
           repo: 'test-issue-bot',
-          headers: {
-            Accept: 'application/vnd.github.symmetra-preview+json'
+          mediaType: {
+            previews: ['symmetra']
           }
         })
       }
@@ -800,8 +800,8 @@ describe('installation', () => {
           owner: 'ranger',
           repo,
           ...l,
-          headers: {
-            Accept: 'application/vnd.github.symmetra-preview+json'
+          mediaType: {
+            previews: ['symmetra']
           }
         })
       })
