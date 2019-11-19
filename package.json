@@ -23,7 +23,7 @@
     "lodash.merge": "^4.6.2",
     "moment": "^2.24.0",
     "ms": "^2.1.1",
-    "probot": "9.6.4",
+    "probot": "9.6.6",
     "rexrex": "^1.3.0",
     "smee-client": "^1.0.1",
     "windsor-node": "^0.0.3"
@@ -31,7 +31,7 @@
   "devDependencies": {
     "eslint": "^6.6.0",
     "eslint-plugin-import": "^2.18.2",
-    "husky": "^3.0.9",
+    "husky": "^3.1.0",
     "jest": "^24.9.0",
     "lint-staged": "^9.4.3",
     "live-server": "^1.2.1",
