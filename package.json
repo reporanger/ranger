@@ -16,7 +16,7 @@
     "site": "cd site && live-server"
   },
   "dependencies": {
-    "@sentry/node": "^5.9.0",
+    "@sentry/node": "^5.10.2",
     "async-sema": "^3.0.1",
     "bad-words": "^3.0.3",
     "bee-queue": "^1.2.2",
@@ -29,13 +29,13 @@
     "windsor-node": "^0.0.3"
   },
   "devDependencies": {
-    "eslint": "^6.6.0",
-    "eslint-plugin-import": "^2.18.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.19.1",
     "husky": "^3.1.0",
     "jest": "^24.9.0",
-    "lint-staged": "^9.4.3",
+    "lint-staged": "^9.5.0",
     "live-server": "^1.2.1",
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.1",
     "prettier": "^1.19.1"
   },
   "engines": {
