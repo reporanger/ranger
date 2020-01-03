@@ -1,4 +1,5 @@
 // You can import your modules
+const nock = require('nock')
 const { Application } = require('probot')
 const app = require('..')
 
@@ -166,7 +167,9 @@ let github
 let queue
 let analytics
 beforeEach(async () => {
-  robot = new Application()
+  nock.disableNetConnect()
+
+  robot = new Application({ id: 1, cert: 'test', githubToken: 'test' })
   const setup = await app(robot)
   queue = setup.queue
   analytics = setup.analytics
@@ -249,6 +252,11 @@ beforeEach(async () => {
   const currentReceive = robot.receive
   // Introduced w/ Probot 9.3.0 - https://github.com/probot/probot/issues/619
   robot.receive = (...args) => currentReceive.call(robot, ...args).then(() => wait())
+})
+
+afterEach(() => {
+  nock.cleanAll()
+  nock.enableNetConnect()
 })
 
 describe.each(['issue', 'pull_request'])('%s', threadType => {
@@ -620,30 +628,32 @@ describe('pull_request', () => {
     expect(github.gitdata.deleteRef).not.toHaveBeenCalled()
   })
 
-  test.each([['no', '0.0.2'], ['patch', '0.0.2'], ['minor', '0.1.0'], ['major', '1.0.0']])(
-    'Can create tags after merging with %s label',
-    async (label, tag) => {
-      await robot.receive(mergedPayload({ labels: [label] }))
-      await wait(2)
+  test.each([
+    ['no', '0.0.2'],
+    ['patch', '0.0.2'],
+    ['minor', '0.1.0'],
+    ['major', '1.0.0']
+  ])('Can create tags after merging with %s label', async (label, tag) => {
+    await robot.receive(mergedPayload({ labels: [label] }))
+    await wait(2)
 
-      const sha = 'a244454d959a49f53aa60768d117d3eeaa0c552e'
+    const sha = 'a244454d959a49f53aa60768d117d3eeaa0c552e'
 
-      expect(github.gitdata.createTag).toHaveBeenCalledWith({
-        owner: 'Codertocat',
-        repo: 'Hello-World',
-        message: 'Update README.md (#3)',
-        type: 'commit',
-        object: sha,
-        tag
-      })
-      expect(github.gitdata.createRef).toHaveBeenCalledWith({
-        owner: 'Codertocat',
-        repo: 'Hello-World',
-        ref: `refs/tags/${tag}`,
-        sha
-      })
-    }
-  )
+    expect(github.gitdata.createTag).toHaveBeenCalledWith({
+      owner: 'Codertocat',
+      repo: 'Hello-World',
+      message: 'Update README.md (#3)',
+      type: 'commit',
+      object: sha,
+      tag
+    })
+    expect(github.gitdata.createRef).toHaveBeenCalledWith({
+      owner: 'Codertocat',
+      repo: 'Hello-World',
+      ref: `refs/tags/${tag}`,
+      sha
+    })
+  })
 
   test('Will not create a tag when merged into not the default branch', async () => {
     await robot.receive(mergedPayload({ labels: ['Major'], base: 'docs' }))
