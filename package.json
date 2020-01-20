@@ -16,26 +16,26 @@
     "site": "cd site && live-server"
   },
   "dependencies": {
-    "@sentry/node": "^5.10.2",
+    "@sentry/node": "^5.11.1",
     "async-sema": "^3.1.0",
     "bad-words": "^3.0.3",
     "bee-queue": "^1.2.2",
     "lodash.merge": "^4.6.2",
     "moment": "^2.24.0",
     "ms": "^2.1.1",
-    "probot": "9.8.1",
+    "probot": "9.9.1",
     "rexrex": "^1.3.0",
     "smee-client": "^1.0.1",
     "windsor-node": "^0.0.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-import": "^2.19.1",
-    "husky": "^3.1.0",
+    "eslint-plugin-import": "^2.20.0",
+    "husky": "^4.0.10",
     "jest": "^24.9.0",
-    "lint-staged": "^9.5.0",
+    "lint-staged": "^10.0.0",
     "live-server": "^1.2.1",
-    "nock": "^11.7.1",
+    "nock": "^11.7.2",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1"
   },
@@ -56,8 +56,7 @@
   "lint-staged": {
     "*.js": [
       "npm run lint",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   }
 }

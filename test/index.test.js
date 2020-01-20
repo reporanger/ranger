@@ -521,11 +521,11 @@ describe('pull_request', () => {
         number: 97
       })
     )
-    expect(github.pullRequests.merge).not.toHaveBeenCalled()
 
     expect(queue.jobs['mfix22:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
 
-    await wait(20)
+    expect(github.pullRequests.get).toHaveBeenCalledTimes(2)
+
     expect(github.pullRequests.merge).toHaveBeenCalledWith({
       pull_number: 97,
       owner: 'mfix22',
