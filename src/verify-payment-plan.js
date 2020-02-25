@@ -17,7 +17,8 @@ const WHITE_LIST = new Set([
   'antimatter15',
   'tonymastrorio',
   'victorbordo',
-  'vanilla'
+  'vanilla',
+  'kuromukira'
 ])
 
 module.exports = async function verifyPaymentPlan(robot, context) {
