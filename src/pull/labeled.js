@@ -10,38 +10,7 @@ const { getPullRequest } = require('../api')
 const RETRY_PERIOD = ms('1m')
 const RETRY_HORIZON = ms('3h')
 
-// https://developer.github.com/v4/enum/mergestatestatus/
-const STATUS = {
-  BEHIND: 'behind', // sometimes good to merge, depending on repo config
-  BLOCKED: 'blocked', // cannot merge
-  CLEAN: 'clean', // good to go 👍
-  DIRTY: 'dirty', // merge conflicts
-  HAS_HOOKS: 'has_hooks', // good-to-go, even with extra checks
-  UNKNOWN: 'unknown', // in between states
-  UNSTABLE: 'unstable', // can merge, but build is failing 🚫
-  DRAFT: 'draft',
-}
-
-// https://developer.github.com/v4/enum/statusstate/
-const STATE = {
-  SUCCESS: 'success',
-  PENDING: 'pending',
-  FAILURE: 'failure',
-  ERROR: 'error',
-  EXPECTED: 'expected',
-}
-
-// https://developer.github.com/v4/enum/checkconclusionstate/
-const CONCLUSION = {
-  ACTION_REQUIRED: 'action_required', // The check suite or run requires action.
-  CANCELLED: 'cancelled', // The check suite or run has been cancelled.
-  FAILURE: 'failure', // The check suite or run has failed.
-  NEUTRAL: 'neutral', // The check suite or run was neutral.
-  SKIPPED: 'skipped', // The check suite or run was skipped.
-  STALE: 'stale', // The check suite or run was marked stale by GitHub. Only GitHub can use this conclusion.
-  SUCCESS: 'success', // The check suite or run has succeeded.
-  TIMED_OUT: 'timed_out', // The check suite or run has timed out.
-}
+const { STATUS, STATE, CONCLUSION } = require('../constants')
 
 const methods = ['merge', 'squash', 'rebase']
 

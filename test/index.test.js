@@ -10,7 +10,7 @@ const installedPayload = require('./fixtures/installed')
 const synchronizedPayload = require('./fixtures/synchronized')
 const mergedPayload = require('./fixtures/merged')
 
-const { MAINTAINERS } = require('../src/constants')
+const { MAINTAINERS, CONCLUSION } = require('../src/constants')
 
 const wait = (delay = 0) => new Promise((resolve) => setTimeout(resolve, delay))
 
@@ -556,13 +556,13 @@ describe('pull_request', () => {
 
   test.each([
     [null, true], // TODO https://github.com/dawnlabs/ranger/issues/60
-    ['success', true],
-    ['neutral', true],
-    ['timed_out', false],
-    ['failure', false],
-    ['skipped', true],
-    ['stale', false],
-    ['action_required', false],
+    [CONCLUSION.SUCCESS, true],
+    [CONCLUSION.NEUTRAL, true],
+    [CONCLUSION.TIMED_OUT, false],
+    [CONCLUSION.FAILURE, false],
+    [CONCLUSION.SKIPPED, true],
+    [CONCLUSION.STALE, false],
+    [CONCLUSION.ACTION_REQUIRED, false],
   ])('Will check suites for status: %s', async (conclusion, shouldMerge) => {
     github.pulls.merge.mockResolvedValueOnce()
     github.checks.listSuitesForRef.mockResolvedValue({
