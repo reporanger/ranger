@@ -10,11 +10,11 @@ exports.closeIssue = function closeIssue(github, data) {
       issue_number: number,
       state,
       mediaType: {
-        previews: ['symmetra']
-      }
+        previews: ['symmetra'],
+      },
     })
-    .then(_ => _.data)
-    .catch(e => {
+    .then((_) => _.data)
+    .catch((e) => {
       console.log(e, data)
       throw e
     })
@@ -23,17 +23,17 @@ exports.closeIssue = function closeIssue(github, data) {
 exports.getPullRequest = function getPullRequest(github, data) {
   const { owner, repo, number } = data
 
-  return github.pullRequests
+  return github.pulls
     .get({
       owner,
       repo,
       pull_number: number,
       mediaType: {
-        previews: ['symmetra', 'shadow-cat']
-      }
+        previews: ['symmetra', 'shadow-cat'],
+      },
     })
-    .then(_ => _.data)
-    .catch(e => {
+    .then((_) => _.data)
+    .catch((e) => {
       console.log(e, data)
       throw e
     })
@@ -49,8 +49,8 @@ exports.createLabel = function createLabel(github, data) {
     color,
     description,
     mediaType: {
-      previews: ['symmetra']
-    }
+      previews: ['symmetra'],
+    },
   })
 }
 
@@ -61,10 +61,10 @@ exports.addLabels = function addLabels(github, { labels, number, ...data }) {
       issue_number: number,
       labels: many(labels),
       mediaType: {
-        previews: ['symmetra']
-      }
+        previews: ['symmetra'],
+      },
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e, data)
       throw e
     })

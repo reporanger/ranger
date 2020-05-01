@@ -19,7 +19,7 @@ const STATUS = {
   HAS_HOOKS: 'has_hooks', // good-to-go, even with extra checks
   UNKNOWN: 'unknown', // in between states
   UNSTABLE: 'unstable', // can merge, but build is failing 🚫
-  DRAFT: 'draft'
+  DRAFT: 'draft',
 }
 
 // https://developer.github.com/v4/enum/statusstate/
@@ -28,7 +28,7 @@ const STATE = {
   PENDING: 'pending',
   FAILURE: 'failure',
   ERROR: 'error',
-  EXPECTED: 'expected'
+  EXPECTED: 'expected',
 }
 
 // https://developer.github.com/v4/enum/checkconclusionstate/
@@ -38,7 +38,7 @@ const CONCLUSION = {
   FAILURE: 'failure', // The check suite or run has failed.
   NEUTRAL: 'neutral', // The check suite or run was neutral.
   SUCCESS: 'success', // The check suite or run has succeeded.
-  TIMED_OUT: 'timed_out' // The check suite or run has timed out.
+  TIMED_OUT: 'timed_out', // The check suite or run has timed out.
 }
 
 const methods = ['merge', 'squash', 'rebase']
@@ -49,7 +49,7 @@ class Retry extends Error {
   }
 }
 
-module.exports = queue => async context => {
+module.exports = (queue) => async (context) => {
   const ID = getId(context, { action: MERGE })
 
   const thread = context.payload.pull_request
@@ -66,7 +66,7 @@ module.exports = queue => async context => {
   }
 
   const config = await getConfig(context)
-  const mergeableLabels = (thread.labels || []).filter(l => {
+  const mergeableLabels = (thread.labels || []).filter((l) => {
     if (typeof config.labels !== 'object') return false
     if (!config.labels[l.name]) return false
 
@@ -89,20 +89,20 @@ module.exports = queue => async context => {
       .createJob({
         ...context.issue({ installation_id: context.payload.installation.id }),
         action: MERGE,
-        method
+        method,
       })
       .setId(ID)
       .retries(RETRY_HORIZON / RETRY_PERIOD)
       .backoff('fixed', RETRY_PERIOD)
       .save()
-      .then(job => {
+      .then((job) => {
         analytics.track(() => ({
           userId: context.payload.installation.id,
           event: `Merge job created`,
           properties: {
             ...job.data,
-            id: job.id
-          }
+            id: job.id,
+          },
         }))
         return job
       })
@@ -112,8 +112,8 @@ module.exports = queue => async context => {
   return queue.removeJob(ID)
 }
 
-module.exports.process = robot => async ({
-  data: { installation_id, owner, repo, number, method = 'merge' }
+module.exports.process = (robot) => async ({
+  data: { installation_id, owner, repo, number, method = 'merge' },
 }) => {
   let github
   let pull
@@ -123,7 +123,7 @@ module.exports.process = robot => async ({
     pull = await getPullRequest(github, { owner, repo, number })
   } catch (error) {
     const Sentry = require('@sentry/node')
-    Sentry.configureScope(scope => {
+    Sentry.configureScope((scope) => {
       scope.setUser({ username: owner, id: installation_id })
       Sentry.captureException(error)
     })
@@ -143,15 +143,15 @@ module.exports.process = robot => async ({
       number,
       method,
       mergeable: pull.mergeable,
-      mergeable_state: pull.mergeable_state
-    }
+      mergeable_state: pull.mergeable_state,
+    },
   }))
 
   if (isMergeable) {
     const sha = pull.head.sha
     const ref = sha
     const {
-      data: { state, statuses }
+      data: { state, statuses },
     } = await github.repos.getCombinedStatusForRef({ owner, repo, ref })
 
     // If no CI is set up, state is pending but statuses === []
@@ -161,20 +161,20 @@ module.exports.process = robot => async ({
     }
 
     const {
-      data: { total_count, check_suites }
+      data: { total_count, check_suites },
     } = await github.checks.listSuitesForRef({
       owner,
       repo,
       ref,
       headers: {
-        Accept: 'application/vnd.github.antiope-preview+json'
-      }
+        Accept: 'application/vnd.github.antiope-preview+json',
+      },
     })
 
     if (
       total_count > 0 &&
       check_suites.find(
-        s =>
+        (s) =>
           s.conclusion !== CONCLUSION.SUCCESS &&
           s.conclusion !== CONCLUSION.NEUTRAL &&
           // TODO remove this. Currently check suites like https://github.com/NLog/NLog/pull/3296/checks are being
@@ -187,15 +187,15 @@ module.exports.process = robot => async ({
       throw new Retry()
     }
 
-    const initialIndex = methods.findIndex(m => m === method)
+    const initialIndex = methods.findIndex((m) => m === method)
 
-    const mergeAttempt = i =>
-      github.pullRequests.merge({
+    const mergeAttempt = (i) =>
+      github.pulls.merge({
         owner,
         repo,
         pull_number: number,
         sha,
-        merge_method: methods[(initialIndex + i) % methods.length]
+        merge_method: methods[(initialIndex + i) % methods.length],
       })
 
     try {
@@ -212,7 +212,7 @@ module.exports.process = robot => async ({
     const { data: branch } = await github.repos.getBranch({
       owner: pull.base.user.login,
       repo: pull.base.repo.name,
-      branch: pull.base.ref
+      branch: pull.base.ref,
     })
     if (
       branch.protected &&
@@ -228,8 +228,8 @@ module.exports.process = robot => async ({
         pull_number: number,
         expected_head_sha: pull.head.sha,
         headers: {
-          accept: 'application/vnd.github.lydian-preview+json'
-        }
+          accept: 'application/vnd.github.lydian-preview+json',
+        },
       })
     }
   } else if (pull.mergeable_state === STATUS.DIRTY) {
