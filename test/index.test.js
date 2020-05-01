@@ -10,7 +10,7 @@ const installedPayload = require('./fixtures/installed')
 const synchronizedPayload = require('./fixtures/synchronized')
 const mergedPayload = require('./fixtures/merged')
 
-const { MAINTAINERS, CONCLUSION } = require('../src/constants')
+const { MAINTAINERS, CONCLUSION, STATE } = require('../src/constants')
 
 const wait = (delay = 0) => new Promise((resolve) => setTimeout(resolve, delay))
 
@@ -209,7 +209,7 @@ beforeEach(async () => {
       }),
       getCombinedStatusForRef: jest
         .fn()
-        .mockResolvedValue({ data: { state: 'success', statuses: [] } }),
+        .mockResolvedValue({ data: { state: STATE.SUCCESS, statuses: [] } }),
       getBranch: jest.fn().mockResolvedValue({
         data: {
           protected: true,
@@ -467,7 +467,7 @@ describe('pull_request', () => {
     expect(github.pulls.merge).not.toHaveBeenCalled()
   })
 
-  test.each(['pending', 'error', 'failure'])(
+  test.each([STATE.PENDING, STATE.ERROR, STATE.FAILURE])(
     'Will not merge if current status is %s',
     async (state) => {
       github.repos.getCombinedStatusForRef.mockResolvedValue({
