@@ -560,6 +560,8 @@ describe('pull_request', () => {
     ['neutral', true],
     ['timed_out', false],
     ['failure', false],
+    ['skipped', true],
+    ['stale', false],
     ['action_required', false],
   ])('Will check suites for status: %s', async (conclusion, shouldMerge) => {
     github.pulls.merge.mockResolvedValueOnce()
