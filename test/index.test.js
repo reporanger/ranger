@@ -12,18 +12,16 @@ const mergedPayload = require('./fixtures/merged')
 
 const { MAINTAINERS } = require('../src/constants')
 
-const wait = (delay = 0) => new Promise(resolve => setTimeout(resolve, delay))
+const wait = (delay = 0) => new Promise((resolve) => setTimeout(resolve, delay))
 
 class MockJob {
   constructor(data, queue) {
     this.queue = queue
-    this.id = Math.random()
-      .toString(36)
-      .slice(2)
+    this.id = Math.random().toString(36).slice(2)
     this.data = data
     this.save = jest.fn(() => {
       let fn
-      fn = async data => {
+      fn = async (data) => {
         try {
           await this.queue.processor(data)
         } catch (e) {
@@ -40,13 +38,13 @@ class MockJob {
       this.to = setTimeout(fn, Math.min(this.delay - Date.now(), 2147483647), this)
       return Promise.resolve(this)
     })
-    this.setId = jest.fn(id => {
+    this.setId = jest.fn((id) => {
       delete this.queue.jobs[this.id]
       this.id = id
       this.queue.jobs[this.id] = this
       return this
     })
-    this.delayUntil = jest.fn(delay => {
+    this.delayUntil = jest.fn((delay) => {
       this.delay = delay
       return this
     })
@@ -70,19 +68,19 @@ jest.mock(
       constructor(name) {
         this.name = name
         this.jobs = {}
-        this.process = jest.fn(fn => {
+        this.process = jest.fn((fn) => {
           this.processor = fn
         })
         this.on = jest.fn()
-        this.getJob = jest.fn(id => {
+        this.getJob = jest.fn((id) => {
           return this.jobs[id]
         })
-        this.createJob = jest.fn(data => {
+        this.createJob = jest.fn((data) => {
           const job = new MockJob(data, this)
           this.jobs[job.id] = job
           return job
         })
-        this.removeJob = jest.fn(id => {
+        this.removeJob = jest.fn((id) => {
           delete this.jobs[id]
           return id
         })
@@ -183,17 +181,18 @@ beforeEach(async () => {
       createLabel: jest.fn().mockResolvedValue(),
       addLabels: jest.fn().mockResolvedValue(),
       update: jest.fn((_, data) => Promise.resolve({ data })),
-      deleteComment: jest.fn()
+      deleteComment: jest.fn(),
     },
-    pullRequests: {
+    pulls: {
       get: jest.fn().mockResolvedValue({
         data: {
           mergeable: true,
           mergeable_state: 'clean',
-          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
-        }
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+        },
       }),
-      merge: jest.fn()
+      merge: jest.fn(),
+      updateBranch: jest.fn().mockResolvedValue({ data: {} }),
     },
     repos: {
       getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
@@ -204,9 +203,9 @@ beforeEach(async () => {
       listTags: jest.fn().mockResolvedValue({
         data: [
           {
-            name: '0.0.1'
-          }
-        ]
+            name: '0.0.1',
+          },
+        ],
       }),
       getCombinedStatusForRef: jest
         .fn()
@@ -217,36 +216,33 @@ beforeEach(async () => {
           protection: {
             enabled: true,
             required_status_checks: {
-              contexts: ['Build']
-            }
-          }
-        }
-      })
+              contexts: ['Build'],
+            },
+          },
+        },
+      }),
     },
     apps: {
       listRepos: jest.fn().mockResolvedValue({
         data: {
           total_count: 5,
           repositories: Array(5).fill({
-            private: true
-          })
-        }
-      })
+            private: true,
+          }),
+        },
+      }),
     },
     gitdata: {
       deleteRef: jest.fn().mockResolvedValue(),
       createRef: jest.fn().mockResolvedValue(),
-      createTag: jest.fn().mockResolvedValue()
+      createTag: jest.fn().mockResolvedValue(),
     },
     checks: {
-      listSuitesForRef: jest.fn().mockResolvedValue({ data: { total_count: 0, check_suites: [] } })
+      listSuitesForRef: jest.fn().mockResolvedValue({ data: { total_count: 0, check_suites: [] } }),
     },
     users: {
-      getByUsername: jest.fn().mockResolvedValue({ data: { email: 'test@test.com' } })
+      getByUsername: jest.fn().mockResolvedValue({ data: { email: 'test@test.com' } }),
     },
-    pulls: {
-      updateBranch: jest.fn().mockResolvedValue({ data: {} })
-    }
   }
   robot.auth = () => Promise.resolve(github)
   const currentReceive = robot.receive
@@ -259,7 +255,7 @@ afterEach(() => {
   nock.enableNetConnect()
 })
 
-describe.each(['issue', 'pull_request'])('%s', threadType => {
+describe.each(['issue', 'pull_request'])('%s', (threadType) => {
   const name = threadType === 'pull_request' ? threadType : 'issues'
   const action = threadType === 'pull_request' ? 'merge' : 'close'
 
@@ -288,13 +284,13 @@ describe.each(['issue', 'pull_request'])('%s', threadType => {
   test('Will comment for each actionable label', async () => {
     await robot.receive(payload({ name, threadType, labels: ['comment', 'comment2'] }))
     await wait(10)
-    ;['beep', 'boop'].forEach(body => {
+    ;['beep', 'boop'].forEach((body) => {
       expect(github.issues.createComment).toHaveBeenCalledWith(
         expect.objectContaining({
           body,
           owner: 'mfix22',
           repo: 'test-issue-bot',
-          issue_number: 7
+          issue_number: 7,
         })
       )
     })
@@ -315,14 +311,14 @@ describe('issue', () => {
       issue_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
-      body: 'duplicate issue created! Closing in 5 ms . . .'
+      body: 'duplicate issue created! Closing in 5 ms . . .',
     })
     const data = {
       number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       installation_id: 135737,
-      action: 'close'
+      action: 'close',
     }
     expect(queue.createJob).toHaveBeenCalledWith(data)
     expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:close')
@@ -381,7 +377,7 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: ['merge'],
-        number: 7
+        number: 7,
       })
     )
 
@@ -391,7 +387,7 @@ describe('pull_request', () => {
       repo: 'test-issue-bot',
       installation_id: 135737,
       action: 'merge',
-      method: 'merge'
+      method: 'merge',
     }
 
     expect(queue.createJob).toHaveBeenCalledWith(data)
@@ -400,31 +396,31 @@ describe('pull_request', () => {
 
     await wait(2)
 
-    expect(github.pullRequests.merge).toHaveBeenCalledWith({
+    expect(github.pulls.merge).toHaveBeenCalledWith({
       pull_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       sha: 0,
-      merge_method: 'merge'
+      merge_method: 'merge',
     })
   })
 
   test('Will not update branch if a pull request is "behind" and branch requires it', async () => {
-    github.pullRequests.get.mockResolvedValue({
+    github.pulls.get.mockResolvedValue({
       data: {
         mergeable: true,
         mergeable_state: 'behind',
         base: {
           sha: 'base sha',
           user: { login: 'mfix22' },
-          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } }
+          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } },
         },
         head: {
           sha: 'head sha',
           user: { login: 'mfix22' },
-          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } }
-        }
-      }
+          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } },
+        },
+      },
     })
 
     await robot.receive(
@@ -432,29 +428,29 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: ['merge'],
-        number: 98
+        number: 98,
       })
     )
 
     await wait(10)
 
-    expect(github.pullRequests.merge).not.toHaveBeenCalled()
+    expect(github.pulls.merge).not.toHaveBeenCalled()
     expect(github.pulls.updateBranch).toHaveBeenCalledWith({
       expected_head_sha: 'head sha',
       owner: 'mfix22',
       pull_number: 98,
       repo: 'test-issue-bot',
-      headers: { accept: 'application/vnd.github.lydian-preview+json' }
+      headers: { accept: 'application/vnd.github.lydian-preview+json' },
     })
   })
 
   test('Will not merge a pull request with state `dirty`', async () => {
-    github.pullRequests.get.mockResolvedValue({
+    github.pulls.get.mockResolvedValue({
       data: {
         mergeable: true,
         mergeable_state: 'dirty',
-        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
-      }
+        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+      },
     })
 
     await robot.receive(
@@ -462,23 +458,23 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: ['merge'],
-        number: 98
+        number: 98,
       })
     )
 
     await wait(20)
 
-    expect(github.pullRequests.merge).not.toHaveBeenCalled()
+    expect(github.pulls.merge).not.toHaveBeenCalled()
   })
 
   test.each(['pending', 'error', 'failure'])(
     'Will not merge if current status is %s',
-    async state => {
+    async (state) => {
       github.repos.getCombinedStatusForRef.mockResolvedValue({
         data: {
           state,
-          statuses: ['Fake Status']
-        }
+          statuses: ['Fake Status'],
+        },
       })
 
       await robot.receive(
@@ -486,31 +482,31 @@ describe('pull_request', () => {
           name: 'pull_request',
           threadType: 'pull_request',
           labels: ['merge'],
-          number: 7
+          number: 7,
         })
       )
 
       expect(queue.createJob).toHaveBeenCalled()
       await wait()
-      expect(github.pullRequests.merge).not.toHaveBeenCalled()
+      expect(github.pulls.merge).not.toHaveBeenCalled()
     }
   )
 
   test('Will retry job if merge is blocked until it is clean', async () => {
-    github.pullRequests.get
+    github.pulls.get
       .mockResolvedValueOnce({
         data: {
           mergeable: true,
           mergeable_state: 'blocked',
-          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
-        }
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+        },
       })
       .mockResolvedValueOnce({
         data: {
           mergeable: true,
           mergeable_state: 'clean',
-          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
-        }
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+        },
       })
 
     await robot.receive(
@@ -518,29 +514,29 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: ['merge'],
-        number: 97
+        number: 97,
       })
     )
 
     expect(queue.jobs['mfix22:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
 
-    expect(github.pullRequests.get).toHaveBeenCalledTimes(2)
+    expect(github.pulls.get).toHaveBeenCalledTimes(2)
 
-    expect(github.pullRequests.merge).toHaveBeenCalledWith({
+    expect(github.pulls.merge).toHaveBeenCalledWith({
       pull_number: 97,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       sha: 0,
-      merge_method: 'merge'
+      merge_method: 'merge',
     })
   })
 
   test.each([
     ['merge', ['merge', 'squash', 'rebase']],
     ['squash', ['squash', 'rebase', 'merge']],
-    ['rebase', ['rebase', 'merge', 'squash']]
+    ['rebase', ['rebase', 'merge', 'squash']],
   ])('Will first try each method, starting with "%s"', async (label, order) => {
-    github.pullRequests.merge
+    github.pulls.merge
       .mockRejectedValueOnce(new Error('Error 1'))
       .mockRejectedValueOnce(new Error('Error 2'))
       .mockResolvedValueOnce()
@@ -550,12 +546,12 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: [label],
-        number: 7
+        number: 7,
       })
     )
 
     await wait(2)
-    expect(github.pullRequests.merge.mock.calls.map(c => c[0].merge_method)).toEqual(order)
+    expect(github.pulls.merge.mock.calls.map((c) => c[0].merge_method)).toEqual(order)
   })
 
   test.each([
@@ -564,11 +560,11 @@ describe('pull_request', () => {
     ['neutral', true],
     ['timed_out', false],
     ['failure', false],
-    ['action_required', false]
+    ['action_required', false],
   ])('Will check suites for status: %s', async (conclusion, shouldMerge) => {
-    github.pullRequests.merge.mockResolvedValueOnce()
+    github.pulls.merge.mockResolvedValueOnce()
     github.checks.listSuitesForRef.mockResolvedValue({
-      data: { total_count: 1, check_suites: [{ conclusion }] }
+      data: { total_count: 1, check_suites: [{ conclusion }] },
     })
 
     await robot.receive(
@@ -576,25 +572,25 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: ['merge'],
-        number: 7
+        number: 7,
       })
     )
 
     await wait(2)
     if (shouldMerge) {
-      expect(github.pullRequests.merge).toHaveBeenCalled()
+      expect(github.pulls.merge).toHaveBeenCalled()
     } else {
-      expect(github.pullRequests.merge).not.toHaveBeenCalled()
+      expect(github.pulls.merge).not.toHaveBeenCalled()
     }
   })
 
   test('Will remove the existing job if a new label event occurs', async () => {
-    github.pullRequests.get.mockResolvedValue({
+    github.pulls.get.mockResolvedValue({
       data: {
         mergeable: false,
         mergeable_state: 'clean',
-        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } }
-      }
+        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+      },
     })
 
     queue.jobs['mfix22:test-issue-bot:99:merge'] = true
@@ -604,7 +600,7 @@ describe('pull_request', () => {
         name: 'pull_request',
         threadType: 'pull_request',
         labels: ['merge'],
-        number: 99
+        number: 99,
       })
     )
 
@@ -617,7 +613,7 @@ describe('pull_request', () => {
     expect(github.gitdata.deleteRef).toHaveBeenCalledWith({
       owner: 'Codertocat',
       ref: 'heads/mfix22-patch-1',
-      repo: 'Hello-World'
+      repo: 'Hello-World',
     })
   })
 
@@ -632,7 +628,7 @@ describe('pull_request', () => {
     ['no', '0.0.2'],
     ['patch', '0.0.2'],
     ['minor', '0.1.0'],
-    ['major', '1.0.0']
+    ['major', '1.0.0'],
   ])('Can create tags after merging with %s label', async (label, tag) => {
     await robot.receive(mergedPayload({ labels: [label] }))
     await wait(2)
@@ -645,13 +641,13 @@ describe('pull_request', () => {
       message: 'Update README.md (#3)',
       type: 'commit',
       object: sha,
-      tag
+      tag,
     })
     expect(github.gitdata.createRef).toHaveBeenCalledWith({
       owner: 'Codertocat',
       repo: 'Hello-World',
       ref: `refs/tags/${tag}`,
-      sha
+      sha,
     })
   })
 
@@ -665,7 +661,7 @@ describe('pull_request', () => {
 
   test.each(['opened', 'synchronize'])(
     'Will take action on a maintainer commit message when PR is %s',
-    async action => {
+    async (action) => {
       await robot.receive(synchronizedPayload({ action }))
       await wait()
 
@@ -675,8 +671,8 @@ describe('pull_request', () => {
         owner: 'ranger',
         repo: 'ranger-test',
         mediaType: {
-          previews: ['symmetra']
-        }
+          previews: ['symmetra'],
+        },
       })
     }
   )
@@ -703,33 +699,33 @@ describe('comment', () => {
       await robot.receive(
         commentPayload({
           action: 'created',
-          body: '+1'
+          body: '+1',
         })
       )
 
       expect(github.issues.deleteComment).toHaveBeenCalledWith({
         comment_id: 448738894,
         owner: 'mfix22',
-        repo: 'test-issue-bot'
+        repo: 'test-issue-bot',
       })
     })
     test('deleting profanity', async () => {
       await robot.receive(
         commentPayload({
           action: 'created',
-          body: 'damn'
+          body: 'damn',
         })
       )
 
       expect(github.issues.deleteComment).toHaveBeenCalledWith({
         comment_id: 448738894,
         owner: 'mfix22',
-        repo: 'test-issue-bot'
+        repo: 'test-issue-bot',
       })
     })
     test.each(MAINTAINERS)(
       `by %s's will trigger actions if the payload is correct`,
-      async author_association => {
+      async (author_association) => {
         const number = 55
 
         await robot.receive(
@@ -737,7 +733,7 @@ describe('comment', () => {
             number,
             action: 'created',
             body: 'Duplicate of #54',
-            author_association
+            author_association,
           })
         )
 
@@ -747,14 +743,14 @@ describe('comment', () => {
           owner: 'mfix22',
           repo: 'test-issue-bot',
           mediaType: {
-            previews: ['symmetra']
-          }
+            previews: ['symmetra'],
+          },
         })
       }
     )
     test.each(['duplicate', 'duplicate #54'])(
       'will not trigger if payload is invalid %#',
-      async body => {
+      async (body) => {
         const number = 55
 
         await robot.receive(
@@ -762,7 +758,7 @@ describe('comment', () => {
             number,
             action: 'created',
             author_association: 'OWNER',
-            body
+            body,
           })
         )
 
@@ -774,9 +770,9 @@ describe('comment', () => {
 
 describe('installation', () => {
   test.each([
-    repos => addedPayload({ repositories_added: repos }),
-    repos => installedPayload({ repositories: repos })
-  ])('Will take action when repos are added', async createPayload => {
+    (repos) => addedPayload({ repositories_added: repos }),
+    (repos) => installedPayload({ repositories: repos }),
+  ])('Will take action when repos are added', async (createPayload) => {
     const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
 
     await robot.receive(createPayload(repos))
@@ -785,34 +781,34 @@ describe('installation', () => {
       {
         name: 'merge when passing',
         color: 'FF851B',
-        description: 'Merge the PR automatically once all status checks have passed'
+        description: 'Merge the PR automatically once all status checks have passed',
       },
       {
         name: 'Patch Version',
         color: '99cef9',
-        description: 'Automatically create a new patch version tag after PR is merged'
+        description: 'Automatically create a new patch version tag after PR is merged',
       },
       {
         name: 'Minor Version',
         color: '6EBAF7',
-        description: 'Automatically create a new minor version tag after PR is merged'
+        description: 'Automatically create a new minor version tag after PR is merged',
       },
       {
         name: 'Major Version',
         color: '1E8DE7',
-        description: 'Automatically create a new major version tag after PR is merged'
-      }
+        description: 'Automatically create a new major version tag after PR is merged',
+      },
     ]
 
     repos.forEach(({ name: repo }) => {
-      newLabels.forEach(l => {
+      newLabels.forEach((l) => {
         expect(github.issues.createLabel).toHaveBeenCalledWith({
           owner: 'ranger',
           repo,
           ...l,
           mediaType: {
-            previews: ['symmetra']
-          }
+            previews: ['symmetra'],
+          },
         })
       })
     })
@@ -822,7 +818,7 @@ describe('installation', () => {
     robot.log.error = jest.fn()
     github.issues.createLabel.mockRejectedValueOnce({
       message: 'Repo alread exists', // <--- this is not a real error message
-      errors: [{ code: 'already_exists' }]
+      errors: [{ code: 'already_exists' }],
     })
 
     const repos = [{ name: 'ranger-0' }, { name: 'ranger-1' }]
@@ -832,7 +828,7 @@ describe('installation', () => {
     expect(robot.log.error).not.toHaveBeenCalled()
 
     github.issues.createLabel.mockRejectedValueOnce({
-      message: JSON.stringify({ errors: [{ status: 'unknown error' }] })
+      message: JSON.stringify({ errors: [{ status: 'unknown error' }] }),
     })
 
     await robot.receive(installedPayload({ repositories: repos }))
@@ -852,9 +848,9 @@ describe('billing', () => {
       marketplace_purchase: {
         on_free_trial: false,
         plan: {
-          bullets: ['Unlimited public repositories', '5 private repositories']
-        }
-      }
+          bullets: ['Unlimited public repositories', '5 private repositories'],
+        },
+      },
     },
     // On free trial
     {
@@ -862,11 +858,11 @@ describe('billing', () => {
       marketplace_purchase: {
         on_free_trial: true,
         plan: {
-          bullets: ['Unlimited public repositories', '1 private repositories']
-        }
-      }
-    }
-  ])('Will schedule job is private billing is correct: %#', async data => {
+          bullets: ['Unlimited public repositories', '1 private repositories'],
+        },
+      },
+    },
+  ])('Will schedule job is private billing is correct: %#', async (data) => {
     github.apps.checkAccountIsAssociatedWithAny = () => ({ data })
 
     await robot.receive(payload({ isPrivate: true }))
@@ -875,7 +871,7 @@ describe('billing', () => {
       owner: 'mfix22',
       repo: 'test-issue-bot',
       installation_id: 135737,
-      action: 'close'
+      action: 'close',
     })
   })
 
@@ -884,15 +880,15 @@ describe('billing', () => {
       'Repo must have an associated account',
       () => {
         throw new Error('No associated account')
-      }
+      },
     ],
     ['Account must contain marketplace purchase', {}],
     [
       'Repo owner must match account type',
       {
         type: 'Organization',
-        marketplace_purchase: {}
-      }
+        marketplace_purchase: {},
+      },
     ],
     [
       'Private repos are not supported in open source plan',
@@ -902,10 +898,10 @@ describe('billing', () => {
         marketplace_purchase: {
           on_free_trial: false,
           plan: {
-            number: 1
-          }
-        }
-      }
+            number: 1,
+          },
+        },
+      },
     ],
     [
       'Number of installed repos must be less than maximum for purchase',
@@ -914,14 +910,14 @@ describe('billing', () => {
         marketplace_purchase: {
           on_free_trial: false,
           plan: {
-            bullets: ['Unlimited public repositories', '1 private repositories']
-          }
-        }
-      }
-    ]
+            bullets: ['Unlimited public repositories', '1 private repositories'],
+          },
+        },
+      },
+    ],
   ])('%s', async (_, data) => {
     github.apps.checkAccountIsAssociatedWithAny = () => ({
-      data: typeof data === 'function' ? data() : data
+      data: typeof data === 'function' ? data() : data,
     })
     await robot.receive(payload({ isPrivate: true }))
     expect(queue.createJob).not.toHaveBeenCalled()
@@ -930,12 +926,12 @@ describe('billing', () => {
 
 describe('analytics', () => {
   test.each([
-    repos => addedPayload({ repositories_added: repos }),
-    repos => installedPayload({ repositories: repos })
-  ])('Will track installations', async createPayload => {
+    (repos) => addedPayload({ repositories_added: repos }),
+    (repos) => installedPayload({ repositories: repos }),
+  ])('Will track installations', async (createPayload) => {
     const repos = [
       { name: 'ranger/test-0', private: true },
-      { name: 'ranger/test-1', private: false }
+      { name: 'ranger/test-1', private: false },
     ]
 
     await robot.receive(createPayload(repos))
@@ -946,8 +942,8 @@ describe('analytics', () => {
         name: 'ranger',
         username: 'ranger',
         type: 'User',
-        email: 'test@test.com'
-      }
+        email: 'test@test.com',
+      },
     })
     expect(analytics.track).toHaveBeenCalledWith({
       userId: 42,
@@ -955,8 +951,8 @@ describe('analytics', () => {
       properties: {
         count: 2,
         private_count: 1,
-        repos: ['ranger/test-0', 'ranger/test-1']
-      }
+        repos: ['ranger/test-0', 'ranger/test-1'],
+      },
     })
   })
 })
@@ -968,7 +964,7 @@ describe('global config', () => {
       `
 
     github.repos.getContents.mockResolvedValue({
-      data: { content: Buffer.from(newConfig).toString('base64') }
+      data: { content: Buffer.from(newConfig).toString('base64') },
     })
 
     await robot.receive(payload())
@@ -976,12 +972,12 @@ describe('global config', () => {
     expect(github.repos.getContents).toHaveBeenCalledWith({
       owner: 'mfix22',
       path: '.github/ranger.yml',
-      repo: 'test-issue-bot'
+      repo: 'test-issue-bot',
     })
     expect(github.repos.getContents).toHaveBeenCalledWith({
       owner: 'dawnlabs',
       path: '.github/ranger.yml',
-      repo: 'global-ranger-config'
+      repo: 'global-ranger-config',
     })
   })
 })
