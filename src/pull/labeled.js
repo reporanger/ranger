@@ -37,6 +37,8 @@ const CONCLUSION = {
   CANCELLED: 'cancelled', // The check suite or run has been cancelled.
   FAILURE: 'failure', // The check suite or run has failed.
   NEUTRAL: 'neutral', // The check suite or run was neutral.
+  SKIPPED: 'skipped', // The check suite or run was skipped.
+  STALE: 'stale', // The check suite or run was marked stale by GitHub. Only GitHub can use this conclusion.
   SUCCESS: 'success', // The check suite or run has succeeded.
   TIMED_OUT: 'timed_out', // The check suite or run has timed out.
 }
@@ -177,6 +179,7 @@ module.exports.process = (robot) => async ({
         (s) =>
           s.conclusion !== CONCLUSION.SUCCESS &&
           s.conclusion !== CONCLUSION.NEUTRAL &&
+          s.conclusion !== CONCLUSION.SKIPPED &&
           // TODO remove this. Currently check suites like https://github.com/NLog/NLog/pull/3296/checks are being
           // queued and never concluding. You can see that in this API response:
           // https://api.github.com/repos/NLog/Nlog/commits/2c8f7471648f22fa5dc9bf6db53e96fae061fc0a/check-suites
