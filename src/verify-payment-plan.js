@@ -18,7 +18,8 @@ const WHITE_LIST = new Set([
   'tonymastrorio',
   'victorbordo',
   'vanilla',
-  'kuromukira'
+  'kuromukira',
+  'daedalus28',
 ])
 
 module.exports = async function verifyPaymentPlan(robot, context) {
@@ -57,7 +58,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
 
     const { data } = await context.github.apps.listRepos({ per_page: 100 })
 
-    const count = data.repositories.filter(r => r.private).length
+    const count = data.repositories.filter((r) => r.private).length
 
     const max = getMaxRepositories(account.marketplace_purchase.plan)
 
@@ -70,7 +71,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
     if (error.status !== 404) {
       robot.log.error(error, context.repo())
       const Sentry = require('@sentry/node')
-      Sentry.configureScope(scope => {
+      Sentry.configureScope((scope) => {
         scope.setUser({ username: owner })
         Sentry.captureException(error)
       })
@@ -91,7 +92,7 @@ const privateReposAllowedPattern = r.and(
 
 function getMaxRepositories(plan) {
   // e.g. ['Unlimited public repositories', '5 private repositories']
-  const privateRepoBullet = plan.bullets.find(b =>
+  const privateRepoBullet = plan.bullets.find((b) =>
     b.match(r.regex(privateReposAllowedPattern, 'i'))
   )
 
