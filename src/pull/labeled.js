@@ -56,27 +56,32 @@ module.exports = (queue) => async (context) => {
       ? 'squash'
       : 'merge'
 
-    return queue
-      .createJob({
-        ...context.issue({ installation_id: context.payload.installation.id }),
-        action: MERGE,
-        method,
-      })
-      .setId(ID)
-      .retries(RETRY_HORIZON / RETRY_PERIOD)
-      .backoff('fixed', RETRY_PERIOD)
-      .save()
-      .then((job) => {
-        analytics.track(() => ({
-          userId: context.payload.installation.id,
-          event: `Merge job created`,
-          properties: {
-            ...job.data,
-            id: job.id,
-          },
-        }))
-        return job
-      })
+    return (
+      queue
+        .createJob({
+          ...context.issue({ installation_id: context.payload.installation.id }),
+          action: MERGE,
+          method,
+        })
+        .setId(ID)
+        // TODO fix tests
+        // https://github.com/reporanger/feedback/issues/1
+        .delayUntil(process.env.NODE_ENV !== 'test' ? Date.now() + 7 * 1000 : 0)
+        .retries(RETRY_HORIZON / RETRY_PERIOD)
+        .backoff('fixed', RETRY_PERIOD)
+        .save()
+        .then((job) => {
+          analytics.track(() => ({
+            userId: context.payload.installation.id,
+            event: `Merge job created`,
+            properties: {
+              ...job.data,
+              id: job.id,
+            },
+          }))
+          return job
+        })
+    )
   }
 
   // If closable labels are removed, delete job for this pull
