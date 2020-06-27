@@ -1,4 +1,3 @@
-// You can import your modules
 const nock = require('nock')
 const { Application } = require('probot')
 const app = require('..')

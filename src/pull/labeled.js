@@ -2,7 +2,7 @@ const ms = require('ms')
 
 const getId = require('../get-job-id')
 const getConfig = require('../config')
-const { MERGE } = require('../constants')
+const { MERGE, PULL_REQUEST_MERGE_DELAY } = require('../constants')
 const analytics = require('../analytics')
 
 const { getPullRequest } = require('../api')
@@ -64,9 +64,8 @@ module.exports = (queue) => async (context) => {
           method,
         })
         .setId(ID)
-        // TODO fix tests
         // https://github.com/reporanger/feedback/issues/1
-        .delayUntil(process.env.NODE_ENV !== 'test' ? Date.now() + 7 * 1000 : 0)
+        .delayUntil(PULL_REQUEST_MERGE_DELAY)
         .retries(RETRY_HORIZON / RETRY_PERIOD)
         .backoff('fixed', RETRY_PERIOD)
         .save()
