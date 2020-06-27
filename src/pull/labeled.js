@@ -65,7 +65,7 @@ module.exports = (queue) => async (context) => {
         })
         .setId(ID)
         // https://github.com/reporanger/feedback/issues/1
-        .delayUntil(PULL_REQUEST_MERGE_DELAY)
+        .delayUntil(Date.now() + PULL_REQUEST_MERGE_DELAY)
         .retries(RETRY_HORIZON / RETRY_PERIOD)
         .backoff('fixed', RETRY_PERIOD)
         .save()
