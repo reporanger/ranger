@@ -1,4 +1,3 @@
-// You can import your modules
 const nock = require('nock')
 const { Application } = require('probot')
 const app = require('..')
@@ -517,6 +516,8 @@ describe('pull_request', () => {
         number: 97,
       })
     )
+
+    await wait(10)
 
     expect(queue.jobs['mfix22:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
 

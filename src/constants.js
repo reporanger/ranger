@@ -1,5 +1,7 @@
 exports.APP_USER_ID = process.env.NODE_ENV === 'production' ? 39074581 : 38635471
 
+exports.PULL_REQUEST_MERGE_DELAY = process.env.NODE_ENV === 'production' ? 7 * 1000 : 0
+
 exports.CLOSE = 'close'
 exports.MERGE = 'merge'
 exports.COMMENT = 'comment'
