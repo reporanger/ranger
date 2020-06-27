@@ -517,6 +517,8 @@ describe('pull_request', () => {
       })
     )
 
+    await wait(10)
+
     expect(queue.jobs['mfix22:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
 
     expect(github.pulls.get).toHaveBeenCalledTimes(2)
