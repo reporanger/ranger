@@ -20,6 +20,8 @@ const WHITE_LIST = new Set([
   'vanilla',
   'kuromukira',
   'daedalus28',
+  'scaleleap',
+  'moltar',
 ])
 
 module.exports = async function verifyPaymentPlan(robot, context) {
