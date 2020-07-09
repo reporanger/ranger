@@ -21,13 +21,13 @@ const verifyPaymentPlan = require('./src/verify-payment-plan')
 // Probot will also send errors to Sentry DNS: https://probot.github.io/docs/configuration/
 Sentry.init({ dsn: process.env.SENTRY_DSN })
 
-module.exports = async robot => {
+module.exports = async (robot) => {
   robot.route('/').get('/health', (req, res) => res.send('OK'))
 
-  process.on('uncaughtException', e => {
+  process.on('uncaughtException', (e) => {
     robot.log.error(e)
   })
-  process.on('unhandledRejection', e => {
+  process.on('unhandledRejection', (e) => {
     robot.log.error(e)
   })
 
@@ -37,15 +37,15 @@ module.exports = async robot => {
     activateDelayedJobs: true,
     redis: {
       db: 0,
-      url: process.env.REDIS_URL
-    }
+      url: process.env.REDIS_URL,
+    },
   })
 
-  queue.process(async job => {
+  queue.process(async (job) => {
     analytics.track(() => ({
       userId: job.data.installation_id,
       event: `Processing job`,
-      properties: job.data
+      properties: job.data,
     }))
     try {
       switch (job.data.action) {
@@ -78,16 +78,16 @@ module.exports = async robot => {
         err.message
       }`
     )
-    Sentry.configureScope(scope => {
+    Sentry.configureScope((scope) => {
       if (job.data.owner) {
-        scope.setUser({ username: job.data.owner })
+        scope.setUser({ ...job.data, username: job.data.owner })
       }
       Sentry.captureException(err)
     })
   })
 
   function wrapPaymentCheck(fn) {
-    return async context => {
+    return async (context) => {
       if (await verifyPaymentPlan(robot, context)) {
         fn(context)
       }
@@ -108,7 +108,7 @@ module.exports = async robot => {
       'pull_request.labeled',
       'pull_request.unlabeled',
       'pull_request.synchronize',
-      'pull_request_review.submitted'
+      'pull_request_review.submitted',
       // `pull_request.edited`
     ],
     wrapPaymentCheck(pullLabeled(queue))
@@ -145,6 +145,6 @@ module.exports = async robot => {
 
   return {
     queue,
-    analytics
+    analytics,
   }
 }
