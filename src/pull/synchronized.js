@@ -43,20 +43,25 @@ module.exports = () => async (context) => {
 
   await Promise.all(
     rules.map(async ({ action, pattern, user, labels } = {}) => {
-      if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
-      if (!labels) return
+      if (typeof action !== 'string') return
 
-      if (pattern) {
-        if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
-      }
+      switch (action.trim().toLowerCase()) {
+        case LABEL: {
+          if (!labels) return
 
-      if (user) {
-        if (user.toLowerCase() !== context.payload.pull_request.user.login.toLowerCase()) {
-          return
+          if (pattern) {
+            if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+          }
+
+          if (user) {
+            if (user.toLowerCase() !== context.payload.pull_request.user.login.toLowerCase()) {
+              return
+            }
+          }
+
+          return addLabels(context.github, context.issue({ labels }))
         }
       }
-
-      return addLabels(context.github, context.issue({ labels }))
     })
   )
 }
