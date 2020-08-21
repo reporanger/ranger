@@ -26,7 +26,6 @@ module.exports = () => async (context) => {
   const {
     head: { sha },
     author_association,
-    user,
   } = context.payload.pull_request
 
   if (!isMaintainer(author_association)) return
@@ -43,7 +42,7 @@ module.exports = () => async (context) => {
   if (!Array.isArray(rules)) return
 
   await Promise.all(
-    rules.map(async ({ action, pattern, author, labels } = {}) => {
+    rules.map(async ({ action, pattern, user, labels } = {}) => {
       if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
       if (!labels) return
 
@@ -51,8 +50,8 @@ module.exports = () => async (context) => {
         if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       }
 
-      if (author) {
-        if (author.toLowerCase() !== user.login.toLowerCase()) {
+      if (user) {
+        if (user.toLowerCase() !== context.payload.pull_request.user.login.toLowerCase()) {
           return
         }
       }

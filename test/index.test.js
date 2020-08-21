@@ -153,7 +153,7 @@ commits:
     labels:
       - merge when passing
   - action: label
-    author: mfix22
+    user: mfix22
     labels:
       - author
 
@@ -712,7 +712,7 @@ describe('pull_request', () => {
     }
   )
 
-  test('commits allows for "author" filter', async () => {
+  test('commits allows for "user" filter', async () => {
     const addLabelPayload = {
       owner: 'ranger',
       repo: 'ranger-test',
