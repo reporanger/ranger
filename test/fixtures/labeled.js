@@ -5,7 +5,7 @@ module.exports = ({
   state = 'open',
   number = 7,
   threadType = 'issue',
-  isPrivate = false
+  isPrivate = false,
 } = {}) => ({
   name,
   payload: {
@@ -23,6 +23,7 @@ module.exports = ({
       user: {
         login: 'mfix22',
         id: 8397708,
+        node_id: 'MDQ6VXNlcjgzOTc3MDg=',
         avatar_url: 'https://avatars0.githubusercontent.com/u/8397708?v=4',
         gravatar_id: '',
         url: 'https://api.github.com/users/mfix22',
@@ -37,14 +38,14 @@ module.exports = ({
         events_url: 'https://api.github.com/users/mfix22/events{/privacy}',
         received_events_url: 'https://api.github.com/users/mfix22/received_events',
         type: 'User',
-        site_admin: false
+        site_admin: false,
       },
       labels: labels.map((l, i) => ({
         id: i,
         url: 'https://api.github.com/repos/mfix22/test-issue-bot/labels/bug',
         name: l,
         color: 'd73a4a',
-        default: true
+        default: true,
       })),
       state: state,
       locked: false,
@@ -56,14 +57,14 @@ module.exports = ({
       updated_at: '2018-04-23T02:07:09Z',
       closed_at: null,
       author_association: 'OWNER',
-      body: ''
+      body: '',
     },
     label: {
       id: 910420476,
       url: 'https://api.github.com/repos/mfix22/test-issue-bot/labels/bug',
       name: 'bug',
       color: 'd73a4a',
-      default: true
+      default: true,
     },
     repository: {
       id: 130609983,
@@ -86,7 +87,7 @@ module.exports = ({
         events_url: 'https://api.github.com/users/mfix22/events{/privacy}',
         received_events_url: 'https://api.github.com/users/mfix22/received_events',
         type: 'User',
-        site_admin: false
+        site_admin: false,
       },
       private: isPrivate,
       html_url: 'https://github.com/mfix22/test-issue-bot',
@@ -157,7 +158,7 @@ module.exports = ({
       forks: 0,
       open_issues: 4,
       watchers: 0,
-      default_branch: 'master'
+      default_branch: 'master',
     },
     sender: {
       login: 'mfix22',
@@ -176,10 +177,10 @@ module.exports = ({
       events_url: 'https://api.github.com/users/mfix22/events{/privacy}',
       received_events_url: 'https://api.github.com/users/mfix22/received_events',
       type: 'User',
-      site_admin: false
+      site_admin: false,
     },
     installation: {
-      id: 135737
-    }
-  }
+      id: 135737,
+    },
+  },
 })
