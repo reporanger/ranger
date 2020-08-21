@@ -153,6 +153,9 @@ commits:
     labels:
       - merge when passing
 
+sponsor_labels:
+  - sponsor
+
 default:
   close:
     delay: 1ms
@@ -242,6 +245,17 @@ beforeEach(async () => {
     users: {
       getByUsername: jest.fn().mockResolvedValue({ data: { email: 'test@test.com' } }),
     },
+    graphql: jest.fn(() => ({
+      user: {
+        sponsorshipsAsMaintainer: {
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: 0,
+          },
+          nodes: [{ sponsor: { id: 'MDQ6VXNlcjgzOTc3MDg=' } }],
+        },
+      },
+    })),
   }
   robot.auth = () => Promise.resolve(github)
   const currentReceive = robot.receive
@@ -298,6 +312,20 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
   test('Will will not comment if no default is provided', async () => {
     await robot.receive(payload({ name, threadType, labels: ['comment3'] }))
     expect(github.issues.createComment).not.toHaveBeenCalled()
+  })
+
+  test(`assign label(s) if sponsor opens a ${threadType}`, async () => {
+    await robot.receive(payload({ action: 'opened', threadType }))
+
+    expect(github.issues.addLabels).toHaveBeenCalledWith({
+      issue_number: 7,
+      labels: ['sponsor'],
+      owner: 'mfix22',
+      repo: 'test-issue-bot',
+      mediaType: {
+        previews: ['symmetra'],
+      },
+    })
   })
 })
 

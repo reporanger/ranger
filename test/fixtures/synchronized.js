@@ -5,18 +5,22 @@ module.exports = ({ action = 'synchronize', author_association = 'COLLABORATOR' 
     pull_request: {
       number: 4,
       head: {
-        sha: 'e829d1a59ce17e24fee7b8ffa42774005acd0240'
+        sha: 'e829d1a59ce17e24fee7b8ffa42774005acd0240',
       },
-      author_association
+      author_association,
+      user: {
+        node_id: 'MDQ6VXNlcjgzOTc3MDg',
+      },
     },
     repository: {
       id: 130609983,
       name: 'ranger-test',
       full_name: 'ranger/ranger-test',
       owner: {
-        login: 'ranger'
+        login: 'ranger',
+        type: 'User',
       },
-      private: false
-    }
-  }
+      private: false,
+    },
+  },
 })

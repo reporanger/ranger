@@ -4,6 +4,7 @@ const Sentry = require('@sentry/node')
 const analytics = require('./src/analytics')
 
 const threadLabeled = require('./src/thread/labeled')
+const threadOpened = require('./src/thread/opened')
 const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
 const pullMerged = require('./src/pull/merged')
@@ -100,6 +101,7 @@ module.exports = async (robot) => {
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
     wrapPaymentCheck(threadLabeled(queue))
   )
+  robot.on(['issues.opened', 'pull_request.opened'], wrapPaymentCheck(threadOpened(queue)))
 
   robot.on(['issues.labeled', 'issues.unlabeled'], wrapPaymentCheck(issueLabeled(queue)))
 
