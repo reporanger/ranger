@@ -1,17 +1,17 @@
 const analytics = require('../analytics')
 
-module.exports = robot => async ({ payload: { installation }, github }) => {
+module.exports = (robot) => async ({ payload: { installation }, github }) => {
   if (analytics.dev) return
 
   const {
     id: installationId,
-    account: { login, type, avatar_url }
+    account: { login, type, avatar_url },
   } = installation
 
   let email
   try {
     const { data } = await github.users.getByUsername({
-      username: login
+      username: login,
     })
     email = data.email
   } catch (e) {
@@ -25,7 +25,7 @@ module.exports = robot => async ({ payload: { installation }, github }) => {
       name: login,
       username: login,
       type,
-      email
-    }
+      email,
+    },
   })
 }

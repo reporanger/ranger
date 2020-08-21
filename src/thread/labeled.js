@@ -9,14 +9,14 @@ const { COMMENT } = require('../constants')
 const { timeToNumber, getLabelConfig } = require('./util')
 const analytics = require('../analytics')
 
-module.exports = queue => async context => {
+module.exports = (queue) => async (context) => {
   const ID = getId(context, { action: COMMENT })
 
   const thread = context.payload.pull_request || context.payload.issue
 
   const config = await getConfig(context)
 
-  const commentableLabels = thread.labels.filter(l => {
+  const commentableLabels = thread.labels.filter((l) => {
     if (typeof config.labels !== 'object') return false
     if (!config.labels[l.name]) return false
 
@@ -28,7 +28,7 @@ module.exports = queue => async context => {
     return action && action.trim().toLowerCase() === COMMENT
   })
 
-  commentableLabels.forEach(async label => {
+  commentableLabels.forEach(async (label) => {
     const jobId = `${ID}:${label.name}`
     const jobExists = await queue.getJob(jobId)
 
@@ -50,20 +50,20 @@ module.exports = queue => async context => {
               installation_id: context.payload.installation.id,
               action: COMMENT,
               body,
-              issue_number: thread.number
+              issue_number: thread.number,
             })
           )
           .setId(jobId)
           .delayUntil(Date.now() + time)
           .save()
-          .then(job => {
+          .then((job) => {
             analytics.track(() => ({
               userId: context.payload.installation.id,
               event: `Comment job created`,
               properties: {
                 ...job.data,
-                id: job.id
-              }
+                id: job.id,
+              },
             }))
             return job
           })
@@ -72,7 +72,7 @@ module.exports = queue => async context => {
   })
 }
 
-module.exports.process = robot => async ({ data /* id */ }) => {
+module.exports.process = (robot) => async ({ data /* id */ }) => {
   const github = await robot.auth(data.installation_id)
   return await github.issues.createComment(data)
 }

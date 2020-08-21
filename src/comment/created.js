@@ -20,7 +20,7 @@ function parseRegex(string) {
   return /$^/
 }
 
-module.exports = () => async context => {
+module.exports = () => async (context) => {
   const config = await getConfig(context)
 
   const { author_association, body, id: comment_id } = context.payload.comment

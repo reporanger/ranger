@@ -5,26 +5,26 @@ const LABELS_TO_CREATE = [
   {
     name: 'merge when passing',
     color: 'FF851B',
-    description: 'Merge the PR automatically once all status checks have passed'
+    description: 'Merge the PR automatically once all status checks have passed',
   },
   {
     name: 'Patch Version',
     color: '99cef9',
-    description: 'Automatically create a new patch version tag after PR is merged'
+    description: 'Automatically create a new patch version tag after PR is merged',
   },
   {
     name: 'Minor Version',
     color: '6EBAF7',
-    description: 'Automatically create a new minor version tag after PR is merged'
+    description: 'Automatically create a new minor version tag after PR is merged',
   },
   {
     name: 'Major Version',
     color: '1E8DE7',
-    description: 'Automatically create a new major version tag after PR is merged'
-  }
+    description: 'Automatically create a new major version tag after PR is merged',
+  },
 ]
 
-module.exports = robot => async context => {
+module.exports = (robot) => async (context) => {
   try {
     const github = await robot.auth(context.payload.installation.id)
 
@@ -40,25 +40,25 @@ module.exports = robot => async context => {
         event: `Creating default labels`,
         properties: {
           repo,
-          user: context.payload.installation.account.login
-        }
+          user: context.payload.installation.account.login,
+        },
       }))
       return Promise.all(
-        LABELS_TO_CREATE.map(l => {
+        LABELS_TO_CREATE.map((l) => {
           const data = {
             owner: context.payload.installation.account.login,
             repo,
-            ...l
+            ...l,
           }
 
-          return createLabel(github, data).catch(err => {
+          return createLabel(github, data).catch((err) => {
             if (err.message.indexOf('archived') > -1) {
               return
             }
 
             try {
               if (err.errors) {
-                if (err.errors.find(err => err.code === 'already_exists')) {
+                if (err.errors.find((err) => err.code === 'already_exists')) {
                   return
                 }
               }
@@ -74,22 +74,22 @@ module.exports = robot => async context => {
 
     await Promise.all(promises)
 
-    const private_repos = repos.filter(r => r.private)
+    const private_repos = repos.filter((r) => r.private)
     analytics.track({
       userId: context.payload.installation.id,
       event: `Repos added`,
       properties: {
         count: repos.length,
         private_count: private_repos.length,
-        repos: repos.map(r => r.name)
-      }
+        repos: repos.map((r) => r.name),
+      },
     })
   } catch (e) {
     const Sentry = require('@sentry/node')
-    Sentry.configureScope(scope => {
+    Sentry.configureScope((scope) => {
       scope.setUser({
         id: context.payload.installation.id,
-        username: context.payload.installation.account.login
+        username: context.payload.installation.account.login,
       })
       Sentry.captureException(e)
     })

@@ -7,18 +7,18 @@ if (
   let analytics = new Windsor(process.env.WINDSOR_KEY)
   module.exports = {
     identify: analytics.user.bind(analytics),
-    track: x => {
+    track: (x) => {
       try {
         return analytics.event.call(analytics, typeof x === 'function' ? x() : x)
       } catch (error) {
         console.error(error)
       }
-    }
+    },
   }
 } else {
   module.exports = {
     track: () => {},
     identify: () => {},
-    dev: true
+    dev: true,
   }
 }

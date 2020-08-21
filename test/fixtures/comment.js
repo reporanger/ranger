@@ -3,7 +3,7 @@ module.exports = ({
   isPrivate = false,
   action = 'deleted',
   body = 'This has been marked to be closed in 10 seconds.',
-  author_association = 'CONTRIBUTOR'
+  author_association = 'CONTRIBUTOR',
 }) => ({
   name: 'issue_comment',
   payload: {
@@ -36,12 +36,12 @@ module.exports = ({
         received_events_url:
           'https://api.github.com/users/issue-maintainer-dev%5Bbot%5D/received_events',
         type: 'Bot',
-        site_admin: false
+        site_admin: false,
       },
       created_at: '2018-12-19T20:49:39Z',
       updated_at: '2018-12-19T20:49:39Z',
       author_association,
-      body
+      body,
     },
     issue: {
       url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/issues/55',
@@ -72,7 +72,7 @@ module.exports = ({
         events_url: 'https://api.github.com/users/raboid/events{/privacy}',
         received_events_url: 'https://api.github.com/users/raboid/received_events',
         type: 'User',
-        site_admin: false
+        site_admin: false,
       },
       labels: [
         {
@@ -81,8 +81,8 @@ module.exports = ({
           url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/labels/duplicate',
           name: 'duplicate',
           color: 'cfd3d7',
-          default: true
-        }
+          default: true,
+        },
       ],
       state: 'open',
       locked: false,
@@ -94,7 +94,7 @@ module.exports = ({
       updated_at: '2018-12-19T21:30:10Z',
       closed_at: null,
       author_association: 'NONE',
-      body: ''
+      body: '',
     },
     repository: {
       id: 130609983,
@@ -117,7 +117,7 @@ module.exports = ({
         events_url: 'https://api.github.com/users/mfix22/events{/privacy}',
         received_events_url: 'https://api.github.com/users/mfix22/received_events',
         type: 'User',
-        site_admin: false
+        site_admin: false,
       },
       private: isPrivate,
       html_url: 'https://github.com/mfix22/test-issue-bot',
@@ -188,10 +188,10 @@ module.exports = ({
       forks: 0,
       open_issues: 4,
       watchers: 0,
-      default_branch: 'master'
+      default_branch: 'master',
     },
     installation: {
-      id: 135737
-    }
-  }
+      id: 135737,
+    },
+  },
 })

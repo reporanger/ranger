@@ -11,7 +11,7 @@ const { CLOSE } = require('../constants')
 const analytics = require('../analytics')
 
 function getLabelByAction(config, actionName) {
-  return label => {
+  return (label) => {
     if (typeof config.labels !== 'object') return false
     if (!config.labels[label.name]) return false
 
@@ -24,7 +24,7 @@ function getLabelByAction(config, actionName) {
   }
 }
 
-module.exports = queue => async context => {
+module.exports = (queue) => async (context) => {
   const ID = getId(context, { action: CLOSE })
 
   const thread = context.payload.issue
@@ -56,19 +56,19 @@ module.exports = queue => async context => {
       return queue
         .createJob({
           ...context.issue({ installation_id: context.payload.installation.id }),
-          action: CLOSE
+          action: CLOSE,
         })
         .setId(ID)
         .delayUntil(Date.now() + time)
         .save()
-        .then(job => {
+        .then((job) => {
           analytics.track(() => ({
             userId: context.payload.installation.id,
             event: `Close job created`,
             properties: {
               ...job.data,
-              id: job.id
-            }
+              id: job.id,
+            },
           }))
           return job
         })
@@ -79,7 +79,7 @@ module.exports = queue => async context => {
   return queue.removeJob(ID)
 }
 
-module.exports.process = robot => async ({ data /* id */ }) => {
+module.exports.process = (robot) => async ({ data /* id */ }) => {
   const github = await robot.auth(data.installation_id)
   return await closeIssue(github, data)
 }

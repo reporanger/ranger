@@ -7,7 +7,7 @@ const analytics = require('../analytics')
 const digit = r.capture(r.extra(r.matchers.NUMBER))
 const pattern = r.and(r.capture(r.repeat('v', 0, 1)), digit, '\\.', digit, '\\.', digit)
 
-module.exports.deleteBranch = () => async context => {
+module.exports.deleteBranch = () => async (context) => {
   const thread = context.payload.pull_request
 
   if (thread.merged !== true) return
@@ -20,7 +20,7 @@ module.exports.deleteBranch = () => async context => {
 
   if (!Array.isArray(config.merges)) return
 
-  const shouldDelete = config.merges.find(c => {
+  const shouldDelete = config.merges.find((c) => {
     const value = c.action || c
     return typeof value === 'string' && value.trim().toLowerCase() === DELETE_BRANCH
   })
@@ -29,7 +29,7 @@ module.exports.deleteBranch = () => async context => {
 
   const ref = `heads/${thread.head.ref}`
 
-  return context.github.gitdata.deleteRef(context.repo({ ref })).catch(e => {
+  return context.github.gitdata.deleteRef(context.repo({ ref })).catch((e) => {
     // TODO this is because GitHub has already deleted the reference
     if (e.message !== 'Reference does not exist') {
       throw e
@@ -37,7 +37,7 @@ module.exports.deleteBranch = () => async context => {
   })
 }
 
-module.exports.createTag = () => async context => {
+module.exports.createTag = () => async (context) => {
   const thread = context.payload.pull_request
 
   if (thread.merged !== true) return
@@ -53,7 +53,7 @@ module.exports.createTag = () => async context => {
     const config = await getConfig(context)
     const isAutoPatch =
       Array.isArray(config.merges) &&
-      config.merges.find(c => {
+      config.merges.find((c) => {
         const value = c.action || c
         return typeof value === 'string' && value.trim().toLowerCase() === TAG
       })
@@ -67,7 +67,7 @@ module.exports.createTag = () => async context => {
 
   const REX = r.regex(pattern)
 
-  const matchedTag = data.find(d => REX.exec(d.name))
+  const matchedTag = data.find((d) => REX.exec(d.name))
 
   if (!matchedTag) return
 
@@ -77,7 +77,7 @@ module.exports.createTag = () => async context => {
     v: match[1] || '',
     major: Number(match[2]),
     minor: Number(match[3]),
-    patch: Number(match[4])
+    patch: Number(match[4]),
   }
 
   let tag
@@ -96,14 +96,14 @@ module.exports.createTag = () => async context => {
       tag,
       type: 'commit',
       message: `${thread.title} (#${thread.number})`,
-      object: sha
+      object: sha,
     })
   )
 
   await context.github.gitdata.createRef(
     context.repo({
       ref: `refs/tags/${tag}`,
-      sha
+      sha,
     })
   )
 
@@ -112,7 +112,7 @@ module.exports.createTag = () => async context => {
     event: `Tag created`,
     properties: context.repo({
       tag,
-      sha
-    })
+      sha,
+    }),
   })
 }

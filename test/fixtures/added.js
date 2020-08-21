@@ -7,9 +7,9 @@ module.exports = ({ action = 'added', repositories_added }) => ({
       account: {
         login: 'ranger',
         id: 1,
-        type: 'User'
-      }
+        type: 'User',
+      },
     },
-    repositories_added
-  }
+    repositories_added,
+  },
 })
