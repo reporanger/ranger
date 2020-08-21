@@ -152,6 +152,10 @@ commits:
     pattern: /merge when passing/i
     labels:
       - merge when passing
+  - action: label
+    user: mfix22
+    labels:
+      - author
 
 sponsor_labels:
   - sponsor
@@ -707,6 +711,28 @@ describe('pull_request', () => {
       })
     }
   )
+
+  test('commits allows for "user" filter', async () => {
+    const addLabelPayload = {
+      owner: 'ranger',
+      repo: 'ranger-test',
+      issue_number: 4,
+      labels: ['author'],
+      mediaType: {
+        previews: ['symmetra'],
+      },
+    }
+
+    await robot.receive(synchronizedPayload({ action: 'synchronize' }))
+    await wait()
+
+    expect(github.issues.addLabels).not.toHaveBeenCalledWith(addLabelPayload)
+
+    await robot.receive(synchronizedPayload({ action: 'synchronize', login: 'mfix22' }))
+    await wait()
+
+    expect(github.issues.addLabels).toHaveBeenCalledWith(addLabelPayload)
+  })
 
   test('Will not take action on a non-maintainer commit message', async () => {
     await robot.receive(synchronizedPayload({ author_association: 'CONTRIBUTOR' }))
