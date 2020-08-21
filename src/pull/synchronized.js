@@ -20,20 +20,21 @@ function parseRegex(string) {
   return r.regex(MATCHES_NOTHING)
 }
 
-module.exports = () => async context => {
+module.exports = () => async (context) => {
   const config = await getConfig(context)
 
   const {
     head: { sha },
-    author_association
+    author_association,
+    user,
   } = context.payload.pull_request
 
   if (!isMaintainer(author_association)) return
 
   const {
     data: {
-      commit: { message: body }
-    }
+      commit: { message: body },
+    },
   } = await context.github.repos.getCommit(context.repo({ ref: sha }))
 
   // TODO confirm this API before releasing in docs
@@ -42,10 +43,19 @@ module.exports = () => async context => {
   if (!Array.isArray(rules)) return
 
   await Promise.all(
-    rules.map(async ({ action, pattern, labels } = {}) => {
+    rules.map(async ({ action, pattern, author, labels } = {}) => {
       if (typeof action !== 'string' || action.trim().toLowerCase() !== LABEL) return
-      if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       if (!labels) return
+
+      if (pattern) {
+        if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+      }
+
+      if (author) {
+        if (author.toLowerCase() !== user.login.toLowerCase()) {
+          return
+        }
+      }
 
       return addLabels(context.github, context.issue({ labels }))
     })
