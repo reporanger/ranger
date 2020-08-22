@@ -21,6 +21,11 @@ function parseRegex(string) {
   return r.regex(MATCHES_NOTHING)
 }
 
+function testString(pattern, string) {
+  // TODO consider changing includes to ===
+  return string.includes(pattern) || parseRegex(pattern).test(string)
+}
+
 module.exports = () => async (context) => {
   const config = await getConfig(context)
 
@@ -48,14 +53,15 @@ module.exports = () => async (context) => {
         [LABEL]: () => {
           if (!labels) return
 
-          if (pattern) {
-            if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+          if (pattern && !testString(pattern, body)) {
+            return
           }
 
-          if (user) {
-            if (user.toLowerCase() !== context.payload.pull_request.user.login.toLowerCase()) {
-              return
-            }
+          if (
+            user &&
+            !testString(user.toLowerCase(), context.payload.pull_request.user.login.toLowerCase())
+          ) {
+            return
           }
 
           return addLabels(context.github, context.issue({ labels }))
