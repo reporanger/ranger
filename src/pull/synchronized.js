@@ -13,6 +13,7 @@ module.exports = () => async (context) => {
   const {
     head: { sha },
     author_association,
+    user: { login },
   } = context.payload.pull_request
 
   if (!isMaintainer(author_association)) return
@@ -38,10 +39,7 @@ module.exports = () => async (context) => {
             return
           }
 
-          if (
-            user &&
-            user.toLowerCase() !== context.payload.pull_request.user.login.toLowerCase()
-          ) {
+          if (user && user.toLowerCase() !== login.toLowerCase()) {
             return
           }
 
