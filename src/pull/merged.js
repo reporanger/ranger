@@ -1,6 +1,7 @@
 const r = require('rexrex')
 
 const getConfig = require('../config')
+const executeAction = require('../execute-action')
 const { DELETE_BRANCH, TAG } = require('../constants')
 const analytics = require('../analytics')
 
@@ -23,10 +24,9 @@ module.exports.deleteBranch = () => async (context) => {
   return Promise.all(
     config.merges.map(async (c) => {
       const action = c.action || c
-      if (typeof action !== 'string') return
 
-      switch (action.trim().toLowerCase()) {
-        case DELETE_BRANCH: {
+      return executeAction(action, {
+        [DELETE_BRANCH]: () => {
           const ref = `heads/${thread.head.ref}`
 
           return context.github.gitdata.deleteRef(context.repo({ ref })).catch((e) => {
@@ -35,8 +35,8 @@ module.exports.deleteBranch = () => async (context) => {
               throw e
             }
           })
-        }
-      }
+        },
+      })
     })
   )
 }

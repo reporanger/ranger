@@ -1,6 +1,7 @@
 const r = require('rexrex')
 const { LABEL, MAINTAINERS } = require('../constants')
 const getConfig = require('../config')
+const executeAction = require('../execute-action')
 const { addLabels } = require('../api')
 
 function isMaintainer(association) {
@@ -43,10 +44,8 @@ module.exports = () => async (context) => {
 
   await Promise.all(
     rules.map(async ({ action, pattern, user, labels } = {}) => {
-      if (typeof action !== 'string') return
-
-      switch (action.trim().toLowerCase()) {
-        case LABEL: {
+      return executeAction(action, {
+        [LABEL]: () => {
           if (!labels) return
 
           if (pattern) {
@@ -60,8 +59,8 @@ module.exports = () => async (context) => {
           }
 
           return addLabels(context.github, context.issue({ labels }))
-        }
-      }
+        },
+      })
     })
   )
 }

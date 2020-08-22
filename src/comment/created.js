@@ -1,5 +1,6 @@
 const Filter = require('bad-words')
 const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
+const executeAction = require('../execute-action')
 const getConfig = require('../config')
 
 const { addLabels } = require('../api')
@@ -29,8 +30,6 @@ module.exports = () => async (context) => {
 
   await Promise.all(
     config.comments.map(async ({ action, pattern, labels } = {}) => {
-      if (typeof action !== 'string') return
-
       if (pattern === '$PROFANITY') {
         if (!new Filter().isProfane(body)) {
           return
@@ -39,18 +38,15 @@ module.exports = () => async (context) => {
         if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
       }
 
-      switch (action.trim().toLowerCase()) {
-        case LABEL: {
+      return executeAction(action, {
+        [LABEL]: () => {
           if (!isMaintainer(author_association)) return
           if (!labels) return
 
           return addLabels(context.github, context.issue({ labels }))
-        }
-
-        case DELETE_COMMENT: {
-          return context.github.issues.deleteComment(context.repo({ comment_id }))
-        }
-      }
+        },
+        [DELETE_COMMENT]: () => context.github.issues.deleteComment(context.repo({ comment_id })),
+      })
     })
   )
 }
