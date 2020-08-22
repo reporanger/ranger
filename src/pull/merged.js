@@ -20,21 +20,25 @@ module.exports.deleteBranch = () => async (context) => {
 
   if (!Array.isArray(config.merges)) return
 
-  const shouldDelete = config.merges.find((c) => {
-    const value = c.action || c
-    return typeof value === 'string' && value.trim().toLowerCase() === DELETE_BRANCH
-  })
+  return Promise.all(
+    config.merges.map(async (c) => {
+      const action = c.action || c
+      if (typeof action !== 'string') return
 
-  if (!shouldDelete) return
+      switch (action.trim().toLowerCase()) {
+        case DELETE_BRANCH: {
+          const ref = `heads/${thread.head.ref}`
 
-  const ref = `heads/${thread.head.ref}`
-
-  return context.github.gitdata.deleteRef(context.repo({ ref })).catch((e) => {
-    // TODO this is because GitHub has already deleted the reference
-    if (e.message !== 'Reference does not exist') {
-      throw e
-    }
-  })
+          return context.github.gitdata.deleteRef(context.repo({ ref })).catch((e) => {
+            // TODO this is because GitHub has already deleted the reference
+            if (e.message !== 'Reference does not exist') {
+              throw e
+            }
+          })
+        }
+      }
+    })
+  )
 }
 
 module.exports.createTag = () => async (context) => {
