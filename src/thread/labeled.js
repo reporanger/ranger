@@ -42,7 +42,6 @@ module.exports = (queue) => async (context) => {
         const body = message
           .replace('$LABEL', label.name)
           .replace('$DELAY', ms(time, { long: true }))
-          .replace('$USER', thread.user.login)
           .replace('$AUTHOR', thread.user.login)
 
         await queue
