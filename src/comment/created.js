@@ -1,24 +1,12 @@
 const Filter = require('bad-words')
 const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
-const { executeAction } = require('../util')
+const { executeAction, testPattern } = require('../util')
 const getConfig = require('../config')
 
 const { addLabels } = require('../api')
 
 function isMaintainer(association) {
   return MAINTAINERS.includes(association)
-}
-
-function parseRegex(string) {
-  // https://stackoverflow.com/questions/874709/converting-user-input-string-to-regular-expression
-  const match = String(string).match(new RegExp('^/(.*?)/([gimy]*)$'))
-
-  if (match && match[1] && match[2]) {
-    return new RegExp(match[1], match[2])
-  }
-
-  // matches nothing
-  return /$^/
 }
 
 module.exports = () => async (context) => {
@@ -34,8 +22,8 @@ module.exports = () => async (context) => {
         if (!new Filter().isProfane(body)) {
           return
         }
-      } else {
-        if (!body.includes(pattern) && !parseRegex(pattern).test(body)) return
+      } else if (pattern && !testPattern(pattern, body)) {
+        return
       }
 
       return executeAction(action, {
