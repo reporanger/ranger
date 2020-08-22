@@ -4,7 +4,7 @@ const { getId } = require('../util')
 const getConfig = require('../config')
 const { MERGE, PULL_REQUEST_MERGE_DELAY } = require('../constants')
 const analytics = require('../analytics')
-
+const { getLabelByAction } = require('../thread/util')
 const { getPullRequest } = require('../api')
 
 const RETRY_PERIOD = ms('1m')
@@ -37,17 +37,7 @@ module.exports = (queue) => async (context) => {
   }
 
   const config = await getConfig(context)
-  const mergeableLabels = (thread.labels || []).filter((l) => {
-    if (typeof config.labels !== 'object') return false
-    if (!config.labels[l.name]) return false
-
-    const action =
-      typeof config.labels[l.name] === 'string'
-        ? config.labels[l.name]
-        : config.labels[l.name].action
-
-    return action && action.trim().toLowerCase() === MERGE
-  })
+  const mergeableLabels = (thread.labels || []).filter(getLabelByAction(config, MERGE))
 
   if (mergeableLabels.length) {
     const method = mergeableLabels.find(({ name }) => name.match(/rebase/i))

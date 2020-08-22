@@ -3,26 +3,12 @@
  */
 const ms = require('ms')
 
-const { getLabelConfig, getEffectiveLabel } = require('../thread/util')
+const { getLabelConfig, getEffectiveLabel, getLabelByAction } = require('../thread/util')
 const { getId } = require('../util')
 const { closeIssue } = require('../api')
 const getConfig = require('../config')
 const { CLOSE } = require('../constants')
 const analytics = require('../analytics')
-
-function getLabelByAction(config, actionName) {
-  return (label) => {
-    if (typeof config.labels !== 'object') return false
-    if (!config.labels[label.name]) return false
-
-    const action =
-      typeof config.labels[label.name] === 'string'
-        ? config.labels[label.name]
-        : config.labels[label.name].action
-
-    return action && action.trim().toLowerCase() === actionName
-  }
-}
 
 module.exports = (queue) => async (context) => {
   const ID = getId(context, { action: CLOSE })

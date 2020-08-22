@@ -3,6 +3,7 @@ const ms = require('ms')
 exports.getLabelConfig = getLabelConfig
 exports.timeToNumber = timeToNumber
 exports.getEffectiveLabel = getEffectiveLabel
+exports.getLabelByAction = getLabelByAction
 
 function getLabelConfig(config, labelName, defaultKey = 'close') {
   if (typeof config.labels[labelName] === 'object') {
@@ -41,4 +42,18 @@ function getEffectiveLabel(config, labels) {
     },
     { label: null, time: Infinity }
   )
+}
+
+function getLabelByAction(config, actionName) {
+  return (label) => {
+    if (typeof config.labels !== 'object') return false
+    if (!config.labels[label.name]) return false
+
+    const action =
+      typeof config.labels[label.name] === 'string'
+        ? config.labels[label.name]
+        : config.labels[label.name].action
+
+    return action && action.trim().toLowerCase() === actionName
+  }
 }

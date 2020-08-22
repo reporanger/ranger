@@ -2,74 +2,77 @@
  * context.issue() is used for both issues and PRs
  */
 const ms = require('ms')
-const { getId } = require('../util')
+
+const { getId, executeAction } = require('../util')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
-
 const { timeToNumber, getLabelConfig } = require('./util')
 const analytics = require('../analytics')
 
 module.exports = (queue) => async (context) => {
-  const ID = getId(context, { action: COMMENT })
-
   const thread = context.payload.pull_request || context.payload.issue
 
   const config = await getConfig(context)
 
-  const commentableLabels = thread.labels.filter((l) => {
-    if (typeof config.labels !== 'object') return false
-    if (!config.labels[l.name]) return false
+  if (typeof config.labels !== 'object') return false
 
-    const action =
-      typeof config.labels[l.name] === 'string'
-        ? config.labels[l.name]
-        : config.labels[l.name].action
+  const ID = getId(context, { action: COMMENT })
 
-    return action && action.trim().toLowerCase() === COMMENT
-  })
+  await Promise.all(
+    thread.labels.map((label) => {
+      if (!config.labels[label.name]) return false
 
-  commentableLabels.forEach(async (label) => {
-    const jobId = `${ID}:${label.name}`
-    const jobExists = await queue.getJob(jobId)
+      const action =
+        typeof config.labels[label.name] === 'string'
+          ? config.labels[label.name]
+          : config.labels[label.name].action
 
-    // Don't create a comment if one already exists
-    if (!jobExists) {
-      const { message, delay } = getLabelConfig(config, label.name, COMMENT)
+      return executeAction(action, {
+        [COMMENT]: async () => {
+          const jobId = `${ID}:${label.name}`
+          const jobExists = await queue.getJob(jobId)
 
-      const time = delay ? timeToNumber(delay, 0) : 0
+          // Don't create a comment if one already exists
+          if (!jobExists) {
+            const { message, delay } = getLabelConfig(config, label.name, COMMENT)
 
-      if (message && message.trim() !== 'false') {
-        const body = message
-          .replace('$LABEL', label.name)
-          .replace('$DELAY', ms(time, { long: true }))
-          .replace('$AUTHOR', thread.user.login)
+            const time = delay ? timeToNumber(delay, 0) : 0
 
-        await queue
-          .createJob(
-            context.repo({
-              installation_id: context.payload.installation.id,
-              action: COMMENT,
-              body,
-              issue_number: thread.number,
-            })
-          )
-          .setId(jobId)
-          .delayUntil(Date.now() + time)
-          .save()
-          .then((job) => {
-            analytics.track(() => ({
-              userId: context.payload.installation.id,
-              event: `Comment job created`,
-              properties: {
-                ...job.data,
-                id: job.id,
-              },
-            }))
-            return job
-          })
-      }
-    }
-  })
+            if (message && message.trim() !== 'false') {
+              const body = message
+                .replace('$LABEL', label.name)
+                .replace('$DELAY', ms(time, { long: true }))
+                .replace('$AUTHOR', thread.user.login)
+
+              await queue
+                .createJob(
+                  context.repo({
+                    installation_id: context.payload.installation.id,
+                    action: COMMENT,
+                    body,
+                    issue_number: thread.number,
+                  })
+                )
+                .setId(jobId)
+                .delayUntil(Date.now() + time)
+                .save()
+                .then((job) => {
+                  analytics.track(() => ({
+                    userId: context.payload.installation.id,
+                    event: `Comment job created`,
+                    properties: {
+                      ...job.data,
+                      id: job.id,
+                    },
+                  }))
+                  return job
+                })
+            }
+          }
+        },
+      })
+    })
+  )
 }
 
 module.exports.process = (robot) => async ({ data /* id */ }) => {
