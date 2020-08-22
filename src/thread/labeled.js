@@ -6,7 +6,7 @@ const ms = require('ms')
 const { getId, executeAction } = require('../util')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
-const { timeToNumber, getLabelConfig } = require('./util')
+const { timeToNumber, getLabelConfig, labelToAction } = require('./util')
 const analytics = require('../analytics')
 
 module.exports = (queue) => async (context) => {
@@ -20,12 +20,9 @@ module.exports = (queue) => async (context) => {
 
   await Promise.all(
     thread.labels.map((label) => {
-      if (!config.labels[label.name]) return false
+      const action = labelToAction(config, label)
 
-      const action =
-        typeof config.labels[label.name] === 'string'
-          ? config.labels[label.name]
-          : config.labels[label.name].action
+      if (!action) return false
 
       return executeAction(action, {
         [COMMENT]: async () => {

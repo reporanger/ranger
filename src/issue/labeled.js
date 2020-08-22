@@ -3,7 +3,7 @@
  */
 const ms = require('ms')
 
-const { getLabelConfig, getEffectiveLabel, getLabelByAction } = require('../thread/util')
+const { getLabelConfig, getEffectiveLabel, labelsByAction } = require('../thread/util')
 const { getId } = require('../util')
 const { closeIssue } = require('../api')
 const getConfig = require('../config')
@@ -21,7 +21,7 @@ module.exports = (queue) => async (context) => {
 
   const config = await getConfig(context)
 
-  const withClosableLabels = thread.labels.filter(getLabelByAction(config, CLOSE))
+  const withClosableLabels = thread.labels.filter(labelsByAction(config, CLOSE))
 
   if (withClosableLabels.length) {
     const { label, time } = getEffectiveLabel(config, withClosableLabels)
