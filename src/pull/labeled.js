@@ -1,6 +1,6 @@
 const ms = require('ms')
 
-const getId = require('../get-job-id')
+const { getId } = require('../util')
 const getConfig = require('../config')
 const { MERGE, PULL_REQUEST_MERGE_DELAY } = require('../constants')
 const analytics = require('../analytics')

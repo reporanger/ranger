@@ -4,7 +4,7 @@
 const ms = require('ms')
 
 const { getLabelConfig, getEffectiveLabel } = require('../thread/util')
-const getId = require('../get-job-id')
+const { getId } = require('../util')
 const { closeIssue } = require('../api')
 const getConfig = require('../config')
 const { CLOSE } = require('../constants')
@@ -48,6 +48,7 @@ module.exports = (queue) => async (context) => {
         const body = comment
           .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
           .replace('$LABEL', label.name)
+          .replace('$AUTHOR', thread.user.login)
         context.github.issues.createComment(context.repo({ body, issue_number: thread.number }))
       }
     }
