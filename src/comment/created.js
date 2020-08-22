@@ -9,6 +9,8 @@ function isMaintainer(association) {
   return MAINTAINERS.includes(association)
 }
 
+const filter = new Filter()
+
 module.exports = () => async (context) => {
   const config = await getConfig(context)
 
@@ -19,7 +21,7 @@ module.exports = () => async (context) => {
   await Promise.all(
     config.comments.map(async ({ action, pattern, labels } = {}) => {
       if (pattern === '$PROFANITY') {
-        if (!new Filter().isProfane(body)) {
+        if (!filter.isProfane(body)) {
           return
         }
       } else if (pattern && !testPattern(pattern, body)) {
