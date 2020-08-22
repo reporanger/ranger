@@ -1,29 +1,10 @@
-const r = require('rexrex')
 const { LABEL, MAINTAINERS } = require('../constants')
 const getConfig = require('../config')
-const executeAction = require('../execute-action')
+const { executeAction, testPattern } = require('../util')
 const { addLabels } = require('../api')
 
 function isMaintainer(association) {
   return MAINTAINERS.includes(association)
-}
-
-const MATCHES_NOTHING = r.and(r.matchers.END, r.matchers.START)
-
-function parseRegex(string) {
-  // https://stackoverflow.com/questions/874709/converting-user-input-string-to-regular-expression
-  const match = String(string).match(new RegExp('^/(.*?)/([gimy]*)$'))
-
-  if (match && match[1] && match[2]) {
-    return r.regex(match[1], match[2])
-  }
-
-  return r.regex(MATCHES_NOTHING)
-}
-
-function testString(pattern, string) {
-  // TODO consider changing includes to ===
-  return string.includes(pattern) || parseRegex(pattern).test(string)
 }
 
 module.exports = () => async (context) => {
@@ -53,13 +34,13 @@ module.exports = () => async (context) => {
         [LABEL]: () => {
           if (!labels) return
 
-          if (pattern && !testString(pattern, body)) {
+          if (pattern && !testPattern(pattern, body)) {
             return
           }
 
           if (
             user &&
-            !testString(user.toLowerCase(), context.payload.pull_request.user.login.toLowerCase())
+            !testPattern(user.toLowerCase(), context.payload.pull_request.user.login.toLowerCase())
           ) {
             return
           }

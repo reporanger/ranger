@@ -1,7 +1,7 @@
 const r = require('rexrex')
 
 const getConfig = require('../config')
-const executeAction = require('../execute-action')
+const { executeAction } = require('../util')
 const { DELETE_BRANCH, TAG } = require('../constants')
 const analytics = require('../analytics')
 

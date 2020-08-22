@@ -1,6 +1,6 @@
 const Filter = require('bad-words')
 const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
-const executeAction = require('../execute-action')
+const { executeAction } = require('../util')
 const getConfig = require('../config')
 
 const { addLabels } = require('../api')
