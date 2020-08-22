@@ -2,7 +2,7 @@
  * context.issue() is used for both issues and PRs
  */
 const ms = require('ms')
-const getId = require('../get-job-id')
+const { getId } = require('../util')
 const getConfig = require('../config')
 const { COMMENT } = require('../constants')
 

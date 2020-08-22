@@ -1,5 +1,5 @@
 const { CLOSE, MERGE, APP_USER_ID } = require('../constants')
-const getId = require('../get-job-id')
+const { getId } = require('../util')
 
 module.exports = (queue) => (context) => {
   if (context.payload.comment.user.id === APP_USER_ID) {

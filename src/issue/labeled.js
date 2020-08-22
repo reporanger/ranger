@@ -4,7 +4,7 @@
 const ms = require('ms')
 
 const { getLabelConfig, getEffectiveLabel } = require('../thread/util')
-const getId = require('../get-job-id')
+const { getId } = require('../util')
 const { closeIssue } = require('../api')
 const getConfig = require('../config')
 const { CLOSE } = require('../constants')

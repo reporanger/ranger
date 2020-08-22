@@ -21,7 +21,7 @@ module.exports.deleteBranch = () => async (context) => {
 
   if (!Array.isArray(config.merges)) return
 
-  return Promise.all(
+  await Promise.all(
     config.merges.map(async (c) => {
       const action = c.action || c
 
