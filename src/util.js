@@ -30,6 +30,5 @@ function parseRegex(string) {
 }
 
 module.exports.testPattern = function testPattern(pattern, string) {
-  // TODO consider changing includes to ===
   return string.includes(pattern) || parseRegex(pattern).test(string)
 }

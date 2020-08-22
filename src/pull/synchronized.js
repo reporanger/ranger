@@ -40,7 +40,7 @@ module.exports = () => async (context) => {
 
           if (
             user &&
-            !testPattern(user.toLowerCase(), context.payload.pull_request.user.login.toLowerCase())
+            user.toLowerCase() !== context.payload.pull_request.user.login.toLowerCase()
           ) {
             return
           }
