@@ -255,17 +255,24 @@ beforeEach(async () => {
     users: {
       getByUsername: jest.fn().mockResolvedValue({ data: { email: 'test@test.com' } }),
     },
-    graphql: jest.fn(() => ({
-      user: {
-        sponsorshipsAsMaintainer: {
-          pageInfo: {
-            hasNextPage: false,
-            endCursor: 0,
+    graphql: jest.fn((query, data) => {
+      const secondPage = data.after
+      return {
+        user: {
+          sponsorshipsAsMaintainer: {
+            pageInfo: {
+              hasNextPage: secondPage ? false : true,
+              endCursor: 1,
+            },
+            nodes: [
+              secondPage
+                ? { sponsor: { id: 'MDQ6VXNlcjgzOTc3MDg=' } }
+                : { sponsor: { id: 'MDQ6NlasdfszOTc3MDg=' } },
+            ],
           },
-          nodes: [{ sponsor: { id: 'MDQ6VXNlcjgzOTc3MDg=' } }],
         },
-      },
-    })),
+      }
+    }),
   }
   robot.auth = () => Promise.resolve(github)
   const currentReceive = robot.receive
