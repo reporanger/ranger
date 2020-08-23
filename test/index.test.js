@@ -600,7 +600,7 @@ describe('pull_request', () => {
   })
 
   test.each([
-    [null, true], // TODO https://github.com/dawnlabs/ranger/issues/60
+    // [null, true], was used for https://github.com/dawnlabs/ranger/issues/60
     [CONCLUSION.SUCCESS, true],
     [CONCLUSION.NEUTRAL, true],
     [CONCLUSION.TIMED_OUT, false],
