@@ -2,7 +2,7 @@
 const r = require('rexrex')
 const { OPEN_SOURCE } = require('./constants')
 
-const WHITE_LIST = new Set([
+const ALLOW_LIST = new Set([
   'dawnlabs',
   'windsorio',
   'runeai',
@@ -30,7 +30,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
   }
 
   const owner = context.repo().owner
-  if (WHITE_LIST.has(owner.toLowerCase())) {
+  if (ALLOW_LIST.has(owner.toLowerCase())) {
     return true
   }
 
