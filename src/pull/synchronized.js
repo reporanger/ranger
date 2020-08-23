@@ -3,10 +3,6 @@ const getConfig = require('../config')
 const { executeAction, testPattern } = require('../util')
 const { addLabels } = require('../api')
 
-function isMaintainer(association) {
-  return MAINTAINERS.includes(association)
-}
-
 module.exports = () => async (context) => {
   const config = await getConfig(context)
 
@@ -16,7 +12,7 @@ module.exports = () => async (context) => {
     user: { login },
   } = context.payload.pull_request
 
-  if (!isMaintainer(author_association)) return
+  if (!MAINTAINERS.includes(author_association)) return
 
   const {
     data: {

@@ -1,13 +1,9 @@
 const Filter = require('bad-words')
+
 const { MAINTAINERS, LABEL, DELETE_COMMENT } = require('../constants')
 const { executeAction, testPattern } = require('../util')
 const getConfig = require('../config')
-
 const { addLabels } = require('../api')
-
-function isMaintainer(association) {
-  return MAINTAINERS.includes(association)
-}
 
 const filter = new Filter()
 
@@ -30,7 +26,7 @@ module.exports = () => async (context) => {
 
       return executeAction(action, {
         [LABEL]: () => {
-          if (!isMaintainer(author_association)) return
+          if (!MAINTAINERS.includes(author_association)) return
           if (!labels) return
 
           return addLabels(context.github, context.issue({ labels }))
