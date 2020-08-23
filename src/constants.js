@@ -10,10 +10,10 @@ exports.DELETE_BRANCH = 'delete_branch'
 exports.TAG = 'tag'
 exports.DELETE_COMMENT = 'delete_comment'
 
-// https://developer.github.com/v4/enum/commentauthorassociation/
+// https://docs.github.com/en/graphql/reference/enums#commentauthorassociation
 exports.MAINTAINERS = ['COLLABORATOR', 'MEMBER', 'OWNER']
 
-// https://developer.github.com/v4/enum/mergestatestatus/
+// https://docs.github.com/en/graphql/reference/enums#mergestatestatus
 exports.STATUS = {
   BEHIND: 'behind', // sometimes good to merge, depending on repo config
   BLOCKED: 'blocked', // cannot merge
@@ -25,7 +25,7 @@ exports.STATUS = {
   DRAFT: 'draft',
 }
 
-// https://developer.github.com/v4/enum/statusstate/
+// https://docs.github.com/en/graphql/reference/enums#statusstate
 exports.STATE = {
   SUCCESS: 'success',
   PENDING: 'pending',
@@ -34,7 +34,7 @@ exports.STATE = {
   EXPECTED: 'expected',
 }
 
-// https://developer.github.com/v4/enum/checkconclusionstate/
+// https://docs.github.com/en/graphql/reference/enums#checkconclusionstate
 exports.CONCLUSION = {
   ACTION_REQUIRED: 'action_required', // The check suite or run requires action.
   CANCELLED: 'cancelled', // The check suite or run has been cancelled.
