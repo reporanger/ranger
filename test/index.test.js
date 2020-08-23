@@ -134,6 +134,7 @@ labels:
     action: merge
 
 comments:
+  - action: label # no 'labels' list
   - action: label
     pattern: /duplicate of/i
     labels: 
@@ -148,10 +149,15 @@ merges:
   - action: tag
 
 commits:
+  - action: label # no 'labels' list
   - action: label
     pattern: /merge when passing/i
     labels:
       - merge when passing
+  - action: label
+    pattern: /wont match this pattern/i
+    labels:
+      - duplicate
   - action: label
     user: mfix22
     labels:
@@ -300,7 +306,13 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
 
   test('Will comment for each actionable label', async () => {
     await robot.receive(payload({ name, threadType, labels: ['comment', 'comment2'] }))
-    await wait(10)
+    await wait()
+
+    // second event should be skipped
+    await robot.receive(payload({ name, threadType, labels: ['comment', 'comment2'] }))
+    await wait()
+
+    expect(github.issues.createComment).toHaveBeenCalledTimes(2)
     ;['beep', 'boop'].forEach((body) => {
       expect(github.issues.createComment).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -700,6 +712,7 @@ describe('pull_request', () => {
       await robot.receive(synchronizedPayload({ action }))
       await wait()
 
+      expect(github.issues.addLabels).toHaveBeenCalledTimes(1)
       expect(github.issues.addLabels).toHaveBeenCalledWith({
         issue_number: 4,
         labels: ['merge when passing'],
@@ -1017,7 +1030,7 @@ describe('analytics', () => {
 describe('global config', () => {
   test('Will allow users to set a global configuration', async () => {
     const newConfig = `
-        uses: dawnlabs/global-ranger-config
+        extends: dawnlabs/global-ranger-config
       `
 
     github.repos.getContents.mockResolvedValue({

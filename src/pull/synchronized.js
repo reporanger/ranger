@@ -24,13 +24,10 @@ module.exports = () => async (context) => {
     },
   } = await context.github.repos.getCommit(context.repo({ ref: sha }))
 
-  // TODO confirm this API before releasing in docs
-  const rules = config.commits
-
-  if (!Array.isArray(rules)) return
+  if (!Array.isArray(config.commits)) return
 
   await Promise.all(
-    rules.map(async ({ action, pattern, user, labels } = {}) => {
+    config.commits.map(async ({ action, pattern, user, labels } = {}) => {
       return executeAction(action, {
         [LABEL]: () => {
           if (!labels) return
