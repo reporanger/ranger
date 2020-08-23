@@ -275,9 +275,6 @@ beforeEach(async () => {
     }),
   }
   robot.auth = () => Promise.resolve(github)
-  const currentReceive = robot.receive
-  // Introduced w/ Probot 9.3.0 - https://github.com/probot/probot/issues/619
-  robot.receive = (...args) => currentReceive.call(robot, ...args).then(() => wait())
 })
 
 afterEach(() => {
@@ -339,6 +336,7 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
 
   test(`assign label(s) if sponsor opens a ${threadType}`, async () => {
     await robot.receive(payload({ action: 'opened', threadType }))
+    await wait()
 
     expect(github.issues.addLabels).toHaveBeenCalledWith({
       issue_number: 7,
