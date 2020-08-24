@@ -27,14 +27,14 @@ module.exports.deleteBranch = () => async (context) => {
 
       return executeAction(action, {
         [DELETE_BRANCH]: () => {
-          const ref = `heads/${thread.head.ref}`
-
-          return context.github.gitdata.deleteRef(context.repo({ ref })).catch((e) => {
-            // TODO this is because GitHub has already deleted the reference
-            if (e.message !== 'Reference does not exist') {
-              throw e
-            }
-          })
+          return context.github.gitdata
+            .deleteRef(context.repo({ ref: `heads/${thread.head.ref}` }))
+            .catch((e) => {
+              // TODO this is because GitHub has already deleted the reference
+              if (e.message !== 'Reference does not exist') {
+                throw e
+              }
+            })
         },
       })
     })
