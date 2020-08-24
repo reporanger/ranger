@@ -14,7 +14,7 @@ module.exports = () => async (context) => {
 
   if (!Array.isArray(config.comments)) return
 
-  await Promise.all(
+  await Promise.allSettled(
     config.comments.map(async ({ action, pattern, labels } = {}) => {
       if (pattern === '$PROFANITY') {
         if (!filter.isProfane(body)) {

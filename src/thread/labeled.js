@@ -18,7 +18,7 @@ module.exports = (queue) => async (context) => {
 
   const ID = getId(context, { action: COMMENT })
 
-  await Promise.all(
+  await Promise.allSettled(
     thread.labels.map((label) => {
       const action = labelToAction(config, label)
 

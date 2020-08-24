@@ -22,7 +22,7 @@ module.exports = () => async (context) => {
 
   if (!Array.isArray(config.commits)) return
 
-  await Promise.all(
+  await Promise.allSettled(
     config.commits.map(async ({ action, pattern, user, labels } = {}) => {
       return executeAction(action, {
         [LABEL]: () => {

@@ -43,7 +43,7 @@ module.exports = (robot) => async (context) => {
           user: context.payload.installation.account.login,
         },
       }))
-      return Promise.all(
+      return Promise.allSettled(
         LABELS_TO_CREATE.map((l) => {
           const data = {
             owner: context.payload.installation.account.login,
@@ -72,7 +72,7 @@ module.exports = (robot) => async (context) => {
       )
     })
 
-    await Promise.all(promises)
+    await Promise.allSettled(promises)
 
     const private_repos = repos.filter((r) => r.private)
     analytics.track({

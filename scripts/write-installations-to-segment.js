@@ -37,7 +37,7 @@ fetch('https://api.github.com/app/installations?per_page=100', {
 })
   .then((res) => res.json())
   .then(async (installations) => {
-    return Promise.all(
+    return Promise.allSettled(
       installations.map(async (i) => {
         const user = await fetchData(i.account.login)
         const email = user.email
