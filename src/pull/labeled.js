@@ -142,12 +142,12 @@ module.exports.process = (robot) => async ({
         (s) =>
           s.conclusion !== CONCLUSION.SUCCESS &&
           s.conclusion !== CONCLUSION.NEUTRAL &&
-          s.conclusion !== CONCLUSION.SKIPPED
-        // Currently check suites like https://github.com/NLog/NLog/pull/3296/checks were being
-        // queued and never concluding. You can see that in this API response:
-        // https://api.github.com/repos/NLog/Nlog/commits/2c8f7471648f22fa5dc9bf6db53e96fae061fc0a/check-suites
-        // Corresponding issue: https://github.com/mfix22/ranger/issues/60
-        // s.conclusion !== null
+          s.conclusion !== CONCLUSION.SKIPPED &&
+          // TODO remove this. Currently check suites like https://github.com/NLog/NLog/pull/3296/checks are being
+          // queued and never concluding. You can see that in this API response:
+          // https://api.github.com/repos/NLog/Nlog/commits/2c8f7471648f22fa5dc9bf6db53e96fae061fc0a/check-suites
+          // Corresponding issue: https://github.com/mfix22/ranger/issues/60
+          s.conclusion !== null
       )
     ) {
       throw new Retry()
