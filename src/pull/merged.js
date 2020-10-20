@@ -27,7 +27,7 @@ module.exports.deleteBranch = () => async (context) => {
 
       return executeAction(action, {
         [DELETE_BRANCH]: () => {
-          return context.github.gitdata
+          return context.github.git
             .deleteRef(context.repo({ ref: `heads/${thread.head.ref}` }))
             .catch((e) => {
               // TODO this is because GitHub has already deleted the reference
@@ -95,7 +95,7 @@ module.exports.createTag = () => async (context) => {
 
   const sha = thread.merge_commit_sha
 
-  await context.github.gitdata.createTag(
+  await context.github.git.createTag(
     context.repo({
       tag,
       type: 'commit',
@@ -104,7 +104,7 @@ module.exports.createTag = () => async (context) => {
     })
   )
 
-  await context.github.gitdata.createRef(
+  await context.github.git.createRef(
     context.repo({
       ref: `refs/tags/${tag}`,
       sha,

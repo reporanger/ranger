@@ -244,7 +244,7 @@ beforeEach(async () => {
         },
       }),
     },
-    gitdata: {
+    git: {
       deleteRef: jest.fn().mockResolvedValue(),
       createRef: jest.fn().mockResolvedValue(),
       createTag: jest.fn().mockResolvedValue(),
@@ -662,7 +662,7 @@ describe('pull_request', () => {
   test('Can delete branches after merging', async () => {
     await robot.receive(mergedPayload())
 
-    expect(github.gitdata.deleteRef).toHaveBeenCalledWith({
+    expect(github.git.deleteRef).toHaveBeenCalledWith({
       owner: 'Codertocat',
       ref: 'heads/mfix22-patch-1',
       repo: 'Hello-World',
@@ -673,7 +673,7 @@ describe('pull_request', () => {
     await robot.receive(mergedPayload({ repo: null }))
     await robot.receive(mergedPayload({ repo: { fork: true } }))
 
-    expect(github.gitdata.deleteRef).not.toHaveBeenCalled()
+    expect(github.git.deleteRef).not.toHaveBeenCalled()
   })
 
   test.each([
@@ -687,7 +687,7 @@ describe('pull_request', () => {
 
     const sha = 'a244454d959a49f53aa60768d117d3eeaa0c552e'
 
-    expect(github.gitdata.createTag).toHaveBeenCalledWith({
+    expect(github.git.createTag).toHaveBeenCalledWith({
       owner: 'Codertocat',
       repo: 'Hello-World',
       message: 'Update README.md (#3)',
@@ -695,7 +695,7 @@ describe('pull_request', () => {
       object: sha,
       tag,
     })
-    expect(github.gitdata.createRef).toHaveBeenCalledWith({
+    expect(github.git.createRef).toHaveBeenCalledWith({
       owner: 'Codertocat',
       repo: 'Hello-World',
       ref: `refs/tags/${tag}`,
@@ -707,8 +707,8 @@ describe('pull_request', () => {
     await robot.receive(mergedPayload({ labels: ['Major'], base: 'docs' }))
     await wait(2)
 
-    expect(github.gitdata.createTag).not.toHaveBeenCalled()
-    expect(github.gitdata.createRef).not.toHaveBeenCalled()
+    expect(github.git.createTag).not.toHaveBeenCalled()
+    expect(github.git.createRef).not.toHaveBeenCalled()
   })
 
   test.each(['opened', 'synchronize'])(
