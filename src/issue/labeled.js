@@ -68,5 +68,10 @@ module.exports = (queue) => async (context) => {
 
 module.exports.process = (robot) => async ({ data /* id */ }) => {
   const github = await robot.auth(data.installation_id)
-  return await closeIssue(github, data)
+  return await closeIssue(github, {
+    ...data,
+    number: undefined,
+    // TODO change this to just use number
+    issue_number: data.issue_number || data.number,
+  })
 }

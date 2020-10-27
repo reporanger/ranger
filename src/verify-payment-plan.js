@@ -83,7 +83,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
 }
 
 function getAssociatedAccount(github, account_id) {
-  return github.apps.checkAccountIsAssociatedWithAny({ account_id })
+  return github.apps.getSubscriptionPlanForAccount({ account_id })
 }
 
 const privateReposAllowedPattern = r.and(
