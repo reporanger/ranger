@@ -1,6 +1,7 @@
 const nock = require('nock')
 const { Probot, ProbotOctokit } = require('probot')
-const app = require('..')
+
+const ranger = require('..')
 
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
@@ -173,9 +174,9 @@ default:
 `
 
 let robot
+let app
 let github
 let queue
-let analytics
 beforeEach(async () => {
   nock.disableNetConnect()
 
@@ -283,14 +284,12 @@ beforeEach(async () => {
 
   robot.state.octokit = github
 
-  const loadedApp = robot.load(app)
-  loadedApp.auth = () => Promise.resolve(github)
+  app = robot.load(ranger)
+  app.auth = () => Promise.resolve(github)
+  queue = app.queue
 
-  queue = loadedApp.queue
-  analytics = loadedApp.analytics
-
-  jest.spyOn(analytics, 'identify')
-  jest.spyOn(analytics, 'track')
+  jest.spyOn(app.analytics, 'identify')
+  jest.spyOn(app.analytics, 'track')
 })
 
 afterEach(() => {
@@ -906,7 +905,7 @@ describe('installation', () => {
   })
 
   test('Will only throw on createLabel if error is not of type "already_exists"', async () => {
-    robot.apps[0].log.error = jest.fn()
+    app.log.error = jest.fn()
     github.issues.createLabel.mockRejectedValueOnce({
       message: 'Repo alread exists', // <--- this is not a real error message
       errors: [{ code: 'already_exists' }],
@@ -916,20 +915,20 @@ describe('installation', () => {
 
     await robot.receive(installedPayload({ repositories: repos }))
 
-    expect(robot.apps[0].log.error).not.toHaveBeenCalled()
+    expect(app.log.error).not.toHaveBeenCalled()
 
     github.issues.createLabel.mockRejectedValueOnce({
       message: JSON.stringify({ errors: [{ status: 'unknown error' }] }),
     })
 
     await robot.receive(installedPayload({ repositories: repos }))
-    expect(robot.apps[0].log.error).toHaveBeenCalled()
+    expect(app.log.error).toHaveBeenCalled()
   })
 })
 
 describe('billing', () => {
   beforeEach(() => {
-    robot.apps[0].log.error = jest.fn()
+    app.log.error = jest.fn()
   })
 
   test.each([
@@ -1027,7 +1026,7 @@ describe('analytics', () => {
 
     await robot.receive(createPayload(repos))
 
-    expect(analytics.identify).toHaveBeenCalledWith({
+    expect(app.analytics.identify).toHaveBeenCalledWith({
       userId: 42,
       traits: {
         name: 'ranger',
@@ -1036,7 +1035,7 @@ describe('analytics', () => {
         email: 'test@test.com',
       },
     })
-    expect(analytics.track).toHaveBeenCalledWith({
+    expect(app.analytics.track).toHaveBeenCalledWith({
       userId: 42,
       event: 'Repos added',
       properties: {
