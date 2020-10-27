@@ -35,7 +35,7 @@ module.exports = (queue) => async (context) => {
           .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
           .replace('$LABEL', label.name)
           .replace('$AUTHOR', thread.user.login)
-        context.github.issues.createComment(context.repo({ body, issue_number: thread.number }))
+        context.github.issues.createComment(context.issue({ body }))
       }
     }
 

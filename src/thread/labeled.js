@@ -43,11 +43,10 @@ module.exports = (queue) => async (context) => {
 
               await queue
                 .createJob(
-                  context.repo({
+                  context.issue({
                     installation_id: context.payload.installation.id,
                     action: COMMENT,
                     body,
-                    issue_number: thread.number,
                   })
                 )
                 .setId(jobId)
