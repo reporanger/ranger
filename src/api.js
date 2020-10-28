@@ -1,11 +1,11 @@
 exports.closeIssue = function closeIssue(github, data) {
-  const { owner, repo, number, state = 'closed' } = data
+  const { owner, repo, issue_number, state = 'closed' } = data
 
   return github.issues
     .update({
       owner,
       repo,
-      issue_number: number,
+      issue_number,
       state,
       mediaType: {
         previews: ['symmetra'],
@@ -19,13 +19,13 @@ exports.closeIssue = function closeIssue(github, data) {
 }
 
 exports.getPullRequest = function getPullRequest(github, data) {
-  const { owner, repo, number } = data
+  const { owner, repo, pull_number } = data
 
   return github.pulls
     .get({
       owner,
       repo,
-      pull_number: number,
+      pull_number,
       mediaType: {
         previews: ['symmetra', 'shadow-cat'],
       },
@@ -52,11 +52,10 @@ exports.createLabel = function createLabel(github, data) {
   })
 }
 
-exports.addLabels = function addLabels(github, { labels, number, ...data }) {
+exports.addLabels = function addLabels(github, { labels, ...data }) {
   return github.issues
     .addLabels({
       ...data,
-      issue_number: number,
       labels: many(labels),
       mediaType: {
         previews: ['symmetra'],

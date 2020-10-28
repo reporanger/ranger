@@ -1,6 +1,7 @@
 const nock = require('nock')
-const { Application } = require('probot')
-const app = require('..')
+const { Probot, ProbotOctokit } = require('probot')
+
+const ranger = require('..')
 
 const payload = require('./fixtures/labeled')
 const commentPayload = require('./fixtures/comment')
@@ -100,7 +101,7 @@ jest.mock(
     }
 )
 
-const config = `
+const config = require('js-yaml').safeLoad(`
 labels:
   duplicate:
     action: close
@@ -170,24 +171,30 @@ default:
   close:
     delay: 1ms
     comment: This issue has been marked to be closed in $DELAY.
-`
+`)
 
 let robot
+let app
 let github
 let queue
-let analytics
 beforeEach(async () => {
   nock.disableNetConnect()
 
-  robot = new Application({ id: 1, cert: 'test', githubToken: 'test' })
-  const setup = await app(robot)
-  queue = setup.queue
-  analytics = setup.analytics
+  robot = new Probot({
+    id: 1,
+    githubToken: 'test',
+    // Disable throttling & retrying requests for easier testing
+    Octokit: ProbotOctokit.defaults({
+      retry: { enabled: false },
+      throttle: { enabled: false },
+    }),
+  })
 
-  jest.spyOn(analytics, 'identify')
-  jest.spyOn(analytics, 'track')
-
+  // TODO override ProbotOctokit.defaults to return this
   github = {
+    config: {
+      get: jest.fn(() => ({ config })),
+    },
     issues: {
       createComment: jest.fn(),
       createLabel: jest.fn().mockResolvedValue(),
@@ -207,8 +214,6 @@ beforeEach(async () => {
       updateBranch: jest.fn().mockResolvedValue({ data: {} }),
     },
     repos: {
-      getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
-      getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
       getCommit: jest
         .fn()
         .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } }),
@@ -274,7 +279,15 @@ beforeEach(async () => {
       }
     }),
   }
-  robot.auth = () => Promise.resolve(github)
+
+  robot.state.octokit = github
+
+  app = robot.load(ranger)
+  app.auth = () => Promise.resolve(github)
+  queue = app.queue
+
+  jest.spyOn(app.analytics, 'identify')
+  jest.spyOn(app.analytics, 'track')
 })
 
 afterEach(() => {
@@ -362,7 +375,7 @@ describe('issue', () => {
       body: 'duplicate issue created! Closing in 5 ms . . .',
     })
     const data = {
-      number: 7,
+      issue_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       installation_id: 135737,
@@ -430,7 +443,7 @@ describe('pull_request', () => {
     )
 
     const data = {
-      number: 7,
+      pull_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       installation_id: 135737,
@@ -890,7 +903,7 @@ describe('installation', () => {
   })
 
   test('Will only throw on createLabel if error is not of type "already_exists"', async () => {
-    robot.log.error = jest.fn()
+    app.log.error = jest.fn()
     github.issues.createLabel.mockRejectedValueOnce({
       message: 'Repo alread exists', // <--- this is not a real error message
       errors: [{ code: 'already_exists' }],
@@ -900,20 +913,20 @@ describe('installation', () => {
 
     await robot.receive(installedPayload({ repositories: repos }))
 
-    expect(robot.log.error).not.toHaveBeenCalled()
+    expect(app.log.error).not.toHaveBeenCalled()
 
     github.issues.createLabel.mockRejectedValueOnce({
       message: JSON.stringify({ errors: [{ status: 'unknown error' }] }),
     })
 
     await robot.receive(installedPayload({ repositories: repos }))
-    expect(robot.log.error).toHaveBeenCalled()
+    expect(app.log.error).toHaveBeenCalled()
   })
 })
 
 describe('billing', () => {
   beforeEach(() => {
-    robot.log.error = jest.fn()
+    app.log.error = jest.fn()
   })
 
   test.each([
@@ -938,11 +951,11 @@ describe('billing', () => {
       },
     },
   ])('Will schedule job is private billing is correct: %#', async (data) => {
-    github.apps.checkAccountIsAssociatedWithAny = () => ({ data })
+    github.apps.getSubscriptionPlanForAccount = () => ({ data })
 
     await robot.receive(payload({ isPrivate: true }))
     expect(queue.createJob).toHaveBeenCalledWith({
-      number: 7,
+      issue_number: 7,
       owner: 'mfix22',
       repo: 'test-issue-bot',
       installation_id: 135737,
@@ -991,7 +1004,7 @@ describe('billing', () => {
       },
     ],
   ])('%s', async (_, data) => {
-    github.apps.checkAccountIsAssociatedWithAny = () => ({
+    github.apps.getSubscriptionPlanForAccount = () => ({
       data: typeof data === 'function' ? data() : data,
     })
     await robot.receive(payload({ isPrivate: true }))
@@ -1011,7 +1024,7 @@ describe('analytics', () => {
 
     await robot.receive(createPayload(repos))
 
-    expect(analytics.identify).toHaveBeenCalledWith({
+    expect(app.analytics.identify).toHaveBeenCalledWith({
       userId: 42,
       traits: {
         name: 'ranger',
@@ -1020,7 +1033,7 @@ describe('analytics', () => {
         email: 'test@test.com',
       },
     })
-    expect(analytics.track).toHaveBeenCalledWith({
+    expect(app.analytics.track).toHaveBeenCalledWith({
       userId: 42,
       event: 'Repos added',
       properties: {
@@ -1028,31 +1041,6 @@ describe('analytics', () => {
         private_count: 1,
         repos: ['ranger/test-0', 'ranger/test-1'],
       },
-    })
-  })
-})
-
-describe('global config', () => {
-  test('Will allow users to set a global configuration', async () => {
-    const newConfig = `
-        extends: dawnlabs/global-ranger-config
-      `
-
-    github.repos.getContents.mockResolvedValue({
-      data: { content: Buffer.from(newConfig).toString('base64') },
-    })
-
-    await robot.receive(payload())
-
-    expect(github.repos.getContents).toHaveBeenCalledWith({
-      owner: 'mfix22',
-      path: '.github/ranger.yml',
-      repo: 'test-issue-bot',
-    })
-    expect(github.repos.getContents).toHaveBeenCalledWith({
-      owner: 'dawnlabs',
-      path: '.github/ranger.yml',
-      repo: 'global-ranger-config',
     })
   })
 })

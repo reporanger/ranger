@@ -49,7 +49,7 @@ module.exports = (queue) => async (context) => {
     return (
       queue
         .createJob({
-          ...context.issue({ installation_id: context.payload.installation.id }),
+          ...context.pullRequest({ installation_id: context.payload.installation.id }),
           action: MERGE,
           method,
         })
@@ -78,14 +78,18 @@ module.exports = (queue) => async (context) => {
 }
 
 module.exports.process = (robot) => async ({
-  data: { installation_id, owner, repo, number, method = 'merge' },
+  data: { installation_id, owner, repo, number, pull_number, method = 'merge' },
 }) => {
   let github
   let pull
+
+  // TODO change this to just use number
+  const the_number = pull_number || number
+
   try {
     github = await robot.auth(installation_id)
 
-    pull = await getPullRequest(github, { owner, repo, number })
+    pull = await getPullRequest(github, { owner, repo, pull_number: the_number })
   } catch (error) {
     const Sentry = require('@sentry/node')
     Sentry.configureScope((scope) => {
@@ -159,7 +163,7 @@ module.exports.process = (robot) => async ({
       github.pulls.merge({
         owner,
         repo,
-        pull_number: number,
+        pull_number: the_number,
         sha,
         merge_method: methods[(initialIndex + i) % methods.length],
       })
@@ -191,7 +195,7 @@ module.exports.process = (robot) => async ({
       return await github.pulls.updateBranch({
         owner,
         repo,
-        pull_number: number,
+        pull_number: the_number,
         expected_head_sha: pull.head.sha,
         headers: {
           accept: 'application/vnd.github.lydian-preview+json',

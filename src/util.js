@@ -2,8 +2,8 @@ const r = require('rexrex')
 
 // We might need different ids for different jobs in the future but this works for now
 module.exports.getId = function getId(context, options) {
-  const { owner, repo, number, action } = context.issue(options)
-  return `${owner}:${repo}:${number}${action ? `:${action}` : ''}`
+  const { owner, repo, issue_number, action } = context.issue(options)
+  return `${owner}:${repo}:${issue_number}${action ? `:${action}` : ''}`
 }
 
 module.exports.executeAction = function executeAction(action, map) {

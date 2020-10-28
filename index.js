@@ -145,8 +145,6 @@ module.exports = async (robot) => {
   // To get your app running against GitHub, see:
   // https://probot.github.io/docs/development/
 
-  return {
-    queue,
-    analytics,
-  }
+  robot.queue = queue
+  robot.analytics = analytics
 }
