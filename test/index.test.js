@@ -101,7 +101,7 @@ jest.mock(
     }
 )
 
-const config = `
+const config = require('js-yaml').safeLoad(`
 labels:
   duplicate:
     action: close
@@ -171,7 +171,7 @@ default:
   close:
     delay: 1ms
     comment: This issue has been marked to be closed in $DELAY.
-`
+`)
 
 let robot
 let app
@@ -193,7 +193,7 @@ beforeEach(async () => {
   // TODO override ProbotOctokit.defaults to return this
   github = {
     config: {
-      get: jest.fn(() => ({ config: require('js-yaml').safeLoad(config) })),
+      get: jest.fn(() => ({ config })),
     },
     issues: {
       createComment: jest.fn(),
@@ -214,8 +214,6 @@ beforeEach(async () => {
       updateBranch: jest.fn().mockResolvedValue({ data: {} }),
     },
     repos: {
-      getContent: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
-      getContents: jest.fn(() => ({ data: { content: Buffer.from(config).toString('base64') } })),
       getCommit: jest
         .fn()
         .mockResolvedValue({ data: { commit: { message: 'merge when passing' } } }),
