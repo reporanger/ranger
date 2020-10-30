@@ -25,12 +25,14 @@ Sentry.init({ dsn: process.env.SENTRY_DSN })
 module.exports = async (robot) => {
   robot.route('/').get('/health', (req, res) => res.send('OK'))
 
-  process.on('uncaughtException', (e) => {
-    robot.log.error(e)
-  })
-  process.on('unhandledRejection', (e) => {
-    robot.log.error(e)
-  })
+  if (process.env.NODE_ENV !== 'test') {
+    process.on('uncaughtException', (e) => {
+      robot.log.error(e)
+    })
+    process.on('unhandledRejection', (e) => {
+      robot.log.error(e)
+    })
+  }
 
   const queue = new Queue('issues', {
     removeOnSuccess: true,
