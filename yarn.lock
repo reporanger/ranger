@@ -851,16 +851,15 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@octokit/auth-app@^2.10.0":
-  version "2.10.1"
-  resolved "https://registry.yarnpkg.com/@octokit/auth-app/-/auth-app-2.10.1.tgz#187fe2432e6089f919fff8f5574dd2154c673962"
-  integrity sha512-WQAbhPtr+cuMcMCt0cu9NgY0XjEEEqeR3/A5hJK3KNdYglxRRf3+uKwNxcK9B3SgpS8Igi6UvatTmGow88w+cA==
+"@octokit/auth-app@^2.4.14":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@octokit/auth-app/-/auth-app-2.7.0.tgz#a1bec2f0da80c4435cdd3213020e7f7c4364c688"
+  integrity sha512-znx092EpYmtEr5UjRXrFGGinA3jWJNriKT/N3CZFbx53JfXNsHqKW8UogyuJwob55JAgEzwhRTra/yy6e+AcfQ==
   dependencies:
     "@octokit/request" "^5.3.0"
     "@octokit/request-error" "^2.0.0"
     "@octokit/types" "^5.0.0"
     "@types/lru-cache" "^5.1.0"
-    deprecation "^2.3.1"
     lru-cache "^6.0.0"
     universal-github-app-jwt "^1.0.1"
     universal-user-agent "^6.0.0"
@@ -872,17 +871,10 @@
   dependencies:
     "@octokit/types" "^2.0.0"
 
-"@octokit/auth-token@^2.4.2":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@octokit/auth-token/-/auth-token-2.4.3.tgz#b868b5f2366533a7e62933eaa1181a8924228cc4"
-  integrity sha512-fdGoOQ3kQJh+hrilc0Plg50xSfaCKOeYN9t6dpJKXN9BxhhfquL0OzoQXg3spLYymL5rm29uPeI3KEXRaZQ9zg==
-  dependencies:
-    "@octokit/types" "^5.0.0"
-
-"@octokit/auth-unauthenticated@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@octokit/auth-unauthenticated/-/auth-unauthenticated-2.0.0.tgz#020d9892f9d476b0e53852ddb405d33b26a5e098"
-  integrity sha512-AV2AMjEVVANyRtII09ksEIsIUWbyVrWXDBP4fZnbqfKjeW6feZkkAP7wjwChgLevRevu17w4KD0nzD5b6Nkrgw==
+"@octokit/auth-unauthenticated@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@octokit/auth-unauthenticated/-/auth-unauthenticated-1.0.0.tgz#07ae30bb13c61deb61566ce79befc1096573c768"
+  integrity sha512-jVgSHBEmY1mA7WoK+LfEwtjhAd8VKt2AAWJcivZICDAoYe5iQJ9PaLF+5BxHQXZ1Gs85GU8hsZS/FyQa+0H7Ug==
   dependencies:
     "@octokit/request-error" "^2.0.2"
     "@octokit/types" "^5.0.0"
@@ -5763,16 +5755,6 @@ object.values@^1.1.1:
     function-bind "^1.1.1"
     has "^1.0.3"
 
-octokit-auth-probot@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/octokit-auth-probot/-/octokit-auth-probot-1.2.0.tgz#8f221956a4834c276b2e86b26a5e1987bc7349ea"
-  integrity sha512-BTiQlM5Yf5RQOUyJnEuqI5umNjjTtKqs1AY4SPM4gD2Gjcp1fuS2MzyYHoGyb0bhsvqVzFB0TNM5VhzAGQsxuw==
-  dependencies:
-    "@octokit/auth-app" "^2.10.0"
-    "@octokit/auth-token" "^2.4.2"
-    "@octokit/auth-unauthenticated" "^2.0.0"
-    "@octokit/types" "^5.5.0"
-
 octokit-pagination-methods@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/octokit-pagination-methods/-/octokit-pagination-methods-1.1.0.tgz#cf472edc9d551055f9ef73f6e42b4dbb4c80bea4"
@@ -6210,11 +6192,13 @@ pretty-format@^26.6.2:
     ansi-styles "^4.0.0"
     react-is "^17.0.1"
 
-probot@10.14.0:
-  version "10.14.0"
-  resolved "https://registry.yarnpkg.com/probot/-/probot-10.14.0.tgz#0f0ee621b7428b34b5898c8c79c394ebcb0d3c5a"
-  integrity sha512-nCsLiilJqdE/0GwWDWH/4pTMEgVJnGAqwVVO/9HIYhtl1p4YM1jUIsHCFks6Z6dBxQU/v4iDrYyxFgg2GwVwbQ==
+probot@10.9.5:
+  version "10.9.5"
+  resolved "https://registry.yarnpkg.com/probot/-/probot-10.9.5.tgz#10856bc50f33322f80fad744473c7b44c602c641"
+  integrity sha512-IQ/E2G5EDY3YlmBmg5B7Mi0nW+PRt4gEyDIDR2r+KZSzAbA2VHSAjaL4X2PP0uECsNzt5/BXTHexVAaHToa4kA==
   dependencies:
+    "@octokit/auth-app" "^2.4.14"
+    "@octokit/auth-unauthenticated" "^1.0.0"
     "@octokit/core" "^3.1.0"
     "@octokit/graphql" "^4.2.0"
     "@octokit/plugin-enterprise-compatibility" "^1.2.1"
@@ -6246,7 +6230,6 @@ probot@10.14.0:
     js-yaml "^3.13.1"
     jsonwebtoken "^8.1.0"
     lru-cache "^6.0.0"
-    octokit-auth-probot "^1.2.0"
     octokit-pagination-methods "1.1.0"
     pino "^6.5.0"
     pino-http "^5.2.0"
