@@ -278,12 +278,12 @@ beforeEach(async () => {
         },
       }
     }),
-    auth: () => Promise.resolve(github),
   }
 
   robot.state.octokit = github
 
   app = robot.load(ranger)
+  app.auth = () => Promise.resolve(github)
   queue = app.queue
 
   jest.spyOn(app.analytics, 'identify')
