@@ -566,7 +566,7 @@
     "@octokit/types" "^5.0.0"
     prettier "^2.0.5"
 
-"@octokit/core@^3.1.0":
+"@octokit/core@^3.2.1":
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@octokit/core/-/core-3.2.1.tgz#9e04df3f4e7f825ac0559327490ce34299140af5"
   integrity sha512-XfFSDDwv6tclUenS0EmB6iA7u+4aOHBT1Lz4PtQNQQg3hBbNaR/+Uv5URU+egeIuuGAiMRiDyY92G4GBOWOqDA==
@@ -1377,10 +1377,10 @@ babel-preset-jest@^26.6.2:
     babel-plugin-jest-hoist "^26.6.2"
     babel-preset-current-node-syntax "^1.0.0"
 
-bad-words@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/bad-words/-/bad-words-3.0.3.tgz#fa6fe18ffce3101a415193ebd8647c289b58b554"
-  integrity sha512-To+nGz+U8SpEQieZ2kSadY/1hVO88UXAslCJuTgLjDOuGrs/tNW2BYwl0fctxcRLooe0nzYN1pGzgvRIrd0BeA==
+bad-words@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/bad-words/-/bad-words-3.0.4.tgz#044c83935c4c363a905d47b5e0179f7241fecaec"
+  integrity sha512-v/Q9uRPH4+yzDVLL4vR1+S9KoFgOEUl5s4axd6NIAq8SV2mradgi4E8lma/Y0cw1ltVdvyegCQQKffCPRCp8fg==
   dependencies:
     badwords-list "^1.0.0"
 
@@ -5330,12 +5330,12 @@ pretty-format@^26.6.2:
     ansi-styles "^4.0.0"
     react-is "^17.0.1"
 
-probot@10.14.0:
-  version "10.14.0"
-  resolved "https://registry.yarnpkg.com/probot/-/probot-10.14.0.tgz#0f0ee621b7428b34b5898c8c79c394ebcb0d3c5a"
-  integrity sha512-nCsLiilJqdE/0GwWDWH/4pTMEgVJnGAqwVVO/9HIYhtl1p4YM1jUIsHCFks6Z6dBxQU/v4iDrYyxFgg2GwVwbQ==
+probot@10.14.1:
+  version "10.14.1"
+  resolved "https://registry.yarnpkg.com/probot/-/probot-10.14.1.tgz#e1e6ac421b42a8b57498b8ef550b68d8dd675c8a"
+  integrity sha512-ZzFZ+jS7w4NCNvFm8BX+a9rw8pRivi/+CMapJzptioxgm1GLiUwTPq5VquP7ig/1Z/fMMaZPAIFaRQrVtJY2QA==
   dependencies:
-    "@octokit/core" "^3.1.0"
+    "@octokit/core" "^3.2.1"
     "@octokit/graphql" "^4.2.0"
     "@octokit/plugin-enterprise-compatibility" "^1.2.1"
     "@octokit/plugin-paginate-rest" "^2.2.3"
