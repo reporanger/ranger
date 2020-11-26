@@ -29,9 +29,9 @@ module.exports = () => async (context) => {
           if (!MAINTAINERS.includes(author_association)) return
           if (!labels) return
 
-          return addLabels(context.github, context.issue({ labels }))
+          return addLabels(context.octokit, context.issue({ labels }))
         },
-        [DELETE_COMMENT]: () => context.github.issues.deleteComment(context.repo({ comment_id })),
+        [DELETE_COMMENT]: () => context.octokit.issues.deleteComment(context.repo({ comment_id })),
       })
     })
   )
