@@ -18,7 +18,7 @@ module.exports = () => async (context) => {
     data: {
       commit: { message: body },
     },
-  } = await context.github.repos.getCommit(context.repo({ ref: sha }))
+  } = await context.octokit.repos.getCommit(context.repo({ ref: sha }))
 
   if (!Array.isArray(config.commits)) return
 
@@ -36,7 +36,7 @@ module.exports = () => async (context) => {
             return
           }
 
-          return addLabels(context.github, context.issue({ labels }))
+          return addLabels(context.octokit, context.issue({ labels }))
         },
       })
     })

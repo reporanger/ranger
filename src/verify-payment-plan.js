@@ -58,7 +58,7 @@ module.exports = async function verifyPaymentPlan(robot, context) {
       return false
     }
 
-    const { data } = await context.github.apps.listRepos({ per_page: 100 })
+    const { data } = await context.octokit.apps.listRepos({ per_page: 100 })
 
     const count = data.repositories.filter((r) => r.private).length
 

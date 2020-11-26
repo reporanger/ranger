@@ -28,7 +28,7 @@ async function checkIfSponsor(context, after) {
     }
   }`
 
-  const result = await context.github.graphql(query, {
+  const result = await context.octokit.graphql(query, {
     owner: context.repo().owner,
     after,
   })
@@ -56,6 +56,6 @@ module.exports = () => async (context) => {
   }
 
   if (await checkIfSponsor(context)) {
-    addLabels(context.github, context.issue({ labels: config.sponsor_labels }))
+    addLabels(context.octokit, context.issue({ labels: config.sponsor_labels }))
   }
 }
