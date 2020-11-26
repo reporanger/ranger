@@ -7,7 +7,7 @@
   "repository": "https://github.com/mfix22/ranger.git",
   "scripts": {
     "dev": "nodemon --exec \"npm start\"",
-    "start": "probot run ./index.js",
+    "start": "probot run --sentry-dsn $SENTRY_DSN --log-level $LOG_LEVEL ./index.js",
     "test": "jest",
     "lint": "eslint src",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
