@@ -164,9 +164,6 @@ commits:
     labels:
       - author
 
-sponsor_labels:
-  - sponsor
-
 default:
   close:
     delay: 1ms
