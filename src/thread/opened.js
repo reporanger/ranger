@@ -51,11 +51,11 @@ async function checkIfSponsor(context, after) {
 module.exports = () => async (context) => {
   const config = await getConfig(context)
 
-  if (!Array.isArray(config.sponsor_labels)) {
-    return
-  }
+  // if (!Array.isArray(config.sponsor_labels)) {
+  //   return
+  // }
 
   if (await checkIfSponsor(context)) {
-    addLabels(context.octokit, context.issue({ labels: config.sponsor_labels }))
+    addLabels(context.octokit, context.issue({ labels: config.sponsor_labels || ['sponsor'] }))
   }
 }
