@@ -1,15 +1,15 @@
-const Windsor = require('windsor-node')
+const Analytics = require('analytics-node')
 
 if (
   process.env.NODE_ENV === 'test' ||
-  (process.env.NODE_ENV === 'production' && process.env.WINDSOR_KEY)
+  (process.env.NODE_ENV === 'production' && process.env.SEGMENT_WRITE_KEY)
 ) {
-  let analytics = new Windsor(process.env.WINDSOR_KEY)
+  let analytics = new Analytics(process.env.SEGMENT_WRITE_KEY)
   module.exports = {
-    identify: analytics.user.bind(analytics),
+    identify: analytics.identify.bind(analytics),
     track: (x) => {
       try {
-        return analytics.event.call(analytics, typeof x === 'function' ? x() : x)
+        return analytics.track.call(analytics, typeof x === 'function' ? x() : x)
       } catch (error) {
         console.error(error)
       }
