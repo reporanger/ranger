@@ -37,7 +37,7 @@ async function checkIfSponsor(context, after) {
     sponsorshipsAsMaintainer: { nodes, pageInfo },
   } = result[ownerType]
 
-  if (nodes.find((node) => node.sponsor.id === thread.user.node_id)) {
+  if (nodes.find((node) => node.sponsor && node.sponsor.id === thread.user.node_id)) {
     return true
   }
 
