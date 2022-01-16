@@ -52,7 +52,7 @@ module.exports = (robot) => async (context) => {
           }
 
           return createLabel(github, data).catch((err) => {
-            if (err.message.indexOf('archived') > -1) {
+            if (err.message.indexOf('archived') > -1 || err.message.indexOf('Not found') > -1) {
               return
             }
 
