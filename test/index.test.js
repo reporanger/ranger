@@ -162,6 +162,10 @@ commits:
     labels:
       - author
 
+closes:
+  - action: lock
+    delay: 0s
+
 default:
   close:
     delay: 1ms
@@ -196,6 +200,7 @@ beforeEach(async () => {
       addLabels: jest.fn().mockResolvedValue(),
       update: jest.fn((_, data) => Promise.resolve({ data })),
       deleteComment: jest.fn(),
+      lock: jest.fn(),
     },
     pulls: {
       get: jest.fn().mockResolvedValue({
@@ -384,9 +389,9 @@ describe('issue', () => {
   test('Will remove the job if an issue is closed', async () => {
     await robot.receive(payload({ action: 'closed', number: 9 }))
 
-    expect(queue.createJob).not.toHaveBeenCalled()
     expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:close')
     expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:merge')
+    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:lock')
   })
 
   test('Labels with `true` config should take action', async () => {
@@ -848,6 +853,30 @@ describe('comment', () => {
         expect(github.issues.addLabels).not.toHaveBeenCalled()
       }
     )
+  })
+})
+
+describe('closes', () => {
+  test('Will lock a thread after it has been closed', async () => {
+    await robot.receive(payload({ action: 'closed', number: 9 }))
+
+    expect(queue.createJob).toHaveBeenCalledWith({
+      action: 'lock',
+      installation_id: 135737,
+      issue_number: 9,
+      owner: 'mfix22',
+      repo: 'test-issue-bot',
+    })
+
+    await wait()
+
+    expect(github.issues.lock).toHaveBeenCalledWith({
+      action: 'lock',
+      installation_id: 135737,
+      issue_number: 9,
+      owner: 'mfix22',
+      repo: 'test-issue-bot',
+    })
   })
 })
 

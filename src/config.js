@@ -24,6 +24,7 @@ const defaultConfig = {
   },
   comments: [],
   commits: [],
+  closes: [],
 }
 
 exports.CONFIG_FILE = CONFIG_FILE
