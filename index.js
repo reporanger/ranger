@@ -15,7 +15,7 @@ const commentCreated = require('./src/comment/created')
 const installationCreated = require('./src/installation/created')
 const installationAdded = require('./src/installation/added')
 
-const { CLOSE, MERGE, COMMENT } = require('./src/constants')
+const { CLOSE, MERGE, COMMENT, LOCK } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
@@ -57,6 +57,8 @@ module.exports = async ({ app, getRouter }) => {
           return await threadLabeled.process(app)(job)
         case MERGE:
           return await pullLabeled.process(app)(job)
+        case LOCK:
+          return await threadClosed.process(app)(job)
         case CLOSE:
         default:
           return await issueLabeled.process(app)(job)

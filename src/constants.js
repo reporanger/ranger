@@ -9,6 +9,7 @@ exports.LABEL = 'label'
 exports.DELETE_BRANCH = 'delete_branch'
 exports.TAG = 'tag'
 exports.DELETE_COMMENT = 'delete_comment'
+exports.LOCK = 'lock'
 
 // https://docs.github.com/en/graphql/reference/enums#commentauthorassociation
 exports.MAINTAINERS = ['COLLABORATOR', 'MEMBER', 'OWNER']
