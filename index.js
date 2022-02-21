@@ -53,15 +53,14 @@ module.exports = async ({ app, getRouter }) => {
     }))
     try {
       switch (job.data.action) {
-        case COMMENT:
-          return await threadLabeled.process(app)(job)
         case MERGE:
           return await pullLabeled.process(app)(job)
         case LOCK:
           return await threadClosed.process(app)(job)
+        case COMMENT:
         case CLOSE:
         default:
-          return await issueLabeled.process(app)(job)
+          return await threadLabeled.process(app)(job)
       }
     } catch (error) {
       if (process.env.NODE_ENV !== 'test') {

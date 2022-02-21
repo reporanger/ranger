@@ -5,9 +5,10 @@ const ms = require('ms')
 
 const { getId, executeAction } = require('../util')
 const getConfig = require('../config')
-const { COMMENT } = require('../constants')
+const { COMMENT, CLOSE } = require('../constants')
 const { timeToNumber, getLabelConfig, labelToAction } = require('./util')
 const analytics = require('../analytics')
+const { closeIssue } = require('../api')
 
 module.exports = (queue) => async (context) => {
   const thread = context.payload.pull_request || context.payload.issue
@@ -73,10 +74,24 @@ module.exports = (queue) => async (context) => {
 
 module.exports.process = (robot) => async ({ data /* id */ }) => {
   const github = await robot.auth(data.installation_id)
-  return await github.issues.createComment({
-    ...data,
-    number: undefined,
-    // TODO change this to just use number
-    issue_number: data.issue_number || data.number,
-  })
+
+  switch (data.action) {
+    case CLOSE: {
+      return await closeIssue(github, {
+        ...data,
+        number: undefined,
+        // TODO change this to just use number
+        issue_number: data.issue_number || data.number,
+      })
+    }
+    case COMMENT:
+    default: {
+      return await github.issues.createComment({
+        ...data,
+        number: undefined,
+        // TODO change this to just use number
+        issue_number: data.issue_number || data.number,
+      })
+    }
+  }
 }

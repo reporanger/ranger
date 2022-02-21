@@ -5,7 +5,6 @@ const ms = require('ms')
 
 const { getLabelConfig, getEffectiveLabel, labelsByAction } = require('../thread/util')
 const { getId } = require('../util')
-const { closeIssue } = require('../api')
 const getConfig = require('../config')
 const { CLOSE } = require('../constants')
 const analytics = require('../analytics')
@@ -64,14 +63,4 @@ module.exports = (queue) => async (context) => {
 
   // If closable labels are removed, delete job for this issue
   return queue.removeJob(ID)
-}
-
-module.exports.process = (robot) => async ({ data /* id */ }) => {
-  const github = await robot.auth(data.installation_id)
-  return await closeIssue(github, {
-    ...data,
-    number: undefined,
-    // TODO change this to just use number
-    issue_number: data.issue_number || data.number,
-  })
 }
