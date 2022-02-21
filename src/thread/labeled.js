@@ -27,10 +27,10 @@ module.exports.close = (queue) => async (context) => {
 
   const config = await getConfig(context)
 
-  const withClosableLabels = thread.labels.filter(labelsByAction(config, CLOSE))
+  const actionableLabels = thread.labels.filter(labelsByAction(config, CLOSE))
 
-  if (withClosableLabels.length) {
-    const { label, time } = getEffectiveLabel(config, withClosableLabels)
+  if (actionableLabels.length) {
+    const { label, time } = getEffectiveLabel(config, actionableLabels)
 
     const jobExists = await queue.getJob(ID)
     if (!jobExists) {
