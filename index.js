@@ -102,11 +102,7 @@ module.exports = async ({ app, getRouter }) => {
   app.on(
     // All pull requests are issues in GitHub REST V3
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(threadLabeled.close(queue))
-  )
-  app.on(
-    ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(threadLabeled.comment(queue))
+    wrapPaymentCheck(threadLabeled(queue))
   )
 
   app.on(['issues.opened', 'pull_request.opened'], wrapPaymentCheck(threadOpened(queue)))

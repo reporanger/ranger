@@ -6,40 +6,45 @@ const ms = require('ms')
 const { getId, executeAction } = require('../util')
 const getConfig = require('../config')
 const { COMMENT, CLOSE, OPEN } = require('../constants')
-const {
-  timeToNumber,
-  getLabelConfig,
-  getEffectiveLabel,
-  labelToAction,
-  labelsByAction,
-} = require('./util')
+const { timeToNumber, getLabelConfig, labelToAction, labelsByAction } = require('./util')
 const analytics = require('../analytics')
 const { closeIssue } = require('../api')
 
-// TODO refactor this file to use a shared "createComment" function
-
-module.exports.close = (queue) => async (context) => {
+module.exports = (queue) => async (context) => {
   const thread = context.payload.pull_request || context.payload.issue
 
-  return Promise.allSettled(
-    [CLOSE, OPEN].map(async (action) => {
-      if (thread.state === 'closed' && action === CLOSE) {
-        return
-      }
+  const config = await getConfig(context)
 
-      const ID = getId(context, { action })
-
-      const config = await getConfig(context)
-
+  await Promise.allSettled(
+    [CLOSE, OPEN].map((action) => {
       const actionableLabels = thread.labels.filter(labelsByAction(config, action))
 
-      if (actionableLabels.length) {
-        const { label, time } = getEffectiveLabel(config, actionableLabels)
+      if (!actionableLabels.length) {
+        // If actionable labels are removed, delete job for this issue
+        return queue.removeJob(getId(context, { action }))
+      }
+    })
+  )
+
+  return Promise.allSettled(
+    thread.labels.map((label) => {
+      const action = labelToAction(config, label)
+
+      if (!action) return false
+
+      async function handleThreadUpdate() {
+        if (thread.state === 'closed' && action === CLOSE) {
+          return
+        }
+
+        const ID = getId(context, { action })
+
+        const { delay, comment } = getLabelConfig(config, label.name, action)
+        const time = timeToNumber(delay, Infinity)
 
         const jobExists = await queue.getJob(ID)
         if (!jobExists) {
-          const { comment } = getLabelConfig(config, label.name, action)
-
+          // TODO refactor this file to use a shared "createComment" function
           if (comment && comment.trim() !== 'false') {
             const body = comment
               .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
@@ -74,26 +79,9 @@ module.exports.close = (queue) => async (context) => {
         }
       }
 
-      // If actionable labels are removed, delete job for this issue
-      return queue.removeJob(ID)
-    })
-  )
-}
-
-module.exports.comment = (queue) => async (context) => {
-  const thread = context.payload.pull_request || context.payload.issue
-
-  const config = await getConfig(context)
-
-  if (typeof config.labels !== 'object') return false
-
-  await Promise.allSettled(
-    thread.labels.map((label) => {
-      const action = labelToAction(config, label)
-
-      if (!action) return false
-
       return executeAction(action, {
+        [CLOSE]: handleThreadUpdate,
+        [OPEN]: handleThreadUpdate,
         [COMMENT]: async () => {
           const ID = getId(context, { action: `COMMENT:${label.name}` })
           const jobExists = await queue.getJob(ID)
@@ -110,7 +98,7 @@ module.exports.comment = (queue) => async (context) => {
                 .replace('$DELAY', ms(time, { long: true }))
                 .replace('$AUTHOR', thread.user.login)
 
-              await queue
+              return queue
                 .createJob(
                   context.issue({
                     installation_id: context.payload.installation.id,
