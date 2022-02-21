@@ -17,15 +17,15 @@ const analytics = require('../analytics')
 const { closeIssue } = require('../api')
 
 module.exports.close = (queue) => async (context) => {
+  const thread = context.payload.pull_request || context.payload.issue
+
   return Promise.allSettled(
     [CLOSE, OPEN].map(async (action) => {
-      const ID = getId(context, { action })
-
-      const thread = context.payload.issue
-
       if (thread.state === 'closed' && action === CLOSE) {
         return
       }
+
+      const ID = getId(context, { action })
 
       const config = await getConfig(context)
 
