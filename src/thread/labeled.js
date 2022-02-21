@@ -16,6 +16,8 @@ const {
 const analytics = require('../analytics')
 const { closeIssue } = require('../api')
 
+// TODO refactor this file to use a shared "createComment" function
+
 module.exports.close = (queue) => async (context) => {
   const thread = context.payload.pull_request || context.payload.issue
 
