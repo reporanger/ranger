@@ -311,7 +311,7 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
     await wait(20)
 
     expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).not.toHaveBeenCalled()
+    expect(queue.removeJob).not.toHaveBeenCalledWith('mfix22:test-issue-bot:7:close')
   })
 
   test('Will remove the job if all actionable labels are removed', async () => {

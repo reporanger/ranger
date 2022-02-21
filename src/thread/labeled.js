@@ -5,7 +5,7 @@ const ms = require('ms')
 
 const { getId, executeAction } = require('../util')
 const getConfig = require('../config')
-const { COMMENT, CLOSE } = require('../constants')
+const { COMMENT, CLOSE, OPEN } = require('../constants')
 const {
   timeToNumber,
   getLabelConfig,
@@ -17,59 +17,68 @@ const analytics = require('../analytics')
 const { closeIssue } = require('../api')
 
 module.exports.close = (queue) => async (context) => {
-  const thread = context.payload.pull_request || context.payload.issue
+  return Promise.allSettled(
+    [CLOSE, OPEN].map(async (action) => {
+      const ID = getId(context, { action })
 
-  if (thread.state === 'closed') {
-    return
-  }
+      const thread = context.payload.issue
 
-  const ID = getId(context, { action: CLOSE })
-
-  const config = await getConfig(context)
-
-  const actionableLabels = thread.labels.filter(labelsByAction(config, CLOSE))
-
-  if (actionableLabels.length) {
-    const { label, time } = getEffectiveLabel(config, actionableLabels)
-
-    const jobExists = await queue.getJob(ID)
-    if (!jobExists) {
-      const { comment } = getLabelConfig(config, label.name, CLOSE)
-
-      if (comment && comment.trim() !== 'false') {
-        const body = comment
-          .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
-          .replace('$LABEL', label.name)
-          .replace('$AUTHOR', thread.user.login)
-        context.octokit.issues.createComment(context.issue({ body }))
+      if (
+        (thread.state === 'closed' && action === CLOSE) ||
+        (thread.state === 'open' && action === OPEN)
+      ) {
+        return
       }
-    }
 
-    if (time >= 0) {
-      return queue
-        .createJob({
-          ...context.issue({ installation_id: context.payload.installation.id }),
-          action: CLOSE,
-        })
-        .setId(ID)
-        .delayUntil(Date.now() + time)
-        .save()
-        .then((job) => {
-          analytics.track(() => ({
-            userId: context.payload.installation.id,
-            event: `Close job created`,
-            properties: {
-              ...job.data,
-              id: job.id,
-            },
-          }))
-          return job
-        })
-    }
-  }
+      const config = await getConfig(context)
 
-  // If closable labels are removed, delete job for this issue
-  return queue.removeJob(ID)
+      const actionableLabels = thread.labels.filter(labelsByAction(config, action))
+
+      if (actionableLabels.length) {
+        const { label, time } = getEffectiveLabel(config, actionableLabels)
+
+        const jobExists = await queue.getJob(ID)
+        if (!jobExists) {
+          const { comment } = getLabelConfig(config, label.name, action)
+
+          if (comment && comment.trim() !== 'false') {
+            const body = comment
+              .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
+              .replace('$LABEL', label.name)
+              .replace('$AUTHOR', thread.user.login)
+            context.octokit.issues.createComment(context.issue({ body }))
+          }
+        }
+
+        if (time >= 0) {
+          return queue
+            .createJob(
+              context.issue({
+                installation_id: context.payload.installation.id,
+                action,
+              })
+            )
+            .setId(ID)
+            .delayUntil(Date.now() + time)
+            .save()
+            .then((job) => {
+              analytics.track(() => ({
+                userId: context.payload.installation.id,
+                event: `${action} job created`,
+                properties: {
+                  ...job.data,
+                  id: job.id,
+                },
+              }))
+              return job
+            })
+        }
+      }
+
+      // If actionable labels are removed, delete job for this issue
+      return queue.removeJob(ID)
+    })
+  )
 }
 
 module.exports.comment = (queue) => async (context) => {
@@ -138,21 +147,23 @@ module.exports.process = (robot) => async ({ data /* id */ }) => {
   const github = await robot.auth(data.installation_id)
 
   switch (data.action) {
-    case CLOSE: {
-      return await closeIssue(github, {
+    case COMMENT: {
+      return await github.issues.createComment({
         ...data,
         number: undefined,
         // TODO change this to just use number
         issue_number: data.issue_number || data.number,
       })
     }
-    case COMMENT:
+    case OPEN:
+    case CLOSE:
     default: {
-      return await github.issues.createComment({
+      return await closeIssue(github, {
         ...data,
         number: undefined,
         // TODO change this to just use number
         issue_number: data.issue_number || data.number,
+        state: data.action === OPEN ? 'open' : 'closed',
       })
     }
   }
