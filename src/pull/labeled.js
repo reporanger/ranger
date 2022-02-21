@@ -48,11 +48,13 @@ module.exports = (queue) => async (context) => {
 
     return (
       queue
-        .createJob({
-          ...context.pullRequest({ installation_id: context.payload.installation.id }),
-          action: MERGE,
-          method,
-        })
+        .createJob(
+          context.pullRequest({
+            installation_id: context.payload.installation.id,
+            action: MERGE,
+            method,
+          })
+        )
         .setId(ID)
         // https://github.com/reporanger/feedback/issues/1
         .delayUntil(Date.now() + PULL_REQUEST_MERGE_DELAY)

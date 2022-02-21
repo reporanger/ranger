@@ -17,10 +17,9 @@ module.exports = (queue) => async (context) => {
       return executeAction(action, {
         [LOCK]: () => {
           return queue
-            .createJob({
-              ...context.issue({ installation_id: context.payload.installation.id }),
-              action: LOCK,
-            })
+            .createJob(
+              context.issue({ installation_id: context.payload.installation.id, action: LOCK })
+            )
             .setId(getId(context, { action: LOCK }))
             .delayUntil(Date.now() + ms(delay))
             .save()
