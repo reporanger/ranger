@@ -23,10 +23,7 @@ module.exports.close = (queue) => async (context) => {
 
       const thread = context.payload.issue
 
-      if (
-        (thread.state === 'closed' && action === CLOSE) ||
-        (thread.state === 'open' && action === OPEN)
-      ) {
+      if (thread.state === 'closed' && action === CLOSE) {
         return
       }
 

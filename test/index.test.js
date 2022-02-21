@@ -110,6 +110,10 @@ labels:
     action: close
     delay: 10ms
     comment: false
+  snooze:
+    action: open
+    delay: 10ms
+    comment: false
   merge:
     action: merge
   -1:
@@ -428,6 +432,24 @@ describe('issue', () => {
 
     expect(github.issues.createComment).toHaveBeenCalled()
     expect(queue.createJob).not.toHaveBeenCalled()
+  })
+
+  test('Open action should re-open thread', async () => {
+    await robot.receive(payload({ labels: ['snooze'], number: 11 }))
+
+    expect(queue.createJob).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'open',
+        issue_number: 11,
+      })
+    )
+    await wait(20)
+    expect(github.issues.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        issue_number: 11,
+        state: 'open',
+      })
+    )
   })
 })
 
