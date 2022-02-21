@@ -5,7 +5,6 @@ const analytics = require('./src/analytics')
 
 const threadLabeled = require('./src/thread/labeled')
 const threadOpened = require('./src/thread/opened')
-const issueLabeled = require('./src/issue/labeled')
 const pullLabeled = require('./src/pull/labeled')
 const pullMerged = require('./src/pull/merged')
 const pullSynchronized = require('./src/pull/synchronized')
@@ -100,15 +99,14 @@ module.exports = async ({ app, getRouter }) => {
   }
 
   // Listeners
-  // TODO combine first 2 listeners
   app.on(
     // All pull requests are issues in GitHub REST V3
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(threadLabeled(queue))
+    wrapPaymentCheck(threadLabeled.close(queue))
   )
   app.on(
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(issueLabeled(queue))
+    wrapPaymentCheck(threadLabeled.comment(queue))
   )
 
   app.on(['issues.opened', 'pull_request.opened'], wrapPaymentCheck(threadOpened(queue)))
