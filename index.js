@@ -101,14 +101,18 @@ module.exports = async ({ app, getRouter }) => {
   }
 
   // Listeners
+  // TODO combine first 2 listeners
   app.on(
     // All pull requests are issues in GitHub REST V3
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
     wrapPaymentCheck(threadLabeled(queue))
   )
-  app.on(['issues.opened', 'pull_request.opened'], wrapPaymentCheck(threadOpened(queue)))
+  app.on(
+    ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
+    wrapPaymentCheck(issueLabeled(queue))
+  )
 
-  app.on(['issues.labeled', 'issues.unlabeled'], wrapPaymentCheck(issueLabeled(queue)))
+  app.on(['issues.opened', 'pull_request.opened'], wrapPaymentCheck(threadOpened(queue)))
 
   app.on(
     [

@@ -13,7 +13,7 @@ const analytics = require('../analytics')
 module.exports = (queue) => async (context) => {
   const ID = getId(context, { action: CLOSE })
 
-  const thread = context.payload.issue
+  const thread = context.payload.pull_request || context.payload.issue
 
   if (thread.state === 'closed') {
     return
