@@ -87,8 +87,6 @@ module.exports.comment = (queue) => async (context) => {
 
   if (typeof config.labels !== 'object') return false
 
-  const ID = getId(context, { action: COMMENT })
-
   await Promise.allSettled(
     thread.labels.map((label) => {
       const action = labelToAction(config, label)
@@ -97,8 +95,8 @@ module.exports.comment = (queue) => async (context) => {
 
       return executeAction(action, {
         [COMMENT]: async () => {
-          const jobId = `${ID}:${label.name}`
-          const jobExists = await queue.getJob(jobId)
+          const ID = getId(context, { action: `COMMENT:${label.name}` })
+          const jobExists = await queue.getJob(ID)
 
           // Don't create a comment if one already exists
           if (!jobExists) {
@@ -120,7 +118,7 @@ module.exports.comment = (queue) => async (context) => {
                     body,
                   })
                 )
-                .setId(jobId)
+                .setId(ID)
                 .delayUntil(Date.now() + time)
                 .save()
                 .then((job) => {
