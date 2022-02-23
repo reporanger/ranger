@@ -17,7 +17,7 @@ function getLabelConfig(config, labelName, defaultKey = 'close') {
   return {}
 }
 
-function timeToNumber(time, whenNull = Infinity) {
+function timeToNumber(time, whenNull = 0) {
   if (time == null) {
     return whenNull
   }

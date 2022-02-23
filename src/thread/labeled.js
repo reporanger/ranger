@@ -40,7 +40,7 @@ module.exports = (queue) => async (context) => {
         const ID = getId(context, { action })
 
         const { delay, comment } = getLabelConfig(config, label.name, action)
-        const time = timeToNumber(delay, Infinity)
+        const time = timeToNumber(delay, -1)
 
         const jobExists = await queue.getJob(ID)
         if (!jobExists) {
@@ -90,7 +90,7 @@ module.exports = (queue) => async (context) => {
           if (!jobExists) {
             const { message, delay } = getLabelConfig(config, label.name, COMMENT)
 
-            const time = delay ? timeToNumber(delay, 0) : 0
+            const time = timeToNumber(delay, 0)
 
             if (message && message.trim() !== 'false') {
               const body = message
