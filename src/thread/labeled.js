@@ -133,7 +133,7 @@ module.exports.process = (robot) => async ({ data /* id */ }) => {
 
   switch (data.action) {
     case COMMENT: {
-      return await github.issues.createComment({
+      return github.issues.createComment({
         ...data,
         number: undefined,
         // TODO change this to just use number
@@ -143,7 +143,7 @@ module.exports.process = (robot) => async ({ data /* id */ }) => {
     case OPEN:
     case CLOSE:
     default: {
-      return await closeIssue(github, {
+      return closeIssue(github, {
         ...data,
         number: undefined,
         // TODO change this to just use number
