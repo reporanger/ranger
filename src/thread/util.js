@@ -28,15 +28,17 @@ function labelToAction(config, label) {
   if (typeof config.labels !== 'object') return null
   if (!config.labels[label.name]) return null
 
-  return typeof config.labels[label.name] === 'string'
-    ? config.labels[label.name]
-    : config.labels[label.name].action
+  const action =
+    typeof config.labels[label.name] === 'string'
+      ? config.labels[label.name]
+      : config.labels[label.name].action
+
+  return action && action.trim().toLowerCase()
 }
 
 function labelsByAction(config, actionName) {
   return (label) => {
     const action = labelToAction(config, label)
-
-    return action && action.trim().toLowerCase() === actionName
+    return action && action === actionName
   }
 }
