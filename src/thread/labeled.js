@@ -32,11 +32,7 @@ module.exports = (queue) => async (context) => {
 
       if (!action) return false
 
-      async function handleThreadUpdate() {
-        if (thread.state === 'closed' && action === CLOSE) {
-          return
-        }
-
+      async function handleUpdateThread() {
         const ID = getId(context, { action })
 
         const { delay, comment } = getLabelConfig(config, label.name, action)
@@ -80,8 +76,13 @@ module.exports = (queue) => async (context) => {
       }
 
       return executeAction(action, {
-        [CLOSE]: handleThreadUpdate,
-        [OPEN]: handleThreadUpdate,
+        [CLOSE]() {
+          if (thread.state === 'closed') {
+            return
+          }
+          return handleUpdateThread()
+        },
+        [OPEN]: handleUpdateThread,
         [COMMENT]: async () => {
           const ID = getId(context, { action: `COMMENT:${label.name}` })
           const jobExists = await queue.getJob(ID)
