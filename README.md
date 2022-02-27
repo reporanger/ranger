@@ -20,3 +20,7 @@ To get started:
 4. Set `WEBHOOK_PROXY_URL` to the webhook URL in your `.env`
 5. `brew services start redis`
 6. `yarn dev`
+
+## Feedback
+
+If you run into issues or have ideas for improving Ranger, please share feedback at [reporanger.com/feedback](https://reporanger.com/feedback) or by emailing [hi@reporanger.com](mailto:hi@reporanger.com).
