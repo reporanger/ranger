@@ -26,7 +26,6 @@ class MockJob {
           await this.queue.processor(data)
         } catch (e) {
           if (e.message !== 'Retry job') {
-            // eslint-disable-next-line
             console.error(e)
           }
           if (this.retriesLeft && --this.retriesLeft >= 0) {
