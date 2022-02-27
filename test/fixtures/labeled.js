@@ -158,7 +158,7 @@ module.exports = ({
       forks: 0,
       open_issues: 4,
       watchers: 0,
-      default_branch: 'master',
+      default_branch: 'main',
     },
     sender: {
       login: 'mfix22',

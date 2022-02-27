@@ -46,7 +46,7 @@ module.exports.createTag = () => async (context) => {
 
   if (thread.merged !== true) return
 
-  // Only create tags on "master"
+  // Only create tags on "main"
   if (thread.base.ref !== context.payload.repository.default_branch) return
 
   const isMajor = thread.labels.find(({ name }) => name.toLowerCase().includes('major'))

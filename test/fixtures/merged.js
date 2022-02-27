@@ -1,4 +1,4 @@
-module.exports = ({ labels = [], base = 'master', repo = { fork: false } } = {}) => ({
+module.exports = ({ labels = [], base = 'main', repo = { fork: false } } = {}) => ({
   name: 'pull_request',
   payload: {
     action: 'closed',
@@ -38,7 +38,7 @@ module.exports = ({ labels = [], base = 'master', repo = { fork: false } } = {})
         login: 'Codertocat',
       },
       private: false,
-      default_branch: 'master',
+      default_branch: 'main',
     },
     installation: {
       id: 135737,

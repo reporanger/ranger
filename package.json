@@ -12,7 +12,7 @@
     "lint": "eslint src",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage",
     "redis:clear": "redis-cli flushall",
-    "deploy": "git push heroku master",
+    "deploy": "git push heroku main",
     "site": "cd site && live-server"
   },
   "dependencies": {
