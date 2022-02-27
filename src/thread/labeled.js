@@ -32,23 +32,30 @@ module.exports = (queue) => async (context) => {
 
       if (!action) return false
 
+      const { delay, message, comment } = getLabelConfig(config, label.name, action)
+      const time = timeToNumber(delay, 0)
+
+      function getCommentBody(string) {
+        if (!string || string.trim() === 'false') return ''
+
+        return string
+          .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
+          .replace('$LABEL', label.name)
+          .replace('$AUTHOR', thread.user.login)
+      }
+
       async function handleUpdateThread() {
         const ID = getId(context, { action })
 
-        const { delay, comment } = getLabelConfig(config, label.name, action)
-        const time = timeToNumber(delay, -1)
-
         const jobExists = await queue.getJob(ID)
         if (!jobExists) {
-          // TODO refactor this file to use a shared "createComment" function
-          if (comment && comment.trim() !== 'false') {
-            const body = comment
-              .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
-              .replace('$LABEL', label.name)
-              .replace('$AUTHOR', thread.user.login)
+          const body = getCommentBody(comment)
+          if (body) {
             await context.octokit.issues.createComment(context.issue({ body }))
           }
         }
+
+        const time = timeToNumber(delay, -1)
 
         if (time >= 0) {
           return queue
@@ -89,16 +96,8 @@ module.exports = (queue) => async (context) => {
 
           // Don't create a comment if one already exists
           if (!jobExists) {
-            const { message, delay } = getLabelConfig(config, label.name, COMMENT)
-
-            const time = timeToNumber(delay, 0)
-
-            if (message && message.trim() !== 'false') {
-              const body = message
-                .replace('$LABEL', label.name)
-                .replace('$DELAY', ms(time, { long: true }))
-                .replace('$AUTHOR', thread.user.login)
-
+            const body = getCommentBody(message)
+            if (body) {
               return queue
                 .createJob(
                   context.issue({

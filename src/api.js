@@ -13,7 +13,7 @@ exports.closeIssue = function closeIssue(github, data) {
     })
     .then((_) => _.data)
     .catch((e) => {
-      console.log(e, data)
+      console.error(e, data)
       throw e
     })
 }
@@ -32,7 +32,7 @@ exports.getPullRequest = function getPullRequest(github, data) {
     })
     .then((_) => _.data)
     .catch((e) => {
-      console.log(e, data)
+      console.error(e, data)
       throw e
     })
 }
@@ -62,7 +62,7 @@ exports.addLabels = function addLabels(github, { labels, ...data }) {
       },
     })
     .catch((e) => {
-      console.log(e, data)
+      console.error(e, data)
       throw e
     })
 }

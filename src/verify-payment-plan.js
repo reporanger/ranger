@@ -1,4 +1,5 @@
 // TODO add DEV flag
+const Sentry = require('@sentry/node')
 const r = require('rexrex')
 const { OPEN_SOURCE } = require('./constants')
 
@@ -72,7 +73,6 @@ module.exports = async function verifyPaymentPlan(robot, context) {
   } catch (error) {
     if (error.status !== 404) {
       robot.log.error(error, context.repo())
-      const Sentry = require('@sentry/node')
       Sentry.configureScope((scope) => {
         scope.setUser({ username: owner })
         Sentry.captureException(error)

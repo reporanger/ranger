@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node')
 const ms = require('ms')
 
 const { getId } = require('../util')
@@ -93,7 +94,6 @@ module.exports.process = (robot) => async ({
 
     pull = await getPullRequest(github, { owner, repo, pull_number: the_number })
   } catch (error) {
-    const Sentry = require('@sentry/node')
     Sentry.configureScope((scope) => {
       scope.setUser({ username: owner, id: installation_id })
       Sentry.captureException(error)

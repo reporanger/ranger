@@ -1,3 +1,4 @@
+const Sentry = require('@sentry/node')
 const { createLabel } = require('../api')
 const analytics = require('../analytics')
 
@@ -85,7 +86,6 @@ module.exports = (robot) => async (context) => {
       },
     })
   } catch (e) {
-    const Sentry = require('@sentry/node')
     Sentry.configureScope((scope) => {
       scope.setUser({
         id: context.payload.installation.id,
