@@ -14,7 +14,7 @@ const commentCreated = require('./src/comment/created')
 const installationCreated = require('./src/installation/created')
 const installationAdded = require('./src/installation/added')
 
-const { CLOSE, MERGE, COMMENT, LOCK } = require('./src/constants')
+const { CLOSE, MERGE, COMMENT, LOCK, OPEN } = require('./src/constants')
 
 const verifyPaymentPlan = require('./src/verify-payment-plan')
 
@@ -58,6 +58,7 @@ module.exports = async ({ app, getRouter }) => {
           return await threadClosed.process(app)(job)
         case COMMENT:
         case CLOSE:
+        case OPEN:
         default:
           return await threadLabeled.process(app)(job)
       }
@@ -102,11 +103,7 @@ module.exports = async ({ app, getRouter }) => {
   app.on(
     // All pull requests are issues in GitHub REST V3
     ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(threadLabeled.close(queue))
-  )
-  app.on(
-    ['issues.labeled', 'issues.unlabeled', 'pull_request.labeled', 'pull_request.unlabeled'],
-    wrapPaymentCheck(threadLabeled.comment(queue))
+    wrapPaymentCheck(threadLabeled(queue))
   )
 
   app.on(['issues.opened', 'pull_request.opened'], wrapPaymentCheck(threadOpened(queue)))

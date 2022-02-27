@@ -407,7 +407,7 @@ describe('issue', () => {
   })
 
   test('Labels with `false` comment config should not send comment', async () => {
-    await robot.receive(payload({ labels: ['wontfix'], number: 11 }))
+    await await robot.receive(payload({ labels: ['wontfix'], number: 11 }))
 
     expect(github.issues.createComment).not.toHaveBeenCalled()
     expect(queue.createJob).toHaveBeenCalled()
@@ -427,15 +427,14 @@ describe('issue', () => {
   })
 
   test('Using negative numbers for delay should not create a job', async () => {
-    // reason for duplicate 'none' is just to test `getEffectiveLabel()` further
-    await robot.receive(payload({ labels: ['none', '-1', 'none'], number: 11 }))
+    await await robot.receive(payload({ labels: ['none', '-1'], number: 11 }))
 
     expect(github.issues.createComment).toHaveBeenCalled()
     expect(queue.createJob).not.toHaveBeenCalled()
   })
 
   test('Open action should re-open thread', async () => {
-    await robot.receive(payload({ labels: ['snooze'], number: 11 }))
+    await await robot.receive(payload({ labels: ['snooze'], number: 11 }))
 
     expect(queue.createJob).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -999,7 +998,7 @@ describe('billing', () => {
   ])('Will schedule job is private billing is correct: %#', async (data) => {
     github.apps.getSubscriptionPlanForAccount = () => ({ data })
 
-    await robot.receive(payload({ isPrivate: true }))
+    await await await robot.receive(payload({ isPrivate: true }))
     expect(queue.createJob).toHaveBeenCalledWith({
       issue_number: 7,
       owner: 'mfix22',

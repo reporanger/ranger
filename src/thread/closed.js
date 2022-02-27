@@ -42,5 +42,5 @@ module.exports = (queue) => async (context) => {
 
 module.exports.process = (robot) => async ({ data }) => {
   const github = await robot.auth(data.installation_id)
-  return await github.issues.lock(data)
+  return github.issues.lock(data)
 }

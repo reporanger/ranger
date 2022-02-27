@@ -37,12 +37,12 @@ module.exports = (queue) => async (context) => {
   }
 
   const config = await getConfig(context)
-  const mergeableLabels = (thread.labels || []).filter(labelsByAction(config, MERGE))
+  const actionableLabels = (thread.labels || []).filter(labelsByAction(config, MERGE))
 
-  if (mergeableLabels.length) {
-    const method = mergeableLabels.find(({ name }) => name.match(/rebase/i))
+  if (actionableLabels.length) {
+    const method = actionableLabels.find(({ name }) => name.match(/rebase/i))
       ? 'rebase'
-      : mergeableLabels.find(({ name }) => name.match(/squash/i))
+      : actionableLabels.find(({ name }) => name.match(/squash/i))
       ? 'squash'
       : 'merge'
 

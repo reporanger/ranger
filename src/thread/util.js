@@ -2,7 +2,6 @@ const ms = require('ms')
 
 exports.getLabelConfig = getLabelConfig
 exports.timeToNumber = timeToNumber
-exports.getEffectiveLabel = getEffectiveLabel
 exports.labelToAction = labelToAction
 exports.labelsByAction = labelsByAction
 
@@ -18,46 +17,28 @@ function getLabelConfig(config, labelName, defaultKey = 'close') {
   return {}
 }
 
-function timeToNumber(time, whenNull = Infinity) {
+function timeToNumber(time, whenNull = 0) {
   if (time == null) {
     return whenNull
   }
   return isNaN(time) ? ms(time.trim()) : Number(time)
 }
 
-function getEffectiveLabel(config, labels) {
-  return labels.reduce(
-    (accum, label) => {
-      const time = timeToNumber(getLabelConfig(config, label.name).delay, Infinity)
-
-      if (time < accum.time) {
-        return { label, time }
-      }
-
-      // if time === Infinity, set the label
-      if (time === accum.time && !accum.label) {
-        return { label, time }
-      }
-
-      return accum
-    },
-    { label: null, time: Infinity }
-  )
-}
-
 function labelToAction(config, label) {
   if (typeof config.labels !== 'object') return null
   if (!config.labels[label.name]) return null
 
-  return typeof config.labels[label.name] === 'string'
-    ? config.labels[label.name]
-    : config.labels[label.name].action
+  const action =
+    typeof config.labels[label.name] === 'string'
+      ? config.labels[label.name]
+      : config.labels[label.name].action
+
+  return action && action.trim().toLowerCase()
 }
 
 function labelsByAction(config, actionName) {
   return (label) => {
     const action = labelToAction(config, label)
-
-    return action && action.trim().toLowerCase() === actionName
+    return action && action === actionName
   }
 }
