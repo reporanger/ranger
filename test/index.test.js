@@ -998,7 +998,7 @@ describe('billing', () => {
   ])('Will schedule job is private billing is correct: %#', async (data) => {
     github.apps.getSubscriptionPlanForAccount = () => ({ data })
 
-    await await robot.receive(payload({ isPrivate: true }))
+    await await await robot.receive(payload({ isPrivate: true }))
     expect(queue.createJob).toHaveBeenCalledWith({
       issue_number: 7,
       owner: 'mfix22',

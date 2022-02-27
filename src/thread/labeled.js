@@ -46,7 +46,7 @@ module.exports = (queue) => async (context) => {
               .replace('$DELAY', time == null ? '' : ms(time, { long: true }))
               .replace('$LABEL', label.name)
               .replace('$AUTHOR', thread.user.login)
-            context.octokit.issues.createComment(context.issue({ body }))
+            await context.octokit.issues.createComment(context.issue({ body }))
           }
         }
 
