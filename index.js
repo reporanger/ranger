@@ -99,6 +99,23 @@ module.exports = async ({ app, getRouter }) => {
     }
   }
 
+  function wrapSentry(fn) {
+    return async (context) => {
+      try {
+        return await fn(context)
+      } catch (error) {
+        Sentry.configureScope((scope) => {
+          scope.setUser({
+            id: context.payload.installation.id,
+            username: context.payload.installation.account.login,
+          })
+          Sentry.captureException(error)
+        })
+        app.log.error(error)
+      }
+    }
+  }
+
   // Listeners
   app.on(
     // All pull requests are issues in GitHub REST V3
@@ -133,7 +150,10 @@ module.exports = async ({ app, getRouter }) => {
   app.on('issue_comment.deleted', commentDeleted(queue))
 
   app.on(['installation.created'], installationCreated(app))
-  app.on(['installation_repositories.added', 'installation.created'], installationAdded(app))
+  app.on(
+    ['installation_repositories.added', 'installation.created'],
+    wrapSentry(installationAdded(app))
+  )
   // TODO 'marketplace_purchase.purchased'
 
   // TODO use status updates to retrigger merge jobs

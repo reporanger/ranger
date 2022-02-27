@@ -1,4 +1,3 @@
-const Sentry = require('@sentry/node')
 const ms = require('ms')
 
 const { CLOSE, MERGE } = require('./constants')
@@ -36,11 +35,6 @@ module.exports = async (context) => {
     return await context.config(CONFIG_FILE, defaultConfig /* mergeOptions */)
   } catch (err) {
     const repo = context.repo()
-
-    Sentry.configureScope((scope) => {
-      scope.setUser({ id: context.payload.installation.id, username: repo.owner })
-      Sentry.captureException(err)
-    })
 
     if (err.name === 'YAMLException') {
       const { data: branch } = await context.octokit.repos.getBranch({
