@@ -1,29 +1,8 @@
-// TODO add DEV flag
 const Sentry = require('@sentry/node')
 const r = require('rexrex')
 const { OPEN_SOURCE } = require('./constants')
 
-const ALLOW_LIST = new Set([
-  'dawnlabs',
-  'windsorio',
-  'runeai',
-  'explosion',
-  'gremlin',
-  'nlog',
-  'vectos',
-  'nerdwallet',
-  'nerdwalletoss',
-  'rockspin',
-  'lime',
-  'antimatter15',
-  'tonymastrorio',
-  'victorbordo',
-  'vanilla',
-  'kuromukira',
-  'daedalus28',
-  'scaleleap',
-  'moltar',
-])
+const ALLOW_LIST = new Set(process.env.BETA_USERS ? process.env.BETA_USERS.split(',') : [])
 
 module.exports = async function verifyPaymentPlan(robot, context) {
   if (!context.payload.repository.private) {
