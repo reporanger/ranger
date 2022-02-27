@@ -10,7 +10,7 @@ module.exports = ({
     action,
     comment: {
       url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/issues/comments/448738894',
-      html_url: 'https://github.com/dawnlabs/test-issue-bot/issues/54#issuecomment-448738894',
+      html_url: 'https://github.com/mfix22/test-issue-bot/issues/54#issuecomment-448738894',
       issue_url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/issues/54',
       id: 448738894,
       node_id: 'MDEyOklzc3VlQ29tbWVudDQ0ODczODg5NA==',
@@ -49,7 +49,7 @@ module.exports = ({
       labels_url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/issues/55/labels{/name}',
       comments_url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/issues/55/comments',
       events_url: 'https://api.github.com/repos/dawnlabs/test-issue-bot/issues/55/events',
-      html_url: 'https://github.com/dawnlabs/test-issue-bot/issues/55',
+      html_url: 'https://github.com/mfix22/test-issue-bot/issues/55',
       id: 392784673,
       node_id: 'MDU6SXNzdWUzOTI3ODQ2NzM=',
       number: number,
