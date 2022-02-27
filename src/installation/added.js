@@ -1,4 +1,3 @@
-const Sentry = require('@sentry/node')
 const { createLabel } = require('../api')
 const analytics = require('../analytics')
 
@@ -26,73 +25,62 @@ const LABELS_TO_CREATE = [
 ]
 
 module.exports = (robot) => async (context) => {
-  try {
-    const github = await robot.auth(context.payload.installation.id)
+  const github = await robot.auth(context.payload.installation.id)
 
-    const repos = context.payload.repositories_added || context.payload.repositories
+  const repos = context.payload.repositories_added || context.payload.repositories
 
-    if (!repos.length) {
-      return
-    }
+  if (!repos.length) {
+    return
+  }
 
-    const promises = repos.map(({ name: repo }) => {
-      analytics.track(() => ({
-        userId: context.payload.installation.id,
-        event: `Creating default labels`,
-        properties: {
+  const promises = repos.map(({ name: repo }) => {
+    analytics.track(() => ({
+      userId: context.payload.installation.id,
+      event: `Creating default labels`,
+      properties: {
+        repo,
+        user: context.payload.installation.account.login,
+      },
+    }))
+    return Promise.allSettled(
+      LABELS_TO_CREATE.map((l) => {
+        const data = {
+          owner: context.payload.installation.account.login,
           repo,
-          user: context.payload.installation.account.login,
-        },
-      }))
-      return Promise.allSettled(
-        LABELS_TO_CREATE.map((l) => {
-          const data = {
-            owner: context.payload.installation.account.login,
-            repo,
-            ...l,
+          ...l,
+        }
+
+        return createLabel(github, data).catch((err) => {
+          if (err.message.indexOf('archived') > -1 || err.message.indexOf('Not found') > -1) {
+            return
           }
 
-          return createLabel(github, data).catch((err) => {
-            if (err.message.indexOf('archived') > -1 || err.message.indexOf('Not found') > -1) {
-              return
-            }
-
-            try {
-              if (err.errors) {
-                if (err.errors.find((err) => err.code === 'already_exists')) {
-                  return
-                }
+          try {
+            if (err.errors) {
+              if (err.errors.find((err) => err.code === 'already_exists')) {
+                return
               }
-
-              throw err
-            } catch (e) {
-              robot.log.error(err)
             }
-          })
+
+            throw err
+          } catch (e) {
+            robot.log.error(err)
+          }
         })
-      )
-    })
-
-    await Promise.allSettled(promises)
-
-    const private_repos = repos.filter((r) => r.private)
-    analytics.track({
-      userId: context.payload.installation.id,
-      event: `Repos added`,
-      properties: {
-        count: repos.length,
-        private_count: private_repos.length,
-        repos: repos.map((r) => r.name),
-      },
-    })
-  } catch (e) {
-    Sentry.configureScope((scope) => {
-      scope.setUser({
-        id: context.payload.installation.id,
-        username: context.payload.installation.account.login,
       })
-      Sentry.captureException(e)
-    })
-    robot.log.error(e)
-  }
+    )
+  })
+
+  await Promise.allSettled(promises)
+
+  const private_repos = repos.filter((r) => r.private)
+  analytics.track({
+    userId: context.payload.installation.id,
+    event: `Repos added`,
+    properties: {
+      count: repos.length,
+      private_count: private_repos.length,
+      repos: repos.map((r) => r.name),
+    },
+  })
 }

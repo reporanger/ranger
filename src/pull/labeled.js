@@ -1,4 +1,3 @@
-const Sentry = require('@sentry/node')
 const ms = require('ms')
 
 const { getId } = require('../util')
@@ -83,24 +82,13 @@ module.exports = (queue) => async (context) => {
 module.exports.process = (robot) => async ({
   data: { installation_id, owner, repo, number, pull_number, method = 'merge' },
 }) => {
-  let github
-  let pull
-
   // TODO change this to just use number
   const the_number = pull_number || number
 
-  try {
-    github = await robot.auth(installation_id)
+  const github = await robot.auth(installation_id)
 
-    pull = await getPullRequest(github, { owner, repo, pull_number: the_number })
-  } catch (error) {
-    Sentry.configureScope((scope) => {
-      scope.setUser({ username: owner, id: installation_id })
-      Sentry.captureException(error)
-    })
-    // Don't retry if auth or fetch fail
-    return
-  }
+  // Don't retry if auth or fetch fail
+  const pull = await getPullRequest(github, { owner, repo, pull_number: the_number })
 
   // || pull.mergeable_state === status.HAS_HOOKS
   const isMergeable = pull.mergeable && !pull.merged && pull.mergeable_state === STATUS.CLEAN
