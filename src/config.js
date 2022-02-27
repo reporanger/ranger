@@ -1,5 +1,5 @@
-const ms = require('ms')
 const Sentry = require('@sentry/node')
+const ms = require('ms')
 
 const { CLOSE, MERGE } = require('./constants')
 
