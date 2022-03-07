@@ -161,7 +161,7 @@ commits:
     labels:
       - duplicate
   - action: label
-    user: mfix22
+    user: reporanger
     labels:
       - author
 
@@ -210,7 +210,7 @@ beforeEach(async () => {
         data: {
           mergeable: true,
           mergeable_state: 'clean',
-          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } } },
         },
       }),
       merge: jest.fn(),
@@ -314,14 +314,14 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
     await wait(20)
 
     expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).not.toHaveBeenCalledWith('mfix22:test-issue-bot:7:close')
+    expect(queue.removeJob).not.toHaveBeenCalledWith('reporanger:test-issue-bot:7:close')
   })
 
   test('Will remove the job if all actionable labels are removed', async () => {
     await robot.receive(payload({ name, threadType, labels: [] }))
 
     expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:7:${action}`)
+    expect(queue.removeJob).toHaveBeenCalledWith(`reporanger:test-issue-bot:7:${action}`)
   })
 
   test('Will comment for each actionable label', async () => {
@@ -337,7 +337,7 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
       expect(github.issues.createComment).toHaveBeenCalledWith(
         expect.objectContaining({
           body,
-          owner: 'mfix22',
+          owner: 'reporanger',
           repo: 'test-issue-bot',
           issue_number: 7,
         })
@@ -357,7 +357,7 @@ describe.each(['issue', 'pull_request'])('%s', (threadType) => {
     expect(github.issues.addLabels).toHaveBeenCalledWith({
       issue_number: 7,
       labels: ['sponsor'],
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       mediaType: {
         previews: ['symmetra'],
@@ -373,28 +373,28 @@ describe('issue', () => {
 
     expect(github.issues.createComment).toHaveBeenCalledWith({
       issue_number: 7,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       body: 'duplicate issue created! Closing in 5 ms . . .',
     })
     const data = {
       issue_number: 7,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       installation_id: 135737,
       action: 'close',
     }
     expect(queue.createJob).toHaveBeenCalledWith(data)
-    expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:close')
+    expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('reporanger:test-issue-bot:7:close')
     expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
   })
 
   test('Will remove the job if an issue is closed', async () => {
     await robot.receive(payload({ action: 'closed', number: 9 }))
 
-    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:close')
-    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:merge')
-    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:9:lock')
+    expect(queue.removeJob).toHaveBeenCalledWith('reporanger:test-issue-bot:9:close')
+    expect(queue.removeJob).toHaveBeenCalledWith('reporanger:test-issue-bot:9:merge')
+    expect(queue.removeJob).toHaveBeenCalledWith('reporanger:test-issue-bot:9:lock')
   })
 
   test('Labels with `true` config should take action', async () => {
@@ -464,7 +464,7 @@ describe('pull_request', () => {
 
     const data = {
       pull_number: 7,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       installation_id: 135737,
       action: 'merge',
@@ -472,14 +472,14 @@ describe('pull_request', () => {
     }
 
     expect(queue.createJob).toHaveBeenCalledWith(data)
-    expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('mfix22:test-issue-bot:7:merge')
+    expect(queue.jobs[Object.keys(queue.jobs)[0]].id).toBe('reporanger:test-issue-bot:7:merge')
     expect(queue.jobs[Object.keys(queue.jobs)[0]].data).toEqual(data)
 
     await wait(2)
 
     expect(github.pulls.merge).toHaveBeenCalledWith({
       pull_number: 7,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       sha: 0,
       merge_method: 'merge',
@@ -493,13 +493,13 @@ describe('pull_request', () => {
         mergeable_state: 'behind',
         base: {
           sha: 'base sha',
-          user: { login: 'mfix22' },
-          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } },
+          user: { login: 'reporanger' },
+          repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } },
         },
         head: {
           sha: 'head sha',
-          user: { login: 'mfix22' },
-          repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } },
+          user: { login: 'reporanger' },
+          repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } },
         },
       },
     })
@@ -518,7 +518,7 @@ describe('pull_request', () => {
     expect(github.pulls.merge).not.toHaveBeenCalled()
     expect(github.pulls.updateBranch).toHaveBeenCalledWith({
       expected_head_sha: 'head sha',
-      owner: 'mfix22',
+      owner: 'reporanger',
       pull_number: 98,
       repo: 'test-issue-bot',
       headers: { accept: 'application/vnd.github.lydian-preview+json' },
@@ -530,7 +530,7 @@ describe('pull_request', () => {
       data: {
         mergeable: true,
         mergeable_state: 'dirty',
-        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } } },
       },
     })
 
@@ -579,14 +579,14 @@ describe('pull_request', () => {
         data: {
           mergeable: true,
           mergeable_state: 'blocked',
-          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } } },
         },
       })
       .mockResolvedValueOnce({
         data: {
           mergeable: true,
           mergeable_state: 'clean',
-          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+          head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } } },
         },
       })
 
@@ -601,13 +601,13 @@ describe('pull_request', () => {
 
     await wait(10)
 
-    expect(queue.jobs['mfix22:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
+    expect(queue.jobs['reporanger:test-issue-bot:97:merge'].retryFormat).toBe('fixed')
 
     expect(github.pulls.get).toHaveBeenCalledTimes(2)
 
     expect(github.pulls.merge).toHaveBeenCalledWith({
       pull_number: 97,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       sha: 0,
       merge_method: 'merge',
@@ -638,7 +638,7 @@ describe('pull_request', () => {
   })
 
   test.each([
-    [null, true], // TODO https://github.com/mfix22/ranger/issues/60
+    [null, true], // TODO https://github.com/reporanger/ranger/issues/60
     [CONCLUSION.SUCCESS, true],
     [CONCLUSION.NEUTRAL, true],
     [CONCLUSION.TIMED_OUT, false],
@@ -674,11 +674,11 @@ describe('pull_request', () => {
       data: {
         mergeable: false,
         mergeable_state: 'clean',
-        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'mfix22' } } },
+        head: { sha: 0, repo: { name: 'test-issue-bot', owner: { login: 'reporanger' } } },
       },
     })
 
-    queue.jobs['mfix22:test-issue-bot:99:merge'] = true
+    queue.jobs['reporanger:test-issue-bot:99:merge'] = true
 
     await robot.receive(
       payload({
@@ -689,7 +689,7 @@ describe('pull_request', () => {
       })
     )
 
-    expect(queue.removeJob).toHaveBeenCalledWith('mfix22:test-issue-bot:99:merge')
+    expect(queue.removeJob).toHaveBeenCalledWith('reporanger:test-issue-bot:99:merge')
   })
 
   test('Can delete branches after merging', async () => {
@@ -697,7 +697,7 @@ describe('pull_request', () => {
 
     expect(github.git.deleteRef).toHaveBeenCalledWith({
       owner: 'Codertocat',
-      ref: 'heads/mfix22-patch-1',
+      ref: 'heads/reporanger-patch-1',
       repo: 'Hello-World',
     })
   })
@@ -779,7 +779,7 @@ describe('pull_request', () => {
 
     expect(github.issues.addLabels).not.toHaveBeenCalledWith(addLabelPayload)
 
-    await robot.receive(synchronizedPayload({ action: 'synchronize', login: 'mfix22' }))
+    await robot.receive(synchronizedPayload({ action: 'synchronize', login: 'reporanger' }))
     await wait()
 
     expect(github.issues.addLabels).toHaveBeenCalledWith(addLabelPayload)
@@ -799,8 +799,8 @@ describe('comment', () => {
     await robot.receive(commentPayload({ number }))
 
     expect(queue.createJob).not.toHaveBeenCalled()
-    expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:close`)
-    expect(queue.removeJob).toHaveBeenCalledWith(`mfix22:test-issue-bot:${number}:merge`)
+    expect(queue.removeJob).toHaveBeenCalledWith(`reporanger:test-issue-bot:${number}:close`)
+    expect(queue.removeJob).toHaveBeenCalledWith(`reporanger:test-issue-bot:${number}:merge`)
   })
   describe('created', () => {
     test('deleting comments', async () => {
@@ -813,7 +813,7 @@ describe('comment', () => {
 
       expect(github.issues.deleteComment).toHaveBeenCalledWith({
         comment_id: 448738894,
-        owner: 'mfix22',
+        owner: 'reporanger',
         repo: 'test-issue-bot',
       })
     })
@@ -827,7 +827,7 @@ describe('comment', () => {
 
       expect(github.issues.deleteComment).toHaveBeenCalledWith({
         comment_id: 448738894,
-        owner: 'mfix22',
+        owner: 'reporanger',
         repo: 'test-issue-bot',
       })
     })
@@ -848,7 +848,7 @@ describe('comment', () => {
         expect(github.issues.addLabels).toHaveBeenCalledWith({
           issue_number: number,
           labels: ['duplicate'],
-          owner: 'mfix22',
+          owner: 'reporanger',
           repo: 'test-issue-bot',
           mediaType: {
             previews: ['symmetra'],
@@ -884,7 +884,7 @@ describe('closes', () => {
       action: 'lock',
       installation_id: 135737,
       issue_number: 9,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
     })
 
@@ -894,7 +894,7 @@ describe('closes', () => {
       action: 'lock',
       installation_id: 135737,
       issue_number: 9,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
     })
   })
@@ -1000,7 +1000,7 @@ describe('billing', () => {
     await await await robot.receive(payload({ isPrivate: true }))
     expect(queue.createJob).toHaveBeenCalledWith({
       issue_number: 7,
-      owner: 'mfix22',
+      owner: 'reporanger',
       repo: 'test-issue-bot',
       installation_id: 135737,
       action: 'close',

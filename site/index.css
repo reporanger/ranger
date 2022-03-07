@@ -267,16 +267,3 @@ section {
 .last-modified {
   text-align: center;
 }
-
-.hire-dawn {
-  background: #008f5a;
-  color: #002c1c;
-  text-align: center;
-  padding: 0.8rem 1.25rem;
-  border-radius: 4px;
-  margin-top: 2rem;
-}
-
-.hire-dawn a {
-  color: #002c1c;
-}

@@ -4,7 +4,7 @@
   "description": "",
   "author": "Mike Fix",
   "license": "UNLICENSED",
-  "repository": "https://github.com/mfix22/ranger.git",
+  "repository": "https://github.com/reporanger/ranger.git",
   "scripts": {
     "dev": "nodemon --exec \"probot run ./index.js\"",
     "start": "probot run --sentry-dsn $SENTRY_DSN --log-level $LOG_LEVEL --redis-url $REDIS_URL ./index.js",

@@ -140,7 +140,7 @@ module.exports.process = (robot) => async ({
           // TODO remove this. Currently check suites like https://github.com/NLog/NLog/pull/3296/checks are being
           // queued and never concluding. You can see that in this API response:
           // https://api.github.com/repos/NLog/Nlog/commits/2c8f7471648f22fa5dc9bf6db53e96fae061fc0a/check-suites
-          // Corresponding issue: https://github.com/mfix22/ranger/issues/60
+          // Corresponding issue: https://github.com/reporanger/ranger/issues/60
           s.conclusion !== null
       )
     ) {
