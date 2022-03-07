@@ -6,9 +6,8 @@
 
 ## Usage
 
-1. **[Configure the GitHub App](https://github.com/marketplace/ranger)**
-2. (Optional) Create `.github/ranger.yml` based on the following template:
-3. See the [docs](https://reporanger.com/docs) for configuration
+1. **[Install the GitHub App](https://github.com/marketplace/ranger)**
+2. (Optional) Create `.github/ranger.yml` based on [our config template](https://reporanger.com/docs)
 
 ## Contributing ✍️
 
