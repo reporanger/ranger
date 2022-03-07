@@ -1,4 +1,4 @@
-# Ranger
+# Ranger 🏞️
 
 > A sidekick for repository maintainers
 
