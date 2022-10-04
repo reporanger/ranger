@@ -3,7 +3,7 @@
   "version": "0.0.99",
   "description": "",
   "author": "Mike Fix",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "repository": "https://github.com/reporanger/ranger.git",
   "scripts": {
     "dev": "nodemon --exec \"probot run ./index.js\"",
