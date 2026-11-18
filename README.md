@@ -22,4 +22,4 @@ To get started:
 
 ## Feedback
 
-If you run into issues or have ideas for improving Ranger, please share feedback at [reporanger.com/feedback](https://reporanger.com/feedback) or by emailing [hi@reporanger.com](mailto:hi@reporanger.com).
+If you run into issues or have ideas for improving Ranger, please share feedback at [reporanger.com/feedback](https://reporanger.com/feedback).
